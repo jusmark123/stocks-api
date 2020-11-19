@@ -1,0 +1,43 @@
+App\Entity\Source:
+  attributes:
+    guid:
+      groups:
+        - source.get
+    name:
+      groups:
+        - source.get
+        - source.post
+        - source.put
+    description:
+      groups:
+        - source.get
+        - source.post
+        - source.put
+    sourceType:
+      groups:
+        - source.get
+        - source.post
+        - source.put
+    orders:
+      groups:
+        - source.get
+        - source.post
+        - source.put
+    createdAt:
+      groups:
+        - source.get
+    createdBy:
+      groups:
+        - source.get
+    modifiedAt:
+      groups:
+        - source.get
+    modifiedBy:
+      groups:
+        - source.get
+    deactivatedAt:
+      groups:
+        - source.get
+    deactivatedBy:
+      groups:
+        - source.get

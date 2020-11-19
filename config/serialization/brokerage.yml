@@ -1,0 +1,43 @@
+App\Entity\brokerage:
+  attributes:
+    guid:
+      groups:
+        - brokerage.get
+    name:
+      groups:
+        - brokerage.get
+        - brokerage.post
+        - brokerage.put
+    description:
+      groups:
+        - brokerage.get
+        - brokerage.post
+        - brokerage.put
+    url:
+      groups:
+        - brokerage.get
+        - brokerage.post
+        - brokerage.put
+    apiDocumentUrl:
+      groups:
+        - brokerage.get
+        - brokerage.post
+        - brokerage.put
+    createdAt:
+      groups:
+        - brokerage.get
+    createdBy:
+      groups:
+        - brokerage.get
+    modifiedAt:
+      groups:
+        - brokerage.get
+    modifiedBy:
+      groups:
+        - brokerage.get
+    deactivatedAt:
+      groups:
+        - brokerage.get
+    deactivatedBy:
+      groups:
+        - brokerage.get

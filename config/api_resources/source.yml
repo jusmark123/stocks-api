@@ -1,0 +1,29 @@
+resources:
+  App\Entity\Source:
+    attributes:
+      normalization_context:
+        groups: [ 'source.get' ]
+      denormalization_context:
+        groups: [ 'source.post' ]
+
+    collectionOperations:
+        get:
+          method: GET
+        post:
+          method: POST
+
+    itemCollections:
+      get:
+        method: GET
+      put:
+        method: PUT
+      delete:
+        method: DELETE
+
+    properties:
+      id:
+        identifier: false
+      guid:
+        identifier: true
+        swagger_context:
+          example: 'd6f68382-dd82-4324-b04c-89266d70ee2a'

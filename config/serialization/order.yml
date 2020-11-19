@@ -1,0 +1,67 @@
+App\Entity\Order:
+  attributes:
+    guid:
+      groups:
+        - order.get
+    brokerOrderId:
+      groups:
+        - order.get
+        - order.post
+        - order.put
+    brokerage:
+      groups:
+        - order.get
+        - order.post
+        - order.put
+    account:
+      groups:
+        - order.get
+        - order.post
+        - order.put
+    position:
+      groups:
+        - order.get
+        - order.post
+        - order.put
+    source:
+      groups:
+        - order.get
+        - order.post
+    user:
+      groups:
+        - order.get
+        - order.post
+        - order.put
+    amountUsd:
+      groups:
+        - order.get
+        - order.post
+        - order.put
+    orderType:
+      groups:
+        - order.get
+        - order.post
+        - order.put
+    orderStatusType:
+      groups:
+        - order.get
+        - order.post
+        - order.put
+    createdAt:
+      groups:
+        - order.get
+    createdBy:
+      groups:
+        - order.get
+    modifiedAt:
+      groups:
+        - order.get
+    modifiedBy:
+      groups:
+        - order.get
+    deactivatedAt:
+      groups:
+        - order.get
+    deactivatedBy:
+      groups:
+        - order.get

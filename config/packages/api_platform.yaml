@@ -1,0 +1,63 @@
+api_platform:
+    title: '%env(PROJECT_NAMESPACE)%/%env(PROJECT_NAME)%'
+    version: '%env(PROJECT_VERSION)%'
+
+    exception_to_status:
+      ApiPlatform\Core\Exception\InvalidArgumentException: 400
+      ApiPlatform\Core\Exception\InvalidIdentifierException: 400
+      ApiPlatform\Core\Exception\ItemNotFoundExceptino: 404
+      Doctrine\ORM\ORMInvalidArgumentException: 400
+      Doctrine\ORM\ORMException: 400
+      Ramsey\Uuid\Exception\InvalidUuidStringException: 400
+
+    mapping:
+        paths: ['%kernel.project_dir%/config/api_resources']
+
+    swagger:
+        api_keys:
+          - { name: 'Authorization', type: 'header' }
+
+    eager_loading:
+        max_joins: 50
+
+    collection:
+      # The default order of results
+      order: ~
+
+      # The name of the query parameter to order results
+      order_parameter_name: 'order'
+
+      pagination:
+        # To enable or disable pagination for all resource collections by default
+        enabled: true
+
+        # To allow the client to enable or disable the pagination
+        client_enabled: true
+
+        # To allow the client to set the number of items per page
+        client_items_per_page: true
+
+        # The default number of items per page
+        items_per_page: 10
+
+        # The maximum number of items per page
+        maximum_items_per_page: 50
+
+        # The default name of the parameter handling the page number
+        page_parameter_name: 'page'
+
+        # The name of the query parameter to enable or disable pagination
+        enabled_parameter_name: 'pagination'
+
+        # The name of the query parameter to set the number of items per page
+        items_per_page_parameter_name: 'itemsperpage'
+
+    formats:
+      json:     ['application/json']
+      jsonhal:  ['applciation/hal+json']
+      html:     ['text/html']
+      csv:      ['text/csv']
+
+    error_formats:
+      jsonproblem:
+        mime_types: ['application/problem+json']

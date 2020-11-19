@@ -1,0 +1,72 @@
+App\Entity\Account:
+  attributes:
+    guid:
+      groups:
+        - account.get
+    accountNumber:
+      groups:
+        - account.get
+        - account.post
+        - account.put
+    accountStatusType:
+      groups:
+        - account.get
+        - account.post
+        - account.put
+    apiKey:
+      groups:
+        - account.get
+        - account.post
+        - account.put
+    apiSecret:
+      groups:
+        - account.get
+        - account.post
+        - account.put
+    brokerage:
+      groups:
+        - account.get
+        - account.post
+    buyingPower:
+      groups:
+        - account.get
+        - account.post
+        - account.put
+    description:
+      groups:
+        - account.get
+        - account.post
+        - account.put
+    equtity:
+      groups:
+        - account.get
+        - account.post
+        - account.put
+    name:
+      groups:
+        - account.get
+        - account.post
+        - account.put
+    portfolioValue:
+      groups:
+        - account.get
+        - account.post
+        - account.put
+    createdAt:
+      groups:
+        - account.get
+    createdBy:
+      groups:
+        - account.get
+    modifiedAt:
+      groups:
+        - account.get
+    modifiedBy:
+      groups:
+        - account.get
+    deactivatedAt:
+      groups:
+        - account.get
+    deactivatedBy:
+      groups:
+        - account.get

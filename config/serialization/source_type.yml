@@ -1,0 +1,33 @@
+App\Entity\SourceType:
+  attributes:
+    id:
+      groups:
+        - source_type.get
+    name:
+      groups:
+        - source_type.get
+        - source_type.post
+        - source_type.put
+    description:
+      groups:
+        - source_type.get
+        - source_type.post
+        - source_type.put
+    createdAt:
+      groups:
+        - source_type.get
+    createdBy:
+      groups:
+        - source_type.get
+    modifiedAt:
+      groups:
+        - source_type.get
+    modifiedBy:
+      groups:
+        - source_type.get
+    deactivatedAt:
+      groups:
+        - source_type.get
+    deactivatedBy:
+      groups:
+        - source_type.get

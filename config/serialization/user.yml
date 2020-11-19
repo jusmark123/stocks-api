@@ -1,0 +1,58 @@
+App\Entity\User:
+  attributes:
+    guid:
+      groups:
+        - user.get
+    username:
+      groups:
+        - user.get
+        - user.post
+        - user.put
+    firstName:
+      groups:
+        - user.get
+        - user.post
+        - user.put
+    lastName:
+      groups:
+        - user.get
+        - user.post
+        - user.put
+    email:
+      groups:
+        - user.get
+        - user.post
+        - user.put
+    phone:
+      groups:
+        - user.get
+        - user.post
+        - user.put
+    description:
+      groups:
+        - user.get
+        - user.post
+        - user.put
+    accounts:
+      groups:
+        - user.get
+        - user.post
+        - user.put
+    createdAt:
+      groups:
+        - user.get
+    createdBy:
+      groups:
+        - user.get
+    modifiedAt:
+      groups:
+        - user.get
+    modifiedBy:
+      groups:
+        - user.get
+    deactivatedAt:
+      groups:
+        - user.get
+    deactivatedBy:
+      groups:
+        - user.get

@@ -1,0 +1,33 @@
+App\Entity\AccountStatusType:
+  attributes:
+    id:
+      groups:
+        - account_status_type.get
+    name:
+      groups:
+        - account_status_type.get
+        - account_status_type.post
+        - account_status_type.put
+    description:
+      groups:
+        - account_status_type.get
+        - account_status_type.post
+        - account_status_type.put
+    createdAt:
+      groups:
+        - account_status_type.get
+    createdBy:
+      groups:
+        - account_status_type.get
+    modifiedAt:
+      groups:
+        - account_status_type.get
+    modifiedBy:
+      groups:
+        - account_status_type.get
+    deactivatedAt:
+      groups:
+        - account_status_type.get
+    deactivatedBy:
+      groups:
+        - account_status_type.get

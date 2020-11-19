@@ -1,0 +1,33 @@
+App\Entity\OrderStatusType:
+  attributes:
+    id:
+      groups:
+        - order_status_type.get
+    name:
+      groups:
+        - order_status_type.get
+        - order_status_type.post
+        - order_status_type.put
+    description:
+      groups:
+        - order_status_type.get
+        - order_status_type.post
+        - order_status_type.put
+    createdAt:
+      groups:
+        - order_status_type.get
+    createdBy:
+      groups:
+        - order_status_type.get
+    modifiedAt:
+      groups:
+        - order_status_type.get
+    modifiedBy:
+      groups:
+        - order_status_type.get
+    deactivatedAt:
+      groups:
+        - order_status_type.get
+    deactivatedBy:
+      groups:
+        - order_status_type.get

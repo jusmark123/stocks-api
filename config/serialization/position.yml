@@ -1,0 +1,73 @@
+App\Entity\Position:
+  attributes:
+    guid:
+      groups:
+        - position.get
+    symbol:
+      groups:
+        - position.get
+        - position.post
+        - position.put
+    brokerage:
+      groups:
+        - position.get
+        - position.post
+    source:
+      groups:
+        - position.get
+        - position.post
+        - position.put
+    qty:
+      groups:
+        - position.get
+        - position.post
+        - position.put
+    order:
+      groups:
+        - position.get
+        - position.post
+        - position.put
+    account:
+      groups:
+        - position.get
+        - position.post
+        - position.put
+    exchange:
+      groups:
+        - position.get
+        - position.post
+    side:
+      groups:
+        - position.get
+        - position.post
+        - position.put
+    marketValue:
+      groups:
+        - position.get
+        - position.post
+    changeToday:
+      groups:
+        - position.get
+        - position.post
+    costBasis:
+      groups:
+        - position.get
+        - position.post
+    createdAt:
+      groups:
+        - position.get
+    createdBy:
+      groups:
+        - position.get
+    modifiedAt:
+      groups:
+        - position.get
+    modifiedBy:
+      groups:
+        - position.get
+    deactivatedAt:
+      groups:
+        - position.get
+    deactivatedBy:
+      groups:
+        - position.get
