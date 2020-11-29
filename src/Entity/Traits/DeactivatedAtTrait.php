@@ -37,7 +37,7 @@ trait DeactivatedAtTrait
      *
      * @return \DateTime deactivatedAt
      */
-    public function getDeactivatedAt()
+    public function getDeactivatedAt(): ?\DateTime
     {
         return $this->deactivatedAt;
     }

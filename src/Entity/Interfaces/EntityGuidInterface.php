@@ -13,12 +13,12 @@ interface EntityGuidInterface
     /**
      * @return \Ramsey\Uuid\Uuid
      */
-    public function getGuid(): \Ramsey\Uuid\Uuid;
+    public function getGuid(): \Ramsey\Uuid\UuidInterface;
 
     /**
      * @param \Ramsey\Uuid\Uuid $uuid
      *
      * @return EntityGuidInterface
      */
-    public function setGuid(\Ramsey\Uuid\Uuid $uuid): EntityGuidInterface;
+    public function setGuid(\Ramsey\Uuid\UuidInterface $uuid): EntityGuidInterface;
 }

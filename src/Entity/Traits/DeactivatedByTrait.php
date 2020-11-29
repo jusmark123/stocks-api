@@ -24,7 +24,7 @@ trait DeactivatedByTrait
     /**
      * @return string|null
      */
-    public function getDeactivatedBy(): string
+    public function getDeactivatedBy(): ?string
     {
         return $this->deactivatedBy;
     }

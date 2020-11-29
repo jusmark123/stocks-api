@@ -98,7 +98,7 @@ class AbstractEntityManager implements BaseEntityManagerInterface
      *
      * @return mixed
      */
-    public function findOneBy(array $criteria): array
+    public function findOneBy(array $criteria)
     {
         return $this->getEntityRepository()->findOneBy($criteria);
     }

@@ -19,7 +19,8 @@ use Gedmo\Mapping\Annotation as Gedmo;
  * @ORM\Table(
  * 		name="brokerage",
  * 		uniqueConstraints={
- * 			@ORM\UniqueConstraint(name="brokerage_un_guid", columns={"guid"})
+ * 			@ORM\UniqueConstraint(name="brokerage_un_guid", columns={"guid"}),
+ * 			@ORM\UniqueConstraint(name="brokerage_un_context", columns={"context"})
  * 		}
  * )
  * @ORM\Entity(repositoryClass="App\Entity\Repository\BrokerageRepository")
@@ -34,6 +35,13 @@ class Brokerage extends AbstractGuidEntity
      * @ORM\Column(name="name", type="string", length=100, nullable=false)
      */
     private $name;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="context", type="string", length=100, nullable=false)
+     */
+    private $context;
 
     /**
      * @var string|null
@@ -52,7 +60,7 @@ class Brokerage extends AbstractGuidEntity
     /**
      * @var string|null
      *
-     * @ORM\Column(name="api_documenation_url", length=255, nullable=true)
+     * @ORM\Column(name="api_document_url", length=255, nullable=true)
      */
     private $apiDocumentUrl;
 
@@ -64,27 +72,34 @@ class Brokerage extends AbstractGuidEntity
     private $accounts;
 
     /**
-     * @var ArrayCollection|Orders[]|PersistentCollection
+     * @var ArrayCollection|Order[]|PersistentCollection
      *
      * @ORM\OneToMany(targetEntity="Order", mappedBy="brokerage", fetch="LAZY")
      */
     private $orders;
 
     /**
-     * Constructor.
+     * Brokerage Constructor.
      */
     public function __construct()
     {
-        // $this->__guidConstructor();
         $this->accounts = new ArrayCollection();
         $this->orders = new ArrayCollection();
     }
 
+    /**
+     * @return string
+     */
     public function getName(): string
     {
         return $this->name;
     }
 
+    /**
+     * @param string $name
+     *
+     * @return Brokerage
+     */
     public function setName(string $name): Brokerage
     {
         $this->name = $name;
@@ -92,11 +107,37 @@ class Brokerage extends AbstractGuidEntity
         return $this;
     }
 
+    /**
+     * @return string
+     */
+    public function getContext(): string
+    {
+        return $this->context;
+    }
+
+    /**
+     * @param string $context
+     */
+    public function setContext(string $context): Brokerage
+    {
+        $this->context = $context;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
     public function getDescription(): string
     {
         return $this->description;
     }
 
+    /**
+     * @param string $description
+     *
+     * @return Brokerage
+     */
     public function setDescription(string $description): Brokerage
     {
         $this->description = $description;
@@ -104,11 +145,19 @@ class Brokerage extends AbstractGuidEntity
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getUrl(): string
     {
         return $this->url;
     }
 
+    /**
+     * @param string $url
+     *
+     * @return Brokerage
+     */
     public function setUrl(string $url): Brokerage
     {
         $this->url = $url;
@@ -116,20 +165,28 @@ class Brokerage extends AbstractGuidEntity
         return $this;
     }
 
-    public function getApiDocumentationUrl(): string
+    /**
+     * @return string
+     */
+    public function getApiDocumentUrl(): string
     {
-        return $this->getApiDocumentationUrl;
+        return $this->apiDocumentUrl;
     }
 
-    public function setApiDocumentationUrl(string $apiDocumentationUrl): Brokerage
+    /**
+     * @param string $apiDocumentUrl
+     *
+     * @return Brokerage
+     */
+    public function setApiDocumentUrl(string $apiDocumentUrl): Brokerage
     {
-        $this->apiDocumentationUrl = $apiDocumentationUrl;
+        $this->apiDocumentUrl = $apiDocumentUrl;
 
         return $this;
     }
 
     /**
-     * @return Account[]|ArrayCollection|PersistentCollection
+     * @return ArrayCollection|Account[]|PersistentCollection
      */
     public function getAccounts()
     {
@@ -137,7 +194,7 @@ class Brokerage extends AbstractGuidEntity
     }
 
     /**
-     * @param Account[]|ArrayCollection|PersistentCollection $accounts
+     * @param ArrayCollection|Account[]|PersistentCollection $accounts
      */
     public function setAccounts($accounts): Brokerage
     {
@@ -146,15 +203,11 @@ class Brokerage extends AbstractGuidEntity
         return $this;
     }
 
-    public function getOrders(): ArrayCollection
+    /**
+     * @return ArrayCollection|Order[]|PersistentCollection
+     */
+    public function getOrders()
     {
         return $this->orders->getValues();
-    }
-
-    public function setOrders(ArrayCollection $orders): Brokerage
-    {
-        $this->orders = $orders;
-
-        return $this;
     }
 }

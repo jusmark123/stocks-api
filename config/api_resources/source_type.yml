@@ -12,7 +12,7 @@ resources:
         post:
           method: POST
 
-    itemCollections:
+    itemOperations:
       get:
         method: GET
       put:

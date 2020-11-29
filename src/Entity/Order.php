@@ -15,11 +15,13 @@ use Gedmo\Mapping\Annotation as Gedmo;
  * class Order.
  *
  * @ORM\Table(
- * 		name="order",
+ * 		name="`order`",
  * 		uniqueConstraints={
  * 			@ORM\UniqueConstraint(name="order_un_guid", columns={"guid"})
  * 		},
  * 		indexes={
+ * 			@ORM\Index(name="order_ix_account_id", columns={"account_id"}),
+ * 			@ORM\Index(name="order_ix_broker_id", columns={"brokerage_id"}),
  * 			@ORM\Index(name="order_ix_broker_order_id", columns={"broker_order_id"})
  * 		}
  * )
@@ -39,7 +41,7 @@ class Order extends AbstractGuidEntity
      * @var Brokerage
      * @ORM\ManyToOne(targetEntity="Brokerage", inversedBy="orders", fetch="LAZY")
      * @ORM\JoinColumns({
-     * 		@ORM\JoinColumn(name="brokerage_id", referencedColumnName="id", nullable=true)
+     * 		@ORM\JoinColumn(name="brokerage_id", referencedColumnName="id", nullable=false)
      * })
      */
     private $brokerage;
@@ -47,9 +49,9 @@ class Order extends AbstractGuidEntity
     /**
      * @var Account
      *
-     * @ORM\ManyToOne(targetEntity="Account", inversedBy="orders", fetch="LAZY")
+     * @ORM\ManyToOne(targetEntity="Account", inversedBy="orders")
      * @ORM\JoinColumns({
-     * 		@ORM\JoinColumn(name="account_id", referencedColumnName="id", nullable=true)
+     * 		@ORM\JoinColumn(name="account_id", referencedColumnName="id", nullable=false)
      * })
      */
     private $account;
@@ -58,7 +60,7 @@ class Order extends AbstractGuidEntity
      * @var Position
      * @ORM\ManyToOne(targetEntity="Position", inversedBy="orders", fetch="LAZY")
      * @ORM\JoinColumns({
-     * 		@ORM\JoinColumn(name="postion_id", referencedColumnName="id", nullable=true)
+     * 		@ORM\JoinColumn(name="position_id", referencedColumnName="id", nullable=true)
      * })
      */
     private $position;
@@ -143,6 +145,11 @@ class Order extends AbstractGuidEntity
         return $this->account;
     }
 
+    /**
+     * @param Account $account
+     *
+     * @return Order
+     */
     public function setAccount(Account $account): Order
     {
         $this->account = $account;
@@ -150,11 +157,19 @@ class Order extends AbstractGuidEntity
         return $this;
     }
 
+    /**
+     * @return Source
+     */
     public function getSource(): Source
     {
         return $this->source = source;
     }
 
+    /**
+     * @param Source $source
+     *
+     * @return Order
+     */
     public function setSource(Source $source): Order
     {
         $this->source = $source;
@@ -170,6 +185,11 @@ class Order extends AbstractGuidEntity
         return $this->user;
     }
 
+    /**
+     * @param User $user
+     *
+     * @return Order
+     */
     public function setUser(User $user): Order
     {
         $this->user = $user;
@@ -177,11 +197,19 @@ class Order extends AbstractGuidEntity
         return $this;
     }
 
+    /**
+     * @return OrderType
+     */
     public function getOrderType(): OrderType
     {
         return $this->orderType = $orderType;
     }
 
+    /**
+     * @param OrderType $orderType
+     *
+     * @return Order
+     */
     public function setOrderType(OrderType $orderType): Order
     {
         $this->orderType = $orderType;
@@ -189,11 +217,19 @@ class Order extends AbstractGuidEntity
         return $this;
     }
 
+    /**
+     * @return OrderStatusType
+     */
     public function getOrderStatusType(): OrderStatusType
     {
         return $this->orderStatusType;
     }
 
+    /**
+     * @param OrderStatusType $orderStatusType
+     *
+     * @return Order
+     */
     public function setOrderStatusType(OrderStatusType $orderStatusType): Order
     {
         $this->orderStatusType = $orderStatusType;
@@ -201,11 +237,19 @@ class Order extends AbstractGuidEntity
         return $this;
     }
 
+    /**
+     * @return float
+     */
     public function getAmountUsd(): float
     {
         return $this->amountUsd;
     }
 
+    /**
+     * @param float $amountUsd
+     *
+     * @return Order
+     */
     public function setAmountUsd(float $amountUsd): Order
     {
         $this->amountUsd = $amountUsd;

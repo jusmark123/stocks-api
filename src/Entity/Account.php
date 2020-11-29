@@ -32,12 +32,8 @@ use Gedmo\Mapping\Annotation as Gedmo;
 class Account extends AbstractGuidEntity
 {
     /**
-     * @var AccountInfoInterface
-     */
-    private $accountInfo;
-    /**
-     * @var string
-     * @ORM\Column(name="account_number", type="string", length=20, nullable=false)
+     * @var string|null
+     * @ORM\Column(name="account_number", type="string", length=20, nullable=true)
      */
     private $accountNumber;
 
@@ -65,6 +61,12 @@ class Account extends AbstractGuidEntity
     private $apiSecret;
 
     /**
+     * @var string|null
+     * @ORM\Column(name="api_endpoint_url", type="string", length=150, nullable=false)
+     */
+    private $apiEndpointUrl;
+
+    /**
      * @var Brokerage
      *
      * @ORM\ManyToOne(targetEntity="Brokerage", inversedBy="accounts", fetch="LAZY")
@@ -75,26 +77,11 @@ class Account extends AbstractGuidEntity
     private $brokerage;
 
     /**
-     * @var float
-     */
-    private $buyingPower;
-
-    /**
-     * @var string
-     */
-    private $currency;
-
-    /**
      * @var string|null
      *
      * @ORM\Column(name="description", type="text", length=65535, nullable=true)
      */
     private $description;
-
-    /**
-     * @var float
-     */
-    private $equity;
 
     /**
      * @var string|null
@@ -104,9 +91,11 @@ class Account extends AbstractGuidEntity
     private $name;
 
     /**
-     * @var float
+     * @var ArrayCollection|Job[]|PersistentCollection
+     *
+     * @ORM\OneToMany(targetEntity="Job", mappedBy="account", fetch="LAZY")
      */
-    private $portfolioValue;
+    private $jobs;
 
     /**
      * @var ArrayCollection|User[]|PersistentCollection
@@ -127,39 +116,36 @@ class Account extends AbstractGuidEntity
     private $positions;
 
     /**
-     * @var ArrayCollection|Orders[]|PersistentCollection
+     * @var ArrayCollection|Order[]|PersistentCollection
      *
      * @ORM\OneToMany(targetEntity="Order", mappedBy="account", fetch="LAZY")
      */
     private $orders;
 
+    /**
+     * Account Constructor.
+     */
     public function __construct()
     {
+        $this->jobs = new ArrayCollection();
         $this->orders = new ArrayCollection();
         $this->positions = new ArrayCollection();
         $this->users = new ArrayCollection();
     }
 
     /**
-     * @return string [description]
+     * @return AccountStatusType
      */
-    public function getAccountNumber(): string
-    {
-        return $this->accountNumber;
-    }
-
-    public function setAccountNumber(string $accountNumber): Account
-    {
-        $this->accountNumber = $accountNumber;
-
-        return $this;
-    }
-
     public function getAccountStatusType(): AccountStatusType
     {
         return $this->accountStatusType;
     }
 
+    /**
+     * @param AccountStatusType $accountStatusType
+     *
+     * @return Account
+     */
     public function setAccountStatusType(AccountStatusType $accountStatusType): Account
     {
         $this->accountStatusType = $accountStatusType;
@@ -175,6 +161,11 @@ class Account extends AbstractGuidEntity
         return $this->apiKey;
     }
 
+    /**
+     * @param string $apiKey
+     *
+     * @return Account
+     */
     public function setApiKey(string $apiKey): Account
     {
         $this->apiKey = $apiKey;
@@ -190,6 +181,11 @@ class Account extends AbstractGuidEntity
         return $this->apiSecret;
     }
 
+    /**
+     * @param string $apiSecret
+     *
+     * @return Account
+     */
     public function setApiSecret(string $apiSecret): Account
     {
         $this->apiSecret = $apiSecret;
@@ -197,38 +193,42 @@ class Account extends AbstractGuidEntity
         return $this;
     }
 
+    /**
+     * @return string
+     */
+    public function getApiEndpointUrl(): string
+    {
+        return $this->apiEndpointUrl;
+    }
+
+    /**
+     * @param string $apiEndpointUrl
+     *
+     * @return Account
+     */
+    public function setApiEndpointUrl(string $apiEndpointUrl): Account
+    {
+        $this->apiEndpointUrl = $apiEndpointUrl;
+
+        return $this;
+    }
+
+    /**
+     * @return Brokerage
+     */
     public function getBrokerage(): Brokerage
     {
         return $this->brokerage;
     }
 
+    /**
+     * @param Brokerage $brokerage
+     *
+     * @return Account
+     */
     public function setBrokerage(Brokerage $brokerage): Account
     {
         $this->brokerage = $brokerage;
-
-        return $this;
-    }
-
-    public function getBuyingPower(): float
-    {
-        return $this->buying_power;
-    }
-
-    public function setBuyingPower(float $buyingPower): Account
-    {
-        $this->buyingPower = $buyingPower;
-
-        return $this;
-    }
-
-    public function getCurrency(): float
-    {
-        return $this->currency;
-    }
-
-    public function setCurrency(float $currency): Account
-    {
-        $this->currency = $currency;
 
         return $this;
     }
@@ -241,24 +241,14 @@ class Account extends AbstractGuidEntity
         return $this->description;
     }
 
+    /**
+     * @param  string
+     *
+     * @return Account
+     */
     public function setDescription(string $description = null): Account
     {
         $this->description = $description;
-
-        return $this;
-    }
-
-    /**
-     * @return float [description]
-     */
-    public function getEquity(): float
-    {
-        return $this->equity;
-    }
-
-    public function setEquity(float $equity): Account
-    {
-        $this->equity = $equity;
 
         return $this;
     }
@@ -271,6 +261,11 @@ class Account extends AbstractGuidEntity
         return $this->name;
     }
 
+    /**
+     * @param string $name
+     *
+     * @return Account
+     */
     public function setName(string $name): Account
     {
         $this->name = $name;
@@ -278,6 +273,11 @@ class Account extends AbstractGuidEntity
         return $this;
     }
 
+    /**
+     * @param User $user
+     *
+     * @return Account
+     */
     public function addUser(User $user): Account
     {
         $this->users->add($user);
@@ -286,13 +286,18 @@ class Account extends AbstractGuidEntity
     }
 
     /**
-     * @return User[]|ArrayCollection|PersistentCollection $users
+     * @return ArrayCollection|User[]|PersistentCollection $users
      */
-    public function getUsers(): array
+    public function getUsers()
     {
         return $this->users;
     }
 
+    /**
+     * @param User $user
+     *
+     * @return Account
+     */
     public function removeUser(User $user): Account
     {
         $this->users->removeElement($user);
@@ -310,6 +315,11 @@ class Account extends AbstractGuidEntity
         return $this;
     }
 
+    /**
+     * @param Position $position
+     *
+     * @return Account
+     */
     public function addPosition(Position $position): Account
     {
         $this->positions->add($position);
@@ -320,13 +330,13 @@ class Account extends AbstractGuidEntity
     /**
      * @return ArrayCollection|Position[]|PersistentCollection
      */
-    public function getPositions(): array
+    public function getPositions()
     {
         return $this->positions;
     }
 
     /**
-     * @param ArrayCollection $positions
+     * @param ArrayCollection|Position[]|PersistentCollection $positions
      */
     public function setPositions(array $positions): Account
     {
@@ -355,11 +365,16 @@ class Account extends AbstractGuidEntity
     /**
      * @return ArrayCollection|Order[]|PersistentCollection
      */
-    public function getOrders(): array
+    public function getOrders()
     {
         return $this->orders;
     }
 
+    /**
+     * @param Order $order
+     *
+     * @return Source
+     */
     public function removeOrder(Order $order): Source
     {
         $this->orders->removeElement($order);
@@ -373,6 +388,26 @@ class Account extends AbstractGuidEntity
     public function setOrders(array $order): Source
     {
         $this->orders = $orders;
+
+        return $this;
+    }
+
+    /**
+     * @return ArrayCollection|Job[]|PersistentCollection
+     */
+    public function getJobs()
+    {
+        return $this->jobs;
+    }
+
+    /**
+     * @param ArrayCollection|Job[]|PersistentCollection $jobs
+     *
+     * @return Account
+     */
+    public function setJobs($jobs): Account
+    {
+        $this->jobs = $jobs;
 
         return $this;
     }

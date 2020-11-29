@@ -23,10 +23,17 @@ services:
     App\:
         resource: '../src/*'
         exclude:
-            - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
             - '../src/Tests/'
+
+    ####### BrokerageService Provider ######
+
+    _instanceof:
+      App\Service\Brokerage\Interfaces\BrokerageServiceInterface:
+        tags: ['stocks_api.brokerage_services_provider']
+
+    ####### Controller ########
 
     # controllers are imported separately to make sure services can be injected
     # as action arguments even if you don't extend any base controller class
@@ -50,3 +57,19 @@ services:
 
     App\Entity\Manager\:
       resource: '../src/Entity/Manager/*'
+
+    App\Entity\Factory\:
+      resource: '../src/Entity/Factory/*'
+
+    App\Service\AccountService:
+      arguments:
+        $brokerageServices: !tagged stocks_api.brokerage_services_provider
+
+    App\DataProvider\:
+      resource: '../src/DataProvider/*'
+
+    GuzzleHttp\ClientInterface:
+      alias: guzzle.client
+
+    guzzle.client:
+      class: GuzzleHttp\Client

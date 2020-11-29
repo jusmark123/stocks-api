@@ -37,7 +37,7 @@ trait ModifiedByTrait
      *
      * @return $this
      */
-    public function getModifiedBy()
+    public function getModifiedBy(): ?string
     {
         return $this->modifiedBy;
     }

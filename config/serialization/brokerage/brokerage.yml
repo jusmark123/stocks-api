@@ -1,4 +1,4 @@
-App\Entity\brokerage:
+App\Entity\Brokerage:
   attributes:
     guid:
       groups:
@@ -6,23 +6,21 @@ App\Entity\brokerage:
     name:
       groups:
         - brokerage.get
-        - brokerage.post
-        - brokerage.put
     description:
       groups:
         - brokerage.get
-        - brokerage.post
-        - brokerage.put
     url:
       groups:
         - brokerage.get
-        - brokerage.post
-        - brokerage.put
     apiDocumentUrl:
       groups:
         - brokerage.get
-        - brokerage.post
-        - brokerage.put
+    accounts:
+      groups:
+        - brokerage.get
+    orders:
+      groups:
+        - brokerage.get
     createdAt:
       groups:
         - brokerage.get
