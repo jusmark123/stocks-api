@@ -36,19 +36,19 @@ trait EntityGuidTrait
     /**
      * @return \Ramsey\Uuid\Uuid
      */
-    public function getGuid(): \Ramsey\Uuid\Uuid
+    public function getGuid(): \Ramsey\Uuid\UuidInterface
     {
         return $this->guid;
     }
 
     /**
-     * @param \Ramsey\Uuid\Uuid $uuid
+     * @param \Ramsey\Uuid\Uuid $guid
      *
      * @return EntityGuidInterface
      */
-    public function setGuid(\Ramsey\Uuid\Uuid $uuid): EntityGuidInterface
+    public function setGuid(\Ramsey\Uuid\UuidInterface $guid): EntityGuidInterface
     {
-        $this->guid = $uuid;
+        $this->guid = $guid;
 
         return $this;
     }

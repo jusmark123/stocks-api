@@ -13,7 +13,7 @@ interface CreatedByInterface
     /*
      * @return string
      */
-    public function getCreatedBy(): string;
+    public function getCreatedBy(): ?string;
 
     /**
      * @param string $createdBy

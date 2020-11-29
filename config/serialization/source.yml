@@ -18,6 +18,9 @@ App\Entity\Source:
         - source.get
         - source.post
         - source.put
+    jobs:
+      groups:
+        - source.get
     orders:
       groups:
         - source.get

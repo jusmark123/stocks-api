@@ -5,9 +5,7 @@ Stocks Api
 HEADER;
 
 $finder = PhpCsFixer\Finder::create()
-    ->in(__DIR__)
-    ->exclude('tests/Fixtures/app/cache')
-;
+    ->in(__DIR__);
 
 return PhpCsFixer\Config::create()
     ->setRiskyAllowed(true)
@@ -27,7 +25,6 @@ return PhpCsFixer\Config::create()
             'location' => 'after_open',
         ],
         'modernize_types_casting' => true,
-        // 'native_function_invocation' => true,
         'no_extra_consecutive_blank_lines' => [
             'break',
             'continue',

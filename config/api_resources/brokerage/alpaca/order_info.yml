@@ -1,0 +1,16 @@
+resources:
+  App\DTO\Brokerage\Alpaca\Order\AlpacaOrderInfo:
+    atrributes:
+      normalization_context:
+        groups: ['alpaca_order_info.get']
+
+    itemOperations:
+      get:
+        method: GET
+        controller: 'App\Controller\DummyController'
+
+    properties:
+      id:
+        identifier: false
+      clientOrderId:
+        identifier: true

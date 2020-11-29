@@ -26,6 +26,9 @@ use Gedmo\Mapping\Annotation as Gedmo;
  */
 class AccountStatusType extends AbstractDefaultEntity
 {
+    public const ACTIVE = 'active';
+    public const INACTIVE = 'inactive';
+
     /**
      * @var string|null
      *

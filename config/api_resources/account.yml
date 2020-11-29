@@ -7,18 +7,36 @@ resources:
         groups: [ 'account.post' ]
 
     collectionOperations:
-        get:
-          method: GET
-        post:
-          method: POST
+      get:
+        method: GET
+      post:
+        method: POST
 
-    itemCollections:
+    itemOperations:
       get:
         method: GET
       put:
         method: PUT
       delete:
         method: DELETE
+
+      get_account_info:
+        method: GET
+        path: /accounts/{id}/account_info
+        force_eager: false
+        defaults:
+          _api_subresource_context:
+            identifiers:
+              - [ 'id', 'App\Entity\Account', true]
+        normalization_context:
+          groups: [ account_info.get, account_info:alpaca.get, account_info:td_ameritrade.get ]
+        swagger_context:
+          summary: Return brokerage account information from brokerage specific webservice
+          tags: ['Account']
+          parameters:
+            - name: id
+              in: path
+              required: true
 
     properties:
       id:

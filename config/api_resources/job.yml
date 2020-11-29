@@ -1,10 +1,10 @@
 resources:
-  App\Entity\Brokerage:
+  App\Entity\Job:
     attributes:
       normalization_context:
-        groups: [ 'brokerage.get' ]
+        groups: [ 'job.get' ]
       denormalization_context:
-        groups: [ 'brokerage.post' ]
+        groups: [ 'job.post' ]
 
     collectionOperations:
         get:
@@ -12,7 +12,7 @@ resources:
         post:
           method: POST
 
-    itemCollections:
+    itemOperations:
       get:
         method: GET
       put:
@@ -22,8 +22,4 @@ resources:
 
     properties:
       id:
-        identifier: false
-      guid:
         identifier: true
-        swagger_context:
-          example: 'd6f68382-dd82-4324-b04c-89266d70ee2a'

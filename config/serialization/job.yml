@@ -1,0 +1,38 @@
+App\Entity\Job:
+  attributes:
+    guid:
+      groups:
+        - job.get
+    name:
+      groups:
+        - job.get
+    description:
+      groups:
+        - job.get
+    account:
+      groups:
+        - job.get
+    source:
+      groups:
+        - job.get
+    user:
+      groups:
+        - job.get
+    createdAt:
+      groups:
+        - job.get
+    createdBy:
+      groups:
+        - job.get
+    modifiedAt:
+      groups:
+        - job.get
+    modifiedBy:
+      groups:
+        - job.get
+    deactivatedAt:
+      groups:
+        - job.get
+    deactivatedBy:
+      groups:
+        - job.get

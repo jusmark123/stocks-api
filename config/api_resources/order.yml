@@ -7,12 +7,30 @@ resources:
         groups: [ 'order.post' ]
 
     collectionOperations:
-        get:
-          method: GET
-        post:
-          method: POST
+      get:
+        method: GET
+      post:
+        method: POST
 
-    itemCollections:
+      account_sync_orders:
+        method: GET
+        path: /account/{id}/sync_orders
+        force_eager: false
+        defaults:
+          _api_subresource_context:
+            identifiers:
+              - [ id, App\Entity\Account, true]
+        normalization_context:
+          groups: [ order_info.get ]
+        swagger_context:
+          summary: Sync account orders from a brokerage
+          tags: [ Account ]
+          parameters:
+            - name: id
+              in: path
+              required: true
+
+    itemOperations:
       get:
         method: GET
       put:

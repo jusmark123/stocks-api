@@ -59,10 +59,18 @@ class Source extends AbstractGuidEntity
     private $orders;
 
     /**
+     * @var ArrayCollection|Job[]|PersistentCollection
+     *
+     * @ORM\OneToMany(targetEntity="Job", mappedBy="source", fetch="LAZY")
+     */
+    private $jobs;
+
+    /**
      * Constructor.
      */
     public function __construct()
     {
+        $this->jobs = new ArrayCollection();
         $this->orders = new ArrayCollection();
     }
 
@@ -136,6 +144,26 @@ class Source extends AbstractGuidEntity
     public function setOrders(array $order): Source
     {
         $this->orders = $orders;
+
+        return $this;
+    }
+
+    /**
+     * @return ArrayCollection|Job[]|PersistentCollection
+     */
+    public function getJobs()
+    {
+        return $this->jobs;
+    }
+
+    /**
+     * @param ArrayCollection|Job[]|PersistentCollection $jobs
+     *
+     * @return Source
+     */
+    public function setJobs($jobs): Source
+    {
+        $this->jobs = $jobs;
 
         return $this;
     }

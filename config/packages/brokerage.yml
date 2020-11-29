@@ -1,0 +1,20 @@
+brokerages:
+  alpaca:
+    data:
+      name: Alpaca Trader
+      context: alpaca
+      description: Alpaca Trade Api
+      url: https://alpaca.markets/
+      api_document_url: https://alpaca.markets/docs/api-documentation/api-v2/
+    constants:
+      class: App\Constants\Brokerage\AlpacaConstants
+
+  td-ameritrade:
+    data:
+      name: TD ameritrade
+      context: td_ameritrade
+      description: TD ameritrade Api
+      url: https://www.tdameritrade.com
+      api_document_url: https://developer.tdameritrade.com/apis
+    constants:
+      class: App\Constants\Brokerage\TdAmeritradeConstants

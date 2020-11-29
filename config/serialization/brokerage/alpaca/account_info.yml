@@ -1,0 +1,77 @@
+App\DTO\Brokerage\Alpaca\AlpacaAccountInfo:
+  attributes:
+    id:
+      groups:
+        - alpaca_account_info.get
+    account:
+      groups:
+        - alpaca_account_info.get
+    accountBlocked:
+      groups:
+        - alpaca_account_info.get
+    accountNumber:
+      groups:
+        - alpaca_account_info.get
+    buyingPower:
+      groups:
+        - alpaca_account_info.get
+    cash:
+      groups:
+        - alpaca_account_info.get
+    currency:
+      groups:
+        - alpaca_account_info.get
+    equity:
+      groups:
+        - alpaca_account_info.get
+    initialMargin:
+      groups:
+        - alpaca_account_info.get
+    lastEquity:
+      groups:
+        - alpaca_account_info.get
+    lastMaintenanceMargin:
+      groups:
+        - alpaca_account_info.get
+    longMarketValue:
+      groups:
+        - alpaca_account_info.get
+    maintenanceMargin:
+      groups:
+        - alpaca_account_info.get
+    multiplier:
+      groups:
+        - alpaca_account_info.get
+    patternDayTrader:
+      groups:
+        - alpaca_account_info.get
+    portfolioValue:
+      groups:
+        - alpaca_account_info.get
+    regtBuyingPower:
+      groups:
+        - alpaca_account_info.get
+    shortMarketValue:
+      groups:
+        - alpaca_account_info.get
+    shortingEnabled:
+      groups:
+        - alpaca_account_info.get
+    $sma:
+      groups:
+        - alpaca_account_info.get
+    status:
+      groups:
+        - alpaca_account_info.get
+    tradeSuspendedByUser:
+      groups:
+        - alpaca_account_info.get
+    tradingBlocked:
+      groups:
+        - alpaca_account_info.get
+    transfersBlocked:
+      groups:
+        - alpaca_account_info.get
+    createdAt:
+      groups:
+        - alpaca_account_info.get

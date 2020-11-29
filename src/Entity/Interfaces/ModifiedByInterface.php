@@ -13,10 +13,10 @@ interface ModifiedByInterface
     /**
      * @return \DateTime
      */
-    public function getCreatedBy(): string;
+    public function getModifiedBy(): ?string;
 
     /**
      * @return mixed
      */
-    public function setCreatedBy(string $createdBy);
+    public function setModifiedBy(string $createdBy);
 }

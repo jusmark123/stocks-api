@@ -5,6 +5,7 @@ App\Entity\User:
         - user.get
     username:
       groups:
+        - account.get
         - user.get
         - user.post
         - user.put
@@ -38,6 +39,9 @@ App\Entity\User:
         - user.get
         - user.post
         - user.put
+    jobs:
+      groups:
+        - user.get
     createdAt:
       groups:
         - user.get

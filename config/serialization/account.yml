@@ -3,12 +3,12 @@ App\Entity\Account:
     guid:
       groups:
         - account.get
-    accountNumber:
+    accountStatusType:
       groups:
         - account.get
         - account.post
         - account.put
-    accountStatusType:
+    apiEndpointUrl:
       groups:
         - account.get
         - account.post
@@ -27,17 +27,7 @@ App\Entity\Account:
       groups:
         - account.get
         - account.post
-    buyingPower:
-      groups:
-        - account.get
-        - account.post
-        - account.put
     description:
-      groups:
-        - account.get
-        - account.post
-        - account.put
-    equtity:
       groups:
         - account.get
         - account.post
@@ -47,7 +37,16 @@ App\Entity\Account:
         - account.get
         - account.post
         - account.put
-    portfolioValue:
+    jobs:
+      groups:
+        - account.get
+    orders:
+      groups:
+        - account.get
+    positions:
+      groups:
+        - account.get
+    users:
       groups:
         - account.get
         - account.post

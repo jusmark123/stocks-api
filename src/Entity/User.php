@@ -19,7 +19,8 @@ use Gedmo\Mapping\Annotation as Gedmo;
  * @ORM\Table(
  * 		name="user",
  * 		uniqueConstraints={
- * 			@ORM\UniqueConstraint(name="user_un_guid", columns={"guid"})
+ * 			@ORM\UniqueConstraint(name="user_un_guid", columns={"guid"}),
+ * 			@ORM\UniqueConstraint(name="user_un_email_username", columns={"email", "username"})
  * 		}
  * )
  * @ORM\Entity(repositoryClass="App\Entity\Repository\UserRepository")
@@ -31,7 +32,7 @@ class User extends AbstractGuidEntity
     /**
      * @var string|null
      *
-     * @ORM\Column(name="name", type="string", length=100, nullable=false)
+     * @ORM\Column(name="username", type="string", length=100, nullable=false)
      */
     private $username;
 
@@ -55,7 +56,7 @@ class User extends AbstractGuidEntity
 
     /**
      * @var string|null
-     * @ORM\Column(name="phone", type="string", length=10, nullable=false)
+     * @ORM\Column(name="phone", type="string", length=10, nullable=true)
      */
     private $phone;
 
@@ -68,7 +69,7 @@ class User extends AbstractGuidEntity
 
     /**
      * @var ArrayCollection|Account[]|PersistentCollection
-     * @ORM\ManyToMany(targetEntity="Account", mappedBy="users", fetch="LAZY")
+     * @ORM\ManyToMany(targetEntity="Account", mappedBy="users", fetch="LAZY", cascade={"persist"})
      */
     private $accounts;
 
@@ -78,23 +79,39 @@ class User extends AbstractGuidEntity
      */
     private $orders;
 
+    /**
+     * @var ArrayCollection|Job[]|PersistentCollection
+     *
+     * @ORM\OneToMany(targetEntity="Job", mappedBy="user", fetch="LAZY")
+     */
+    private $jobs;
+
+    /**
+     * User Constructor.
+     */
     public function __construct()
     {
         $this->accounts = new ArrayCollection();
+        $this->jobs = new ArrayCollection();
         $this->orders = new ArrayCollection();
     }
 
     /**
-     * @return string $name
+     * @return string $username
      */
-    public function getUserName(): string
+    public function getUsername(): string
     {
-        return $this->name;
+        return $this->username;
     }
 
-    public function setUserName(string $name): User
+    /**
+     * @param string $username
+     *
+     * @return User
+     */
+    public function setUsername(string $username): User
     {
-        $this->name = $name;
+        $this->username = $username;
 
         return $this;
     }
@@ -107,6 +124,11 @@ class User extends AbstractGuidEntity
         return $this->description;
     }
 
+    /**
+     * @param string $description
+     *
+     * @return User
+     */
     public function setDescription(string $description): User
     {
         $this->description = $description;
@@ -122,6 +144,11 @@ class User extends AbstractGuidEntity
         return $this->email;
     }
 
+    /**
+     * @param string $email
+     *
+     * @return User
+     */
     public function setEmail(string $email): User
     {
         $this->email = $email;
@@ -137,6 +164,11 @@ class User extends AbstractGuidEntity
         return $this->phone;
     }
 
+    /**
+     * @param string $phone
+     *
+     * @return User
+     */
     public function setPhone(string $phone): User
     {
         $this->phone = $phone;
@@ -152,6 +184,11 @@ class User extends AbstractGuidEntity
         return $this->firstName;
     }
 
+    /**
+     * @param string $firstName
+     *
+     * @return User
+     */
     public function setFirstName(string $firstName): User
     {
         $this->firstName = $firstName;
@@ -167,6 +204,11 @@ class User extends AbstractGuidEntity
         return $this->lastName;
     }
 
+    /**
+     * @param string $lastName
+     *
+     * @return User
+     */
     public function setLastName(string $lastName): User
     {
         $this->lastName = $lastName;
@@ -174,6 +216,11 @@ class User extends AbstractGuidEntity
         return $this;
     }
 
+    /**
+     * @param Account $account
+     *
+     * @return User
+     */
     public function addAccount(Account $account): User
     {
         $this->accounts->add($account);
@@ -189,6 +236,11 @@ class User extends AbstractGuidEntity
         return $this->accounts->getValues();
     }
 
+    /**
+     * @param Account $account
+     *
+     * @return User
+     */
     public function removeAccount(Account $account): User
     {
         $this->accounts->removeElement($account);
@@ -196,13 +248,23 @@ class User extends AbstractGuidEntity
         return $this;
     }
 
-    public function setAccounts(array $accounts): User
+    /**
+     * @param  ArrayCollection|Account[]|PersistentCollection
+     *
+     * @return User
+     */
+    public function setAccounts($accounts): User
     {
         $this->accounts = $array;
 
         return $this;
     }
 
+    /**
+     * @param Order $order
+     *
+     * @return User
+     */
     public function addOrder(Order $order): User
     {
         $this->orders[] = $order;
@@ -211,13 +273,18 @@ class User extends AbstractGuidEntity
     }
 
     /**
-     * @return ArrayCollection
+     * @return ArrayCollection|Order[]|PersistentCollection
      */
-    public function getOrders(): array
+    public function getOrders()
     {
         return $this->orders->getValues();
     }
 
+    /**
+     * @param Order $order
+     *
+     * @return User
+     */
     public function removeOrder(Order $order): User
     {
         $this->orders->removeElement($order);
@@ -226,11 +293,31 @@ class User extends AbstractGuidEntity
     }
 
     /**
-     * @param ArrayCollection $orders
+     * @param ArrayCollection|Order[]|PersistentCollection $orders
      */
-    public function setOrders(array $orders): User
+    public function setOrders($orders): User
     {
         $this->orders = $orders;
+
+        return $this;
+    }
+
+    /**
+     * @return ArrayCollection|Job[]|PersistentCollection
+     */
+    public function getJobs()
+    {
+        return $this->jobs;
+    }
+
+    /**
+     * @param ArrayCollection|Job[]|PersistentCollection $jobs
+     *
+     * @return User
+     */
+    public function setJobs($jobs): User
+    {
+        $this->jobs = $jobs;
 
         return $this;
     }
