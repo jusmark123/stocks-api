@@ -68,6 +68,16 @@ class User extends AbstractGuidEntity
     private $description;
 
     /**
+     * @var UserType
+     *
+     * @ORM\ManyToOne(targetEntity="UserType", fetch="LAZY")
+     * @ORM\JoinColumns({
+     *     @ORM\JoinColumn(name="user_type_id", referencedColumnName="id", nullable=false)
+     * })
+     */
+    private $userType;
+
+    /**
      * @var ArrayCollection|Account[]|PersistentCollection
      * @ORM\ManyToMany(targetEntity="Account", mappedBy="users", fetch="LAZY", cascade={"persist"})
      */
@@ -87,10 +97,13 @@ class User extends AbstractGuidEntity
     private $jobs;
 
     /**
-     * User Constructor.
+     * User constructor.
+     *
+     * @throws \Exception
      */
     public function __construct()
     {
+        parent::__construct();
         $this->accounts = new ArrayCollection();
         $this->jobs = new ArrayCollection();
         $this->orders = new ArrayCollection();
@@ -132,6 +145,26 @@ class User extends AbstractGuidEntity
     public function setDescription(string $description): User
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * @return UserType
+     */
+    public function getUserType(): UserType
+    {
+        return $this->userType;
+    }
+
+    /**
+     * @param UserType $userType
+     *
+     * @return User
+     */
+    public function setUserType(UserType $userType): User
+    {
+        $this->userType = $userType;
 
         return $this;
     }

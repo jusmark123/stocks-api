@@ -8,8 +8,9 @@ declare(strict_types=1);
 
 namespace App\Entity\Manager\Interfaces;
 
-use Doctrine\Common\Persistence\ObjectRepository;
+use App\Entity\AbstractEntity;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ObjectRepository;
 
 /**
  * Class BaseEntityManagerInterface.
@@ -27,12 +28,12 @@ interface BaseEntityManagerInterface
     public function getEntityRepository();
 
     /**
-     * @param EntityInterface $entity
-     * @param bool            $flush
+     * @param AbstractEntity $entity
+     * @param bool           $flush
      *
-     * @return EntityInterface
+     * @return AbstractEntity
      */
-    public function persist(EntityInterface $entity, bool $flush = false): EntityInterface;
+    public function persist(AbstractEntity $entity, bool $flush = false): AbstractEntity;
 
     public function flush();
 
@@ -68,10 +69,10 @@ interface BaseEntityManagerInterface
     public function find($id);
 
     /**
-     * @param EntityInterface $entity
-     * @param bool            $flush
+     * @param AbstractEntity $entity
+     * @param bool           $flush
      *
-     * @return EntityInterface
+     * @return AbstractEntity
      */
-    public function remove(EntityInterface $entity, bool $flush = false): EntityInterface;
+    public function remove(AbstractEntity $entity, bool $flush = false): AbstractEntity;
 }

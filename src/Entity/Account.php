@@ -123,10 +123,13 @@ class Account extends AbstractGuidEntity
     private $orders;
 
     /**
-     * Account Constructor.
+     * Account constructor.
+     *
+     * @throws \Exception
      */
     public function __construct()
     {
+        parent::__construct();
         $this->jobs = new ArrayCollection();
         $this->orders = new ArrayCollection();
         $this->positions = new ArrayCollection();

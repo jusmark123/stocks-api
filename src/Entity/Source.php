@@ -14,7 +14,7 @@ use Doctrine\ORM\PersistentCollection;
 use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
- * class SourceType.
+ * class Source.
  *
  * @ORM\Table(
  * 		name="source",
@@ -22,7 +22,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
  * 			@ORM\UniqueConstraint(name="source_un_guid", columns={"guid"})
  * 		}
  * )
- * @ORM\Entity(repositoryClass="App\Entity\Repository\AccountStatusTypeRepository")
+ * @ORM\Entity(repositoryClass="App\Entity\Repository\SourceRepository")
  * @ORM\HasLifecycleCallbacks()
  * @Gedmo\SoftDeleteable(fieldName="deactivatedAt", timeAware=false)
  */
@@ -66,10 +66,13 @@ class Source extends AbstractGuidEntity
     private $jobs;
 
     /**
-     * Constructor.
+     * Source constructor.
+     *
+     * @throws \Exception
      */
     public function __construct()
     {
+        parent::__construct();
         $this->jobs = new ArrayCollection();
         $this->orders = new ArrayCollection();
     }

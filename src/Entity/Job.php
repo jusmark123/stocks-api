@@ -10,10 +10,6 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
-use App\Entity\User;
-use App\Entity\Source;
-use App\Entity\Account;
-
 
 /**
  * Job.
@@ -40,6 +36,8 @@ class Job extends AbstractGuidEntity
 
     /**
      * @var string
+     *
+     * @ORM\Column(name="status", type="string", length=100, nullable=true)
      */
     private $status;
 
@@ -49,6 +47,20 @@ class Job extends AbstractGuidEntity
      * @ORM\Column(name="description", type="text", length=65535, nullable=true)
      */
     private $description;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="error_message", type="string", length=225, nullable=true)
+     */
+    private $errorMessage;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="error_trace", type="text", length=65535, nullable=true)
+     */
+    private $errorTrace;
 
     /**
      * @var Account
@@ -76,6 +88,16 @@ class Job extends AbstractGuidEntity
      * })
      */
     private $user;
+
+    /**
+     * Job constructor.
+     *
+     * @throws \Exception
+     */
+    public function __construct()
+    {
+        parent::__construct();
+    }
 
     /**
      * @return string $name
@@ -138,11 +160,51 @@ class Job extends AbstractGuidEntity
     }
 
     /**
+     * @return string
+     */
+    public function getErrorMessage(): ?string
+    {
+        return $this->errorMessage;
+    }
+
+    /**
+     * @param string $errorMessage
+     *
+     * @return Job
+     */
+    public function setErrorMessage(string $errorMessage): Job
+    {
+        $this->errorMessage = $errorMessage;
+
+        return $this;
+    }
+
+    /**
+     * @return [type]
+     */
+    public function getErrorTrace(): ?string
+    {
+        return $this->errorTrace;
+    }
+
+    /**
+     * @param string $errorTrace
+     *
+     * @return Job
+     */
+    public function setErrorTrace(string $errorTrace): Job
+    {
+        $this->errorTrace = $errorTrace;
+
+        return $this;
+    }
+
+    /**
      * @return Source
      */
     public function getSource(): Source
     {
-        return $this->source = source;
+        return $this->source;
     }
 
     /**
@@ -173,6 +235,26 @@ class Job extends AbstractGuidEntity
     public function setAccount(Account $account): Job
     {
         $this->account = $account;
+
+        return $this;
+    }
+
+    /**
+     * @return User
+     */
+    public function getUser(): User
+    {
+        return $this->user;
+    }
+
+    /**
+     * @param User $user
+     *
+     * @return Job
+     */
+    public function setUser(User $user): Job
+    {
+        $this->user = $user;
 
         return $this;
     }

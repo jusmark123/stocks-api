@@ -11,7 +11,7 @@ build-cache:
 	bin/console cache:warmup --no-debug --no-interaction
 PHONY: build-cache
 
-build-database: build-cache build-drop-database build-create-database build-migrate build-validate-database build-fixtures
+build-database: build-drop-database build-create-database build-migrate build-validate-database build-fixtures
 .PHONY: build-database
 
 build: .env build-dependencies build-database
@@ -30,7 +30,7 @@ build-create-database:
 .PHONY: build-create-database
 
 build-fixtures:
-	bin/console doctrine:fixture:load --no-interaction
+	bin/console doctrine:fixture:load --no-interaction --append
 .PHONY: build-fixtures
 
 build-migrate:

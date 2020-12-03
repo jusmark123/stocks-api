@@ -79,10 +79,13 @@ class Brokerage extends AbstractGuidEntity
     private $orders;
 
     /**
-     * Brokerage Constructor.
+     * Brokerage constructor.
+     *
+     * @throws \Exception
      */
     public function __construct()
     {
+        parent::__construct();
         $this->accounts = new ArrayCollection();
         $this->orders = new ArrayCollection();
     }

@@ -45,10 +45,10 @@ abstract class AbstractClient implements BrokerageClientInterface
      * @param UriFactory      $uriFactory
      */
     public function __construct(
-         HttpClient $client,
-     LoggerInterface $logger,
-     RequestFactory $requestFactory,
-     UriFactory $uriFactory
+        HttpClient $client,
+        LoggerInterface $logger,
+        RequestFactory $requestFactory,
+        UriFactory $uriFactory
     ) {
         $this->client = $client;
         $this->logger = $logger;

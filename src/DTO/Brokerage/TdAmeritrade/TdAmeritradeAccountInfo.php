@@ -6,7 +6,7 @@
 
 declare(strict_types=1);
 
-namespace App\DTO\TdAmeritrade;
+namespace App\DTO\Brokerage\TdAmeritrade;
 
 use App\Entity\Interfaces\AccountInfoInterface;
 

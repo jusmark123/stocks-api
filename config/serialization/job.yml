@@ -15,6 +15,15 @@ App\Entity\Job:
     source:
       groups:
         - job.get
+    status:
+      groups:
+        - job.get
+    errorMessage:
+      groups:
+        - job.get
+    errorTrace:
+      groups:
+        - job.get
     user:
       groups:
         - job.get

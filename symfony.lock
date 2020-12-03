@@ -1,4 +1,10 @@
 {
+    "bunny/bunny": {
+        "version": "v0.4.3"
+    },
+    "evenement/evenement": {
+        "version": "v3.0.1"
+    },
     "guzzlehttp/guzzle": {
         "version": "6.5.5"
     },
@@ -61,6 +67,18 @@
     },
     "ralouphie/getallheaders": {
         "version": "3.0.3"
+    },
+    "react/child-process": {
+        "version": "v0.6.1"
+    },
+    "react/event-loop": {
+        "version": "v1.1.1"
+    },
+    "react/promise": {
+        "version": "v2.8.0"
+    },
+    "react/stream": {
+        "version": "v1.1.1"
     },
     "symfony/polyfill-intl-idn": {
         "version": "v1.20.0"

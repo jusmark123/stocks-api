@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * Stocks Api
+ */
+
 declare(strict_types=1);
 
 namespace DoctrineMigrations;
@@ -12,12 +16,12 @@ use Doctrine\Migrations\AbstractMigration;
  */
 final class Version20201129021347 extends AbstractMigration
 {
-    public function getDescription() : string
+    public function getDescription(): string
     {
         return 'Added Job table for task monitoring';
     }
 
-    public function up(Schema $schema) : void
+    public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE TABLE job (
@@ -53,7 +57,7 @@ final class Version20201129021347 extends AbstractMigration
         $this->addSql('CREATE UNIQUE INDEX brokerage_un_context ON brokerage (context)');
     }
 
-    public function down(Schema $schema) : void
+    public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql('DROP TABLE job');

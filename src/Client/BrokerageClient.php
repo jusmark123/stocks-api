@@ -12,7 +12,6 @@ use App\Client\Interfaces\BrokerageClientInterface;
 use App\Entity\Account;
 use App\Entity\Brokerage;
 use Http\Client\HttpClient;
-use Http\Message\Exception as HttpException;
 use Http\Message\RequestFactory;
 use Http\Message\UriFactory;
 use Http\Promise\Promise;
@@ -42,13 +41,13 @@ class BrokerageClient extends AbstractClient implements BrokerageClientInterface
      * @param UriFactory      $uriFactory
      */
     public function __construct(
-         HttpClient $client,
-     LoggerInterface $logger,
-     RequestFactory $requestFactory,
-     UriFactory $uriFactory)
-    {
+        HttpClient $client,
+        LoggerInterface $logger,
+        RequestFactory $requestFactory,
+        UriFactory $uriFactory
+    ) {
         parent::__construct(
-                        $client,
+            $client,
             $logger,
             $requestFactory,
             $uriFactory);
@@ -117,11 +116,15 @@ class BrokerageClient extends AbstractClient implements BrokerageClientInterface
     /**
      * @param RequestInterface $request
      *
-     * @return [type]
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     *
+     * @return ResponseInterface|null
      */
     public function sendRequest(RequestInterface $request)
     {
-        return $this->client->sendRequest($request);
+        $response = $this->client->sendRequest($request);
+
+        return $this->validateResponse($response);
     }
 
     /**
@@ -150,36 +153,36 @@ class BrokerageClient extends AbstractClient implements BrokerageClientInterface
         }
 
         return $this->requestFactory->createRequest(
-          $method,
-          $url,
-          $headers,
-          \in_array($method, ['POST', 'PUT'], true) ? $body : ''
+            $method,
+            $url,
+            $headers,
+            \in_array($method, ['POST', 'PUT'], true) ? $body : ''
         );
     }
 
     /**
      * @param ResponseInterface $response
      *
-     * @return Promise
+     * @return ResponseInterface
      */
-    private function validateResponse(ResponseInterface $response): ?Promise
+    private function validateResponse(ResponseInterface $response): ?ResponseInterface
     {
         if ($response && HttpResponse::HTTP_OK === $response->getStatusCode()) {
             return $response;
         }
 
-        $this->logger->debug([
-          'Error response return from brokerage client api request',
-          [
-              'response' => [
-                  'status' => $response->getStatusCode,
-                  'reason' => $response->getReasonPhrase,
-                  'headers' => $response->getHeaders,
-                  'body' => (string) $response->getBody(),
-              ],
-          ],
-       ]);
+        $this->logger->debug(
+            'Error response return from brokerage client api request',
+            [
+                'response' => [
+                    'status' => $response->getStatusCode(),
+                    'reason' => $response->getReasonPhrase(),
+                    'headers' => $response->getHeaders(),
+                    'body' => (string) $response->getBody(),
+                ],
+            ],
+        );
 
-        throw new HttpException(BrokerageClient::class, $response->getStatusCode);
+        throw new \Exception(BrokerageClient::class, $response->getStatusCode());
     }
 }

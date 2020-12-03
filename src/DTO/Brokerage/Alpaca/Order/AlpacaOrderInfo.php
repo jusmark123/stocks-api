@@ -61,7 +61,7 @@ class AlpacaOrderInfo implements OrderInfoInterface
     private $expiredAt;
 
     /**
-     * @var \DateTime
+     * @var \DateTime|null
      */
     private $cancelledAt;
 
@@ -92,7 +92,7 @@ class AlpacaOrderInfo implements OrderInfoInterface
     /**
      * @var string
      */
-    private $asset_id;
+    private $assetId;
 
     /**
      * @var string
@@ -182,14 +182,14 @@ class AlpacaOrderInfo implements OrderInfoInterface
      *
      * @var float
      */
-    private $hwn;
+    private $hwm;
 
     /**
      * AlpacaOrderInfo Constructor.
      */
     public function __construct()
     {
-        $this->legs = new ArrayCollection([$elements]);
+        $this->legs = new ArrayCollection();
     }
 
     /**
@@ -235,6 +235,26 @@ class AlpacaOrderInfo implements OrderInfoInterface
     /**
      * @return string
      */
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param string $id
+     *
+     * @return AlpacaOrderInfo
+     */
+    public function setId(string $id): AlpacaOrderInfo
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
     public function getClientOrderId(): string
     {
         return $this->clientOrderId;
@@ -253,7 +273,7 @@ class AlpacaOrderInfo implements OrderInfoInterface
     }
 
     /**
-     * @return DateTime
+     * @return \DateTime
      */
     public function getCreatedAt(): \DateTime
     {
@@ -261,13 +281,15 @@ class AlpacaOrderInfo implements OrderInfoInterface
     }
 
     /**
-     * @param  \DateTime|null
+     * @param string $createdAt
      *
-     * @return AlpacaOrderInfo
+     * @throws \Exception
+     *
+     * @return $this
      */
-    public function setCreatedAt(\DateTime $createdAt): AlpacaOrderInfo
+    public function setCreatedAt(string $createdAt): AlpacaOrderInfo
     {
-        $this->createdAt = $createdAt;
+        $this->createdAt = new \DateTime($createdAt);
 
         return $this;
     }
@@ -281,13 +303,15 @@ class AlpacaOrderInfo implements OrderInfoInterface
     }
 
     /**
-     * @param  \DateTime|null
+     * @param string|null $updatedAt
      *
-     * @return AlpacaOrderInfo
+     * @throws \Exception
+     *
+     * @return $this
      */
-    public function setUpdatedAt(\DateTime $updatedAt): AlpacaOrderInfo
+    public function setUpdatedAt(?string $updatedAt): AlpacaOrderInfo
     {
-        $this->updatedAt = $updatedAt;
+        $this->updatedAt = $updatedAt ?? new \DateTime($updatedAt);
 
         return $this;
     }
@@ -301,13 +325,15 @@ class AlpacaOrderInfo implements OrderInfoInterface
     }
 
     /**
-     * @param DateTime $submittedAt
+     * @param string|null $submittedAt
      *
-     * @return AlpacaOrderInfo
+     * @throws \Exception
+     *
+     * @return $this
      */
-    public function setSubmittedAt(\DateTime $submittedAt): AlpacaOrderInfo
+    public function setSubmittedAt(?string $submittedAt): AlpacaOrderInfo
     {
-        $this->submittedAt = $submittedAt;
+        $this->submittedAt = $submittedAt ?? new \DateTime($submittedAt);
 
         return $this;
     }
@@ -321,13 +347,15 @@ class AlpacaOrderInfo implements OrderInfoInterface
     }
 
     /**
-     * @param DateTime $filledAt
+     * @param string|null $filledAt
      *
-     * @return AlpacaOrderInfo
+     * @throws \Exception
+     *
+     * @return $this
      */
-    public function setFilledAt(\DateTime $filledAt): AlpacaOrderInfo
+    public function setFilledAt(?string $filledAt): AlpacaOrderInfo
     {
-        $this->filledAt = $filledAt;
+        $this->filledAt = $filledat ?? new \DateTime($filledAt);
 
         return $this;
     }
@@ -341,13 +369,15 @@ class AlpacaOrderInfo implements OrderInfoInterface
     }
 
     /**
-     * @param DateTime $expiredAt
+     * @param string|null $expiredAt
      *
-     * @return AlpacaOrderInfo
+     * @throws \Exception
+     *
+     * @return $this
      */
-    public function setExpiredAt(\DateTime $expiredAt): AlpacaOrderInfo
+    public function setExpiredAt(?string $expiredAt): AlpacaOrderInfo
     {
-        $this->expiredAt = $expiredAt;
+        $this->expiredAt = $expiredAt ?? new \DateTime($expiredAt);
 
         return $this;
     }
@@ -361,13 +391,15 @@ class AlpacaOrderInfo implements OrderInfoInterface
     }
 
     /**
-     * @param DateTime $cancelledAt
+     * @param string|null $cancelledAt
      *
-     * @return AlpacaOrderInfo
+     * @throws \Exception
+     *
+     * @return $this
      */
-    public function setCancelledAt(\DateTime $cancelledAt): AlpacaOrderInfo
+    public function setCancelledAt(?string $cancelledAt = null): AlpacaOrderInfo
     {
-        $this->cancelledAt = $cancelledAt;
+        $this->cancelledAt = $canclledAt ?? new \DateTime($cancelledAt);
 
         return $this;
     }
@@ -381,13 +413,15 @@ class AlpacaOrderInfo implements OrderInfoInterface
     }
 
     /**
-     * @param DateTime $updatedAt
+     * @param string|null $failedAt
      *
-     * @return AlpacaOrderInfo
+     * @throws \Exception
+     *
+     * @return $this
      */
-    public function setFailedAt(\DateTime $updatedAt): AlpacaOrderInfo
+    public function setFailedAt(?string $failedAt = null): AlpacaOrderInfo
     {
-        $this->failedAt = $failedAt;
+        $this->failedAt = $failedAt ?? new \DateTime($failedAt);
 
         return $this;
     }
@@ -401,13 +435,15 @@ class AlpacaOrderInfo implements OrderInfoInterface
     }
 
     /**
-     * @param DateTime $replaceAt
+     * @param string|null $replacedAt
      *
-     * @return AlpacaOrderInfo
+     * @throws \Exception
+     *
+     * @return $this
      */
-    public function setReplacedAt(\DateTime $replaceAt): AlpacaOrderInfo
+    public function setReplacedAt(?string $replacedAt = null): AlpacaOrderInfo
     {
-        $this->replacedAt = $replacedAt;
+        $this->replacedAt = $replacedAt ?? new \DateTime($replacedAt);
 
         return $this;
     }
@@ -415,17 +451,17 @@ class AlpacaOrderInfo implements OrderInfoInterface
     /**
      * @return AlpacaOrderInfo|null
      */
-    public function getReplacedBy(): ?AlpacaAccountInfo
+    public function getReplacedBy(): ?AlpacaOrderInfo
     {
         return $this->replacedBy;
     }
 
     /**
-     * @param AlpacaOrderInfo $replacedBy
+     * @param AlpacaOrderInfo|null $replacedBy
      *
-     * @return AlpacaOrderInfo
+     * @return $this
      */
-    public function setReplacedBy(AlpacaOrderInfo $replacedBy): AlpacaOrderInfo
+    public function setReplacedBy(?AlpacaOrderInfo $replacedBy): AlpacaOrderInfo
     {
         $this->replacedBy = $replacedBy;
 
@@ -441,11 +477,11 @@ class AlpacaOrderInfo implements OrderInfoInterface
     }
 
     /**
-     * @param AlpacaOrderInfo $replaces
+     * @param AlpacaOrderInfo|null $replaces
      *
-     * @return AlpacaOrderInfo
+     * @return $this
      */
-    public function setReplaces(\AlpacaOrderInfo $replaces): AlpacaOrderInfo
+    public function setReplaces(?AlpacaOrderInfo $replaces): AlpacaOrderInfo
     {
         $this->replaces = $replaces;
 
@@ -468,6 +504,46 @@ class AlpacaOrderInfo implements OrderInfoInterface
     public function setAssetId(string $assetId): AlpacaOrderInfo
     {
         $this->assetId = $assetId;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSymbol(): string
+    {
+        return $this->symbol;
+    }
+
+    /**
+     * @param string $symbol
+     *
+     * @return AlpacaOrderInfo
+     */
+    public function setSymbol(string $symbol): AlpacaOrderInfo
+    {
+        $this->symbol = $symbol;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAssetClass(): string
+    {
+        return $this->assetClass;
+    }
+
+    /**
+     * @param string $assetClass
+     *
+     * @return AlpacaOrderInfo
+     */
+    public function setAssetClass(string $assetClass): AlpacaOrderInfo
+    {
+        $this->assetClass = $assetClass;
 
         return $this;
     }
@@ -581,11 +657,11 @@ class AlpacaOrderInfo implements OrderInfoInterface
     }
 
     /**
-     * @param string $limitPrice
+     * @param string|null $limitPrice
      *
-     * @return AlpacaOrderInfo
+     * @return $this
      */
-    public function setLimitPrice(string $limitPrice): AlpacaOrderInfo
+    public function setLimitPrice(?string $limitPrice): AlpacaOrderInfo
     {
         $this->limitPrice = (float) $limitPrice;
 
@@ -593,19 +669,19 @@ class AlpacaOrderInfo implements OrderInfoInterface
     }
 
     /**
-     * @return float
+     * @return float|null
      */
-    public function getStopPrice(): float
+    public function getStopPrice(): ?float
     {
         return $this->stopPrice;
     }
 
     /**
-     * @param string $stopPrice
+     * @param string|null $stopPrice
      *
-     * @return AlpacaOrderInfo
+     * @return $this
      */
-    public function setStopPrice(string $stopPrice): AlpacaOrderInfo
+    public function setStopPrice(?string $stopPrice): AlpacaOrderInfo
     {
         $this->stopPrice = (float) $stopPrice;
 
@@ -615,19 +691,19 @@ class AlpacaOrderInfo implements OrderInfoInterface
     /**
      * @return float
      */
-    public function getFilledAvgPrice(): float
+    public function getFilledAvgPrice(): ?float
     {
         return $this->filledAvgPrice;
     }
 
     /**
-     * @param string $filledAvgPrice
+     * @param float|null $filledAvgPrice
      *
-     * @return AlpacaOrderInfo
+     * @return $this
      */
-    public function setFilledAvgPrice(string $filledAvgPrice): AlpacaOrderInfo
+    public function setFilledAvgPrice(?float $filledAvgPrice): AlpacaOrderInfo
     {
-        $this->filledAvgPrice = (float) $filledAvgPrice;
+        $this->filledAvgPrice = $filledAvgPrice;
 
         return $this;
     }
@@ -673,7 +749,7 @@ class AlpacaOrderInfo implements OrderInfoInterface
     }
 
     /**
-     * @return [type]
+     * @return ArrayCollection|AlpacaOrderInfo[]
      */
     public function getLegs()
     {
@@ -681,7 +757,7 @@ class AlpacaOrderInfo implements OrderInfoInterface
     }
 
     /**
-     * @param [type] $legs
+     * @param ArrayCollection|AlpacaOrderInfo[] $legs
      *
      * @return AlpacaOrderInfo
      */

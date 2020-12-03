@@ -24,4 +24,9 @@ abstract class AbstractBrokerageService extends AbstractService implements Broke
     {
         return $account->getapiEndpointUrl().$uri;
     }
+
+    /**
+     * @return string
+     */
+    abstract public function getConstantsClass(): string;
 }
