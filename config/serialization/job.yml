@@ -9,6 +9,9 @@ App\Entity\Job:
     description:
       groups:
         - job.get
+    data:
+      groups:
+        - job.get
     account:
       groups:
         - job.get

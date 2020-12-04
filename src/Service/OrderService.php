@@ -8,11 +8,12 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Client\BrokerageClient;
 use App\DTO\Brokerage\Interfaces\OrderInfoInterface;
-use App\Entity\Factory\OrderFactory;
 use App\Entity\Manager\OrderEntityManager;
 use App\Entity\Order;
 use App\Helper\ValidationHelper;
+use App\Service\Brokerage\BrokerageServiceAwareTrait;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -20,6 +21,13 @@ use Psr\Log\LoggerInterface;
  */
 class OrderService extends AbstractService
 {
+    use BrokerageServiceAwareTrait;
+
+    /**
+     * @var OrderEntityManager
+     */
+    private $brokerageClient;
+
     /**
      * @var OrderEntityManager
      */
@@ -28,16 +36,22 @@ class OrderService extends AbstractService
     /**
      * OrderService constructor.
      *
-     * @param OrderFactory $orderFactory
+     * @param BrokerageClient    $brokerageClient
+     * @param iterable           $brokerageServices
+     * @param LoggerInterface    $logger
+     * @param OrderEntityManager $entityManager
+     * @param ValidationHelper   $validator
      */
     public function __construct(
+        BrokerageClient $brokerageClient,
+        iterable $brokerageServices,
         LoggerInterface $logger,
         OrderEntityManager $entityManager,
         ValidationHelper $validator
     ) {
-        $this->entityManager = $entityManager;
-        $this->setLogger($logger);
-        $this->setValidator($validator);
+        $this->brokerageClient = $brokerageClient;
+        $this->brokerageServices = $brokerageServices;
+        parent::__construct($entityManager, $validator, $logger);
     }
 
     /**
@@ -47,26 +61,14 @@ class OrderService extends AbstractService
      */
     public function createOrderFromOrderInfo(OrderInfoInterface $orderInfo)
     {
-        $order = OrderFactory::create();
+        $account = $orderInfo->getAccount();
 
-        try {
-            $this->validator->validate($orderInfo);
+        $brokerageService = $this->getBrokerageService($account->getBrokerage());
 
-            $order = $order->setAccount($orderInfo->getAccount());
+        $order = $brokerageService->createOrderFromOrderInfo($orderInfo);
 
-            $this->validator->validate($order);
+        $this->validator->validate($order);
 
-            return $order;
-        } catch (\Exception $e) {
-            $this->logger->info();
-        }
-    }
-
-    /**
-     * @param Order $order
-     */
-    public function save(Order $order)
-    {
-        $this->entityManager->persist($order);
+        return $order;
     }
 }

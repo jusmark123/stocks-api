@@ -11,6 +11,7 @@ namespace App\EventSubscriber\Job;
 use App\Constants\Transport\JobConstants;
 use App\Entity\Job;
 use App\Event\AbstractFailedEvent;
+use App\Event\Job\JobInitiateFailedEvent;
 use App\Event\Job\JobProcessFailedEvent;
 use App\Event\Job\JobPublishFailedEvent;
 use App\Event\Job\JobReceiveFailedEvent;
@@ -49,6 +50,11 @@ class JobFailedEventSubscriber extends AbstractMessageEventSubscriber
     public function getEventSubscribedEvents()
     {
         return [
+            JobInitiateFailedEvent::getEventName() => [
+                [
+                    'jobInitiateFailed',
+                ],
+            ],
             JobReceiveFailedEvent::getEventName() => [
                 [
                     'jobReceiveFailed',

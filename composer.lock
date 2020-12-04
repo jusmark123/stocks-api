@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0206edee0aed18ef836314e144f7c002",
+    "content-hash": "79b3717f40c69412d24acdd58f3a26b1",
     "packages": [
         {
             "name": "api-platform/core",
@@ -1784,6 +1784,76 @@
                 "source": "https://github.com/doctrine/sql-formatter/tree/1.1.x"
             },
             "time": "2020-07-30T16:57:33+00:00"
+        },
+        {
+            "name": "dunglas/doctrine-json-odm",
+            "version": "1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/dunglas/doctrine-json-odm.git",
+                "reference": "70afdc23e68a31c7cbf8417f2dbb285ec929e14e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/dunglas/doctrine-json-odm/zipball/70afdc23e68a31c7cbf8417f2dbb285ec929e14e",
+                "reference": "70afdc23e68a31c7cbf8417f2dbb285ec929e14e",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/orm": "^2.6.3",
+                "php": "^7.1",
+                "symfony/property-access": "^3.4 || ^4.1 || ^5.0",
+                "symfony/property-info": "^3.4 || ^4.1 || ^5.0",
+                "symfony/serializer": "^3.4 || ^4.1 || ^5.0"
+            },
+            "require-dev": {
+                "doctrine/doctrine-bundle": "^1.8",
+                "symfony/finder": "^3.4 || ^4.1 || ^5.0",
+                "symfony/framework-bundle": "^3.4 || ^4.1 || ^5.0",
+                "symfony/phpunit-bridge": "^5.0"
+            },
+            "suggest": {
+                "scienta/doctrine-json-functions": "To add support for JSON functions in DQL.",
+                "symfony/framework-bundle": "To use the provided bundle."
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Dunglas\\DoctrineJsonOdm\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Kévin Dunglas",
+                    "email": "dunglas@gmail.com",
+                    "homepage": "https://dunglas.fr"
+                }
+            ],
+            "description": "An object document mapper for Doctrine ORM using JSON types of modern RDBMS.",
+            "homepage": "https://dunglas.fr",
+            "keywords": [
+                "database",
+                "json",
+                "mysql",
+                "odm",
+                "orm",
+                "postgresql",
+                "rdbms"
+            ],
+            "support": {
+                "issues": "https://github.com/dunglas/doctrine-json-odm/issues",
+                "source": "https://github.com/dunglas/doctrine-json-odm/tree/hotfix/1.0.1"
+            },
+            "time": "2019-12-23T09:48:22+00:00"
         },
         {
             "name": "evenement/evenement",

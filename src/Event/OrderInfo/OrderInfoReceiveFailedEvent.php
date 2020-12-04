@@ -8,51 +8,36 @@ declare(strict_types=1);
 
 namespace App\Event\OrderInfo;
 
+use App\DTO\Brokerage\Interfaces\OrderInfoInterface;
 use App\Entity\Job;
 use App\Event\AbstractFailedEvent;
 
 /**
  * Class OrderInfoReceiveFailedEvent.
  */
-class OrderInfoReceiveFailedEvent extends AbstractFailedEvent
+class OrderInfoReceiveFailedEvent extends AbstractFailedEvent implements OrderInfoFailedEventInterface
 {
+    use OrderInfoFailedEventTrait;
+
     const EVENT_NAME = 'order-id.failed';
-
-    /** @var Job */
-    protected $job;
-
-    /**
-     * @var array
-     */
-    protected $message;
 
     /**
      * OrderInfoReceiveFailedEvent constructor.
      *
-     * @param array      $message
-     * @param \Exception $exception
-     * @param Job|null   $job
+     * @param array                   $orderInfoMessage
+     * @param \Exception              $exception
+     * @param Job                     $job
+     * @param OrderInfoInterface|null $orderInfo
      */
-    public function __construct(array $message, \Exception $exception, ?Job $job = null)
-    {
+    public function __construct(
+        array $orderInfoMessage,
+        \Exception $exception,
+        Job $job,
+        ?OrderInfoInterface $orderInfo = null
+    ) {
         $this->job = $job;
-        $this->message = $message;
+        $this->orderInfoMessage = $orderInfoMessage;
+        $this->orderInfo = $orderInfo;
         parent::__construct($exception);
-    }
-
-    /**
-     * @return array
-     */
-    public function getMessage(): array
-    {
-        return $this->message;
-    }
-
-    /**
-     * @return Job|null
-     */
-    public function getJob(): ?Job
-    {
-        return $this->job;
     }
 }

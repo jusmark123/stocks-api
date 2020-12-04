@@ -2,6 +2,15 @@
     "bunny/bunny": {
         "version": "v0.4.3"
     },
+    "dunglas/doctrine-json-odm": {
+        "version": "0.1",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "master",
+            "version": "0.1",
+            "ref": "c2ab78f625df0c89af5908d50a28602ff8c4919f"
+        }
+    },
     "evenement/evenement": {
         "version": "v3.0.1"
     },

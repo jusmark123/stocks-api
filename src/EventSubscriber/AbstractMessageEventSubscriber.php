@@ -10,6 +10,7 @@ namespace App\EventSubscriber;
 
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Serializer\SerializerAwareTrait;
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -20,10 +21,17 @@ abstract class AbstractMessageEventSubscriber extends AbstractEventSubscriber
     use SerializerAwareTrait;
     use LoggerAwareTrait;
 
+    /** @var EventDispatcherInterface
+     *
+     */
+    protected $dispatcher;
+
     public function __construct(
+        EventDispatcherInterface $dispatcher,
         LoggerInterface $logger,
         SerializerInterface $serializer
     ) {
+        $this->dispatcher = $dispatcher;
         $this->setLogger($logger);
         $this->setSerializer($serializer);
     }

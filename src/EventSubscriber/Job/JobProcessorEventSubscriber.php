@@ -11,7 +11,6 @@ namespace App\EventSubscriber\Job;
 use App\Constants\Transport\JobConstants;
 use App\Constants\Transport\Queue;
 use App\Entity\Job;
-use App\Entity\Manager\JobEntityManager;
 use App\Event\AbstractEvent;
 use App\Event\Job\JobCompleteEvent;
 use App\Event\Job\JobInitiatedEvent;
@@ -33,24 +32,10 @@ class JobProcessorEventSubscriber extends AbstractMessageEventSubscriber
         JobConstants::REQUEST_HEADER_NAME => JobConstants::REQUEST_SYNC_ORDER_REQUEST,
     ];
 
-    /**
-     * @var ClientPublisher
-     */
+    /** @var ClientPublisher */
     private $clientPublisher;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $dispatcher;
-
-    /**
-     * @var JobEntityManager
-     */
-    private $entityManager;
-
-    /**
-     * @var JobService
-     */
+    /** @var JobService */
     private $jobService;
 
     /** @var MessageFactory */
@@ -61,7 +46,6 @@ class JobProcessorEventSubscriber extends AbstractMessageEventSubscriber
      *
      * @param ClientPublisher          $clientPublisher
      * @param EventDispatcherInterface $dispatcher
-     * @param JobEntityManager         $entityManager
      * @param JobService               $jobService
      * @param LoggerInterface          $logger
      * @param MessageFactory           $messageFactory
@@ -70,18 +54,15 @@ class JobProcessorEventSubscriber extends AbstractMessageEventSubscriber
     public function __construct(
         ClientPublisher $clientPublisher,
         EventDispatcherInterface $dispatcher,
-        JobEntityManager $entityManager,
         JobService $jobService,
         LoggerInterface $logger,
         MessageFactory $messageFactory,
         SerializerInterface $serializer
     ) {
         $this->clientPublisher = $clientPublisher;
-        $this->dispatcher = $dispatcher;
-        $this->entityManager = $entityManager;
         $this->jobService = $jobService;
         $this->messageFactory = $messageFactory;
-        parent::__construct($logger, $serializer);
+        parent::__construct($dispatcher, $logger, $serializer);
     }
 
     /**
@@ -147,13 +128,13 @@ class JobProcessorEventSubscriber extends AbstractMessageEventSubscriber
 
     public function jobSuccess(AbstractEvent $event, Job $job)
     {
+        $this->jobService->save($job);
+        $this->publish($event, $job);
+
         $this->logger->info($event::getEventName(), [
             'job' => json_decode($this->serializer->serialize($job, self::ENTITY_LOG_FORMAT), true),
             'jobUUID' => $job->getId(),
         ]);
-
-        $this->save($job);
-        $this->publish($event, $job);
     }
 
     private function publish(AbstractEvent $event, Job $job, array $headers = [])
@@ -178,11 +159,5 @@ class JobProcessorEventSubscriber extends AbstractMessageEventSubscriber
                 JobPublishFailedEvent::getEventName()
             );
         }
-    }
-
-    private function save(job $job)
-    {
-        $this->entityManager->persist($job);
-        $this->entityManager->flush();
     }
 }

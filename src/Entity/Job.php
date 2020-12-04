@@ -19,7 +19,11 @@ use Gedmo\Mapping\Annotation as Gedmo;
  *		uniqueConstraints={
  *			@ORM\UniqueConstraint(name="job_un_guid", columns={"guid"})
  *		},
- *		indexes={},
+ *		indexes={
+ *          @ORM\Index(name="job_ix_name_user_id", columns={"name","user_id"}),
+ *          @ORM\Index(name="job_ix_name_source_id", columns={"name","source_id"}),
+ *          @ORM\Index(name="job_ix_name_account_id", columns={"name","source_id"}),
+ *      },
  * )
  * @ORM\Entity(repositoryClass="App\Entity\Repository\JobRepository")
  * @ORM\HasLifecycleCallbacks()
@@ -47,6 +51,13 @@ class Job extends AbstractGuidEntity
      * @ORM\Column(name="description", type="text", length=65535, nullable=true)
      */
     private $description;
+
+    /**
+     * @var array|null
+     *
+     * @ORM\Column(name="data", type="json_document", options={"jsonb": true})
+     */
+    private $data;
 
     /**
      * @var string
@@ -140,6 +151,26 @@ class Job extends AbstractGuidEntity
     }
 
     /**
+     * @return array|null
+     */
+    public function getData(): ?string
+    {
+        return $this->data;
+    }
+
+    /**
+     * @param array|null $data
+     *
+     * @return Job
+     */
+    public function setData(?array $data): Job
+    {
+        $this->data = $data;
+
+        return $this;
+    }
+
+    /**
      * @return string
      */
     public function getStatus(): string
@@ -180,7 +211,7 @@ class Job extends AbstractGuidEntity
     }
 
     /**
-     * @return [type]
+     * @return string
      */
     public function getErrorTrace(): ?string
     {

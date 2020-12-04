@@ -21,7 +21,7 @@ class AlpacaOrderInfo implements OrderInfoInterface
     private $account;
 
     /**
-     * @var Order
+     * @var Order|null
      */
     private $order;
 

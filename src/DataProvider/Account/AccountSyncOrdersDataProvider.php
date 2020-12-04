@@ -21,9 +21,8 @@ use App\Entity\Manager\AccountEntityManager;
 use App\Entity\Source;
 use App\Entity\User;
 use App\Event\Job\JobInitiatedEvent;
+use App\Event\Job\JobInitiateFailedEvent;
 use App\Event\Job\JobProcessFailedEvent;
-use App\Event\Job\JobReceivedFailedEvent;
-use App\Event\OrderInfo\OrderInfoPublishEvent;
 use App\Event\OrderInfo\OrderInfoPublishFailedEvent;
 use App\Exception\EmptyOrderHistoryException;
 use App\MessageClient\ClientPublisher\ClientPublisher;
@@ -114,13 +113,14 @@ class AccountSyncOrdersDataProvider extends AbstractJobRequestDataProvider
      */
     public function createJob(string $resourceClass, $id, string $operationName = null, array $context = []): Job
     {
-        $systemSource = $this->entityManager->getRepository(Source::class)->findOneBy(
-            ['guid' => SourceConstants::SYSTEM_SOURCE_GUID]);
-
-        $systemUser = $this->entityManager->getRepository(User::class)->findOneBy(
-            ['guid' => UserConstants::SYSTEM_USER_GUID]);
-
+        $job = null;
         try {
+            $systemSource = $this->entityManager->getRepository(Source::class)->findOneBy(
+                ['guid' => SourceConstants::SYSTEM_SOURCE_GUID]);
+
+            $systemUser = $this->entityManager->getRepository(User::class)->findOneBy(
+                ['guid' => UserConstants::SYSTEM_USER_GUID]);
+
             $account = $this->entityManager->getRepository(Account::class)->findOneBy(['guid' => $id]);
 
             if (!$account instanceof Account) {
@@ -147,11 +147,15 @@ class AccountSyncOrdersDataProvider extends AbstractJobRequestDataProvider
                 throw new EmptyOrderHistoryException('No orders returned');
             }
 
+            $orderIds = array_column($orderHistory, 'id');
+            $data = array_combine($orderIds, array_fill(0, \count($orderIds), JobConstants::JOB_PENDING));
+
             // Create Job
             $job = JobFactory::create()
                 ->setAccount($account)
                 ->setName(JobConstants::REQUEST_SYNC_ORDER_REQUEST)
                 ->setDescription(sprintf(JobConstants::ACCOUNT_SYNC_ORDERS_REQUEST, $account->getGuid()))
+                ->setData($data)
                 ->setSource($systemSource)
                 ->setUser($systemUser);
 
@@ -173,10 +177,6 @@ class AccountSyncOrdersDataProvider extends AbstractJobRequestDataProvider
                             $headers
                         );
                         $this->clientPublisher->publish($packet);
-                        $this->dispatcher->dispatch(
-                            new OrderInfoPublishEvent($orderInfo),
-                            OrderInfoPublishEvent::getEventName()
-                        );
                     } catch (PublishException $e) {
                         $this->dispatcher->dispatch(
                             new OrderInfoPublishFailedEvent($orderInfo, $e),
@@ -187,22 +187,20 @@ class AccountSyncOrdersDataProvider extends AbstractJobRequestDataProvider
             } catch (\Exception $e) {
                 $this->dispatcher->dispatch(
                     new JobProcessFailedEvent($job, $e),
-                    JobProcessFailedEvent::getEvent()
+                    JobProcessFailedEvent::getEventName()
                 );
             }
-        } catch (EmptyOrderHistoryException $e) {
-            $job = JobFactory::create()
-                ->setAccount($account)
-                ->setName(JobConstants::REQUEST_SYNC_ORDER_REQUEST)
-                ->setDescription(sprintf(JobConstants::ACCOUNT_SYNC_ORDERS_REQUEST, $account->getGuid()))
-                ->setSource($systemSource)
-                ->setUser($systemUser)
-                ->setStatus(JobConstants::JOB_FAILED)
-                ->setErrorMessage($e->getMessage())
-                ->setErrorTrace($e->getTraceAsString());
+        } catch (\Exception $e) {
+            if ($job instanceof Job) {
+                $this->dispatcher->dispatch(
+                    new JobInitiateFailedEvent($job, $e),
+                    JobInitiateFailedEvent::getEventName()
+                );
 
-            $this->dispatcher->dispatch(new JobReceivedFailedEvent($job, $e), JobReceivedFailedEvent::getEventName());
-            throw $e;
+                $job->setError($e->getMessage())
+                    ->setErrorTrace($e->getTraceAsString())
+                    ->setStatus(JobConstants::JOB_FAILED);
+            }
         }
 
         return $job;

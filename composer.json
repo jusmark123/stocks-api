@@ -26,6 +26,7 @@
         "doctrine/doctrine-bundle": "^2.2",
         "doctrine/doctrine-migrations-bundle": "^3.0",
         "doctrine/orm": "^2.7",
+        "dunglas/doctrine-json-odm": "^1.0",
         "evenement/evenement": "^3.0",
         "guzzlehttp/promises": "^1.4",
         "lexik/jwt-authentication-bundle": "^2.6",

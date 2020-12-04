@@ -13,29 +13,11 @@ use App\Entity\Job;
 use App\Entity\Order;
 use App\Event\AbstractFailedEvent;
 
-class OrderInfoProcessFailedEvent extends AbstractFailedEvent
+class OrderInfoProcessFailedEvent extends AbstractFailedEvent implements OrderInfoFailedEventInterface
 {
+    use OrderInfoFailedEventTrait;
+
     const EVENT_NAME = 'order-info.';
-
-    /**
-     * @var Job
-     */
-    protected $job;
-
-    /**
-     * @var Order|null
-     */
-    protected $order;
-
-    /**
-     * @var OrderInfoInterface|null
-     */
-    protected $orderInfo;
-
-    /**
-     * @var array
-     */
-    protected $orderInfoMessage;
 
     /**
      * OrderInfoProcessFailedEvent constructor.
@@ -58,37 +40,5 @@ class OrderInfoProcessFailedEvent extends AbstractFailedEvent
         $this->orderInfo = $orderInfo;
         $this->orderInfoMessage = $orderInfoMessage;
         parent::__construct($exception);
-    }
-
-    /**
-     * @return Job
-     */
-    public function getJob(): Job
-    {
-        return $this->job;
-    }
-
-    /**
-     * @return OrderInfoInterface
-     */
-    public function getOrderInfo(): ?OrderInfoInterface
-    {
-        return $this->orderInfo;
-    }
-
-    /**
-     * @return Order
-     */
-    public function getOrder(): ?Order
-    {
-        return $this->order;
-    }
-
-    /**
-     * @return array
-     */
-    public function getOrderInfoMessage(): array
-    {
-        return $this->orderInfoMessage;
     }
 }

@@ -8,22 +8,27 @@ declare(strict_types=1);
 
 namespace App\Service\Message;
 
-use App\DTO\Brokerage\Interfaces\OrderInfoInterface;
-use App\Entity\Job;
-use App\Entity\Order;
+use App\Constants\Transport\JobConstants;
+use App\Event\AbstractEvent;
 use App\Event\OrderInfo\OrderInfoProcessedEvent;
-use App\Event\OrderInfo\OrderInfoProcessFailedEvent;
+use App\Event\OrderInfo\OrderInfoReceivedEvent;
 use App\Helper\ValidationHelper;
 use App\Service\AccountService;
+use App\Service\JobService;
 use App\Service\OrderService;
-use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * Class OrderInfoProcessorService.
+ */
 class OrderInfoProcessorService extends AbstractMessageService
 {
     /** @var AccountService */
     protected $accountService;
+
+    /** @var JobService */
+    protected $jobService;
 
     /** @var OrderService */
     protected $orderService;
@@ -31,8 +36,9 @@ class OrderInfoProcessorService extends AbstractMessageService
     /**
      * OrderInfoProcessorService constructor.
      *
+     * @param AccountService           $accountService
      * @param EventDispatcherInterface $dispatcher
-     * @param EntityManagerInterface   $entityManager
+     * @param JobService               $jobService
      * @param LoggerInterface          $logger
      * @param OrderService             $orderService
      * @param ValidationHelper         $validator
@@ -40,14 +46,23 @@ class OrderInfoProcessorService extends AbstractMessageService
     public function __construct(
         AccountService $accountService,
         EventDispatcherInterface $dispatcher,
-        EntityManagerInterface $entityManager,
+        JobService $jobService,
         LoggerInterface $logger,
         OrderService $orderService,
         ValidationHelper $validator
     ) {
         $this->accountService = $accountService;
+        $this->jobService = $jobService;
         $this->orderService = $orderService;
-        parent::__construct($dispatcher, $entityManager, $logger, $validator);
+        parent::__construct($dispatcher, $logger, $validator);
+    }
+
+    /**
+     * @return JobService
+     */
+    public function getJobService(): JobService
+    {
+        return $this->jobService;
     }
 
     /**
@@ -58,62 +73,25 @@ class OrderInfoProcessorService extends AbstractMessageService
         return $this->orderService;
     }
 
-    public function createOrderFromMessage(array $orderInfoMessage, $job)
-    {
-        try {
-        } catch (\Exception $e) {
-            $this->processingError($orderInfoMessage, $e, $job);
-        }
-    }
-
     /**
-     * @param array $orderInfoMessage
-     * @param Job   $job
+     * @param AbstractEvent $event
      *
      * @return bool
      */
-    public function process(array $orderInfoMessage, Job $job)
+    public function process(OrderInfoReceivedEvent $event)
     {
-        $order = null;
-        try {
-            $orderInfo = $this->accountService->createOrderInfoFromMessage($job->getAccount(), $orderInfoMessage);
-            $order = $this->orderService->createOrderFromOrderInfo($orderInfo);
+        $job = $event->getJob();
+        $orderInfoMessage = $event->getOrderInfoMessage();
+        $orderInfo = $this->accountService->createOrderInfoFromMessage($job->getAccount(), $orderInfoMessage);
+        $order = $this->orderService->createOrderFromOrderInfo($orderInfo);
+        $data[$orderInfo->getId()] = JobConstants::JOB_PROCESSED;
 
-            $this->getValidator()->validate($orderInfo);
-            $this->orderService->save($order);
+        $job->setData($data);
 
-            $this->getDispatcher()->dispatch(
-                new OrderInfoProcessedEvent($orderInfo),
-                OrderInfoProcessedEvent::getEventName());
+        $this->jobService->save($job);
 
-            return true;
-        } catch (\Exception $e) {
-        }
-    }
-
-    /**
-     * @param array                   $orderInfoMessage
-     * @param \Exception              $exception
-     * @param Job                     $job
-     * @param OrderInfoInterface|null $orderInfo
-     * @param Order|null              $order
-     */
-    private function processingError(
-        array $orderInfoMessage,
-        \Exception $exception,
-        Job $job,
-        ?OrderInfoInterface $orderInfo = null,
-        ?Order $order = null
-    ) {
         $this->getDispatcher()->dispatch(
-            new OrderInfoProcessFailedEvent(
-                $orderInfoMessage,
-                $exception,
-                $job,
-                $order,
-                $orderInfo
-            ),
-            OrderInfoProcessFailedEvent::getEventName()
-        );
+            new OrderInfoProcessedEvent($orderInfo, $order, $job),
+            OrderInfoProcessedEvent::getEventName());
     }
 }

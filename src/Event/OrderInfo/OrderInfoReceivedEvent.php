@@ -8,7 +8,6 @@ declare(strict_types=1);
 
 namespace App\Event\OrderInfo;
 
-use App\DTO\Brokerage\Interfaces\OrderInfoInterface;
 use App\Entity\Job;
 use App\Event\AbstractEvent;
 
@@ -19,13 +18,14 @@ class OrderInfoReceivedEvent extends AbstractEvent
     /** @var Job */
     private $job;
 
-    /** @var OrderInfoInterface */
+    /** @var array */
     protected $orderInfoMessage;
 
     /**
      * OrderInfoReceivedEvent constructor.
      *
-     * @param OrderInfoInterface $orderInfo
+     * @param array $orderInfoMessage
+     * @param Job   $job
      */
     public function __construct(array $orderInfoMessage, Job $job)
     {
@@ -34,9 +34,9 @@ class OrderInfoReceivedEvent extends AbstractEvent
     }
 
     /**
-     * @return OrderInfoInterface
+     * @return array
      */
-    public function getOrderInfoMessage(): OrderInfoInterface
+    public function getOrderInfoMessage(): array
     {
         return $this->orderInfoMessage;
     }

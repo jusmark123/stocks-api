@@ -8,30 +8,39 @@ declare(strict_types=1);
 
 namespace App\EventSubscriber\OrderInfo;
 
-use App\Entity\Job;
-use App\Event\AbstractFailedEvent;
+use App\Event\Job\JobIncompleteEvent;
+use App\Event\OrderInfo\OrderInfoFailedEventInterface;
 use App\Event\OrderInfo\OrderInfoProcessFailedEvent;
 use App\Event\OrderInfo\OrderInfoPublishFailedEvent;
 use App\Event\OrderInfo\OrderInfoReceiveFailedEvent;
 use App\EventSubscriber\AbstractMessageEventSubscriber;
-use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
+/**
+ * Class OrderInfoFailedEventSubscriber.
+ */
 class OrderInfoFailedEventSubscriber extends AbstractMessageEventSubscriber
 {
-    /** @var EntityManagerInterface */
-    private $entityManager;
-
+    /**
+     * OrderInfoFailedEventSubscriber constructor.
+     *
+     * @param EventDispatcherInterface $dispatcher
+     * @param LoggerInterface          $logger
+     * @param SerializerInterface      $serializer
+     */
     public function __construct(
-        EntityManagerInterface $entityManager,
+        EventDispatcherInterface $dispatcher,
         LoggerInterface $logger,
         SerializerInterface $serializer
     ) {
-        $this->entityManager = $entityManager;
-        parent::__construct($logger, $serializer);
+        parent::__construct($dispatcher, $logger, $serializer);
     }
 
+    /**
+     * @return \string[][][]
+     */
     public function getEventSubscribedEvents()
     {
         return [
@@ -53,38 +62,58 @@ class OrderInfoFailedEventSubscriber extends AbstractMessageEventSubscriber
         ];
     }
 
+    /**
+     * @param OrderInfoReceiveFailedEvent $event
+     */
     public function orderInfoReceiveFailed(OrderInfoReceiveFailedEvent $event)
     {
-        $job = $event->getJob();
-
-        $this->logger->error($event->getException()->getMessage(), [
-            'exception' => $event->getException(),
-            'order_info_message' => json_decode($this->serializer->serialize($event->getMessage(), self::ENTITY_LOG_FORMAT), true),
-        ]);
-    }
-
-    public function orderInfoProcessFailed(OrderInfoProcessFailedEvent $event)
-    {
-        $this->createLogEntry($event);
-    }
-
-    public function orderInfoPublishFailed(OrderInfoPublishFailedEvent $event)
-    {
-        $this->createLogEntry($event);
+        $this->jobIncomplete($event);
     }
 
     /**
-     * @param AbstractFailedEvent $event
-     * @param Job                 $job
+     * @param OrderInfoProcessFailedEvent $event
      */
-    private function createLogEntry(AbstractFailedEvent $event)
+    public function orderInfoProcessFailed(OrderInfoProcessFailedEvent $event)
     {
+        $this->jobIncomplete($event);
+    }
+
+    /**
+     * @param OrderInfoPublishFailedEvent $event
+     */
+    public function orderInfoPublishFailed(OrderInfoPublishFailedEvent $event)
+    {
+        $this->jobIncomplete($event);
+    }
+
+    /**
+     * @param OrderInfoFailedEventInterface $event
+     */
+    private function createLogEntry(OrderInfoFailedEventInterface $event)
+    {
+        $orderInfoMessage = $event->getOrderInfoMessage();
         $orderInfo = $event->getOrderInfo();
         $job = $event->getJob();
         $this->logger->error($event->getException()->getMessage(), [
             'exception' => $event->getException(),
-            'orderInfo' => json_decode($this->serializer->serialize($orderInfo, self::ENTITY_LOG_FORMAT), true),
-            'jobUUID' => $job ? $job->getId() : null,
+            'order_info_message' => $orderInfoMessage ?? json_decode(
+                $this->serializer->serialize($event->getOrderInfoMessage(), self::ENTITY_LOG_FORMAT),
+                true),
+            'orderInfo' => $orderInfo ?? json_decode(
+                $this->serializer->serialize($orderInfo, self::ENTITY_LOG_FORMAT),
+                true),
+            'jobUUID' => $job->getId(),
         ]);
+    }
+
+    /**
+     * @param OrderInfoFailedEventInterface $event
+     */
+    private function jobIncomplete(OrderInfoFailedEventInterface $event)
+    {
+        $this->dispatcher->dispatch(
+            new JobIncompleteEvent($event->getJob(), $event->getException()),
+            JobIncompleteEvent::getEventName());
+        $this->createLogEntry($event);
     }
 }

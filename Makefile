@@ -37,13 +37,13 @@ build-migrate:
 	bin/console doctrine:migrations:migrate --no-interaction
 .PHONY: build-migrate
 
+build-migration:
+	bin/console doctrine:migration:diff --formatted
+.PHONY: migration
+
 build-validate-database:
 	bin/console doctrine:schema:validate
 .PHONY: build-validate-database
-
-migration:
-	bin/console doctrine:migration:diff --formatted
-.PHONY: migration
 
 clear-cache:
 	rm -rf var/cache/*

@@ -14,13 +14,13 @@ use App\DTO\Brokerage\Interfaces\AccountInfoInterface;
 use App\DTO\Brokerage\Interfaces\OrderInfoInterface;
 use App\Entity\Account;
 use App\Entity\Brokerage;
+use App\Entity\Order;
 use App\Helper\SerializerHelper;
 use App\Helper\ValidationHelper;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
 use Symfony\Component\Serializer\Mapping\Loader\YamlFileLoader;
-use Symfony\Component\Serializer\Serializer;
 
 class AlpacaBrokerageService extends AbstractBrokerageService
 {
@@ -30,11 +30,6 @@ class AlpacaBrokerageService extends AbstractBrokerageService
      * @var BrokerageClient
      */
     private $brokerageClient;
-
-    /**
-     * @var Serializer
-     */
-    private $serializer;
 
     /**
      * AlpacaBrokerageService constructor.
@@ -48,10 +43,8 @@ class AlpacaBrokerageService extends AbstractBrokerageService
         LoggerInterface $logger,
         ValidationHelper $validator
     ) {
-        $classMetaDataFactory = new ClassMetadataFactory(new YamlFileLoader(AlpacaConstants::SERIALIZATION_CONFIG));
         $this->brokerageClient = $brokerageClient;
-        $this->serializer = SerializerHelper::CamelCaseToSnakeCaseNormalizer($classMetaDataFactory);
-        parent::__construct($validator, $logger);
+        parent::__construct($logger, $validator);
     }
 
     /**
@@ -62,6 +55,30 @@ class AlpacaBrokerageService extends AbstractBrokerageService
     public function supports(Brokerage $brokerage): bool
     {
         return $brokerage instanceof Brokerage && AlpacaConstants::BROKERAGE_NAME === $brokerage->getName();
+    }
+
+    public function createOrderFromOrderInfo(OrderInfoInterface $orderInfo): Order
+    {
+    }
+
+    /**
+     * @param array $orderInfoArray
+     *
+     * @return OrderInfoInterface|null
+     */
+    public function createOrderInfoFromMessage(array $orderInfoArray): ?OrderInfoInterface
+    {
+        $classMetaDataFactory = new ClassMetadataFactory(new YamlFileLoader(AlpacaConstants::SERIALIZATION_CONFIG));
+        $serializer = SerializerHelper::CamelCaseToSnakeCaseNormalizer($classMetaDataFactory);
+        $orderInfo = $serializer->deserialize(
+            (string) json_encode($orderInfoArray),
+            AlpacaConstants::ORDER_INFO_ENTITY_CLASS,
+            AlpacaConstants::REQUEST_RETURN_DATA_TYPE
+        );
+
+        $this->validator->validate($orderInfo);
+
+        return $orderInfo;
     }
 
     /**
@@ -81,7 +98,10 @@ class AlpacaBrokerageService extends AbstractBrokerageService
 
         $response = $this->brokerageClient->sendRequest($request);
 
-        return $this->serializer->deserialize(
+        $classMetaDataFactory = new ClassMetadataFactory(new YamlFileLoader(AlpacaConstants::SERIALIZATION_CONFIG));
+        $serializer = SerializerHelper::CamelCaseToSnakeCaseNormalizer($classMetaDataFactory);
+
+        return $serializer->deserialize(
             (string) $response->getBody(),
             AlpacaConstants::ACCOUNT_INFO_ENTITY_CLASS,
             AlpacaConstants::REQUEST_RETURN_DATA_TYPE
@@ -116,20 +136,6 @@ class AlpacaBrokerageService extends AbstractBrokerageService
         }
 
         return $response;
-    }
-
-    /**
-     * @param array $orderInfoArray
-     *
-     * @return OrderInfoInterface|null
-     */
-    public function getOrderInfoFromArray(array $orderInfoArray): ?OrderInfoInterface
-    {
-        return $this->serializer->deserialize(
-            (string) json_encode($orderInfoArray),
-            AlpacaConstants::ORDER_INFO_ENTITY_CLASS,
-            AlpacaConstants::REQUEST_RETURN_DATA_TYPE
-        );
     }
 
     /**

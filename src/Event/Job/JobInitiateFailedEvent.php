@@ -11,9 +11,9 @@ namespace App\Event\Job;
 use App\Entity\Job;
 use App\Event\AbstractFailedEvent;
 
-class JobProcessFailedEvent extends AbstractFailedEvent
+class JobInitiateFailedEvent extends AbstractFailedEvent
 {
-    const EVENT_NAME = 'job.process';
+    const EVENT_NAME = 'job.initiate';
 
     /**
      * @var Job
@@ -21,7 +21,7 @@ class JobProcessFailedEvent extends AbstractFailedEvent
     protected $job;
 
     /**
-     * JobProcessFailedEvent constructor.
+     * JobInitiateFailedEvent constructor.
      *
      * @param Job        $job
      * @param \Exception $exception
