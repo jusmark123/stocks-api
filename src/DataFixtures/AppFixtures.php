@@ -14,12 +14,13 @@ use App\Constants\Entity\SourceConstants;
 use App\Constants\Entity\SourceTypeConstants;
 use App\Constants\Entity\UserConstants;
 use App\Constants\Entity\UserTypeConstants;
-use App\Entity\Account;
 use App\Entity\AccountStatusType;
-use App\Entity\Brokerage;
+use App\Entity\Factory\AccountFactory;
+use App\Entity\Factory\BrokerageFactory;
 use App\Entity\Factory\SourceFactory;
 use App\Entity\Factory\UserFactory;
 use App\Entity\Manager\AccountStatusTypeEntityManager;
+use App\Entity\Source;
 use App\Entity\SourceType;
 use App\Entity\UserType;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -39,6 +40,7 @@ class AppFixtures extends Fixture
     public function load(ObjectManager $manager)
     {
         // Users
+        /** @var UserType $userType */
         $userType = $manager->getRepository(UserType::class)->find(UserTypeConstants::SERVICE_ACCOUNT);
         $systemUser = UserFactory::create()
             ->setGuid(Uuid::fromString(UserConstants::SYSTEM_USER_GUID))
@@ -60,7 +62,7 @@ class AppFixtures extends Fixture
         $manager->persist($systemSource);
 
         // Alpaca Markets
-        $alpacaBrokerage = (new Brokerage())
+        $alpacaBrokerage = BrokerageFactory::create()
           ->setGuid(Uuid::fromString('9e13594c-0172-45b4-a9db-ed11db638601'))
           ->setName(AlpacaConstants::BROKERAGE_NAME)
                     ->setContext('alpaca')
@@ -70,9 +72,9 @@ class AppFixtures extends Fixture
 
         $manager->persist($alpacaBrokerage);
 
+        /** @var AccountStatusType $accountStatusType */
         $accountStatusType = $manager->getRepository(AccountStatusType::class)->find(AccountStatusTypeConstants::ACTIVE);
-
-        $alpacaPaperAccount = (new Account())
+        $alpacaPaperAccount = AccountFactory::create()
           ->setGuid(Uuid::fromString('3347b24d-2984-449a-9bde-ccaa5f81946c'))
           ->setAccountStatusType($accountStatusType)
           ->setApiKey('PKU2P6NISHZELU5ATWEQ')
@@ -84,6 +86,17 @@ class AppFixtures extends Fixture
           ->addUser($systemUser);
 
         $manager->persist($alpacaPaperAccount);
+
+        //MomentumTraderAlgorithm Source
+        /** @var SourceType $sourceType */
+        $sourceType = $manager->getRepository(SourceType::class)->find(SourceTypeConstants::ALGORITHM);
+        $momentumTrader = SourceFactory::create()
+            ->setGuid(Uuid::fromString('5aac6583-9ebc-4f59-bbe6-555c302dc00d'))
+            ->setName('Python MACD Momentum Trader')
+            ->setDescription('AI trading algorithm using MACD')
+            ->setSourceType($sourceType);
+
+        $manager->persist($momentumTrader);
 
         $manager->flush();
     }

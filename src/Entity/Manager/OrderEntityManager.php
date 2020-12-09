@@ -10,6 +10,9 @@ namespace App\Entity\Manager;
 
 use App\Entity\Order;
 
+/**
+ * Class OrderEntityManager.
+ */
 class OrderEntityManager extends AbstractEntityManager
 {
     const ENTITY_CLASS = Order::class;

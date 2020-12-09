@@ -8,6 +8,6 @@ declare(strict_types=1);
 
 namespace App\DTO\Brokerage\Interfaces;
 
-class OrderRequestInterface
+interface OrderRequestInterface
 {
 }

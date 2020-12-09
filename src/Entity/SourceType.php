@@ -15,10 +15,10 @@ use Gedmo\Mapping\Annotation as Gedmo;
  * class SourceType.
  *
  * @ORM\Table(
- *        name="source_type",
- *        uniqueConstraints={
- * 			@ORM\UniqueConstraint(name="source_type_un_name", columns={"name"})
- *        }
+ *    name="source_type",
+ *    uniqueConstraints={
+ * 		  @ORM\UniqueConstraint(name="source_type_un_name", columns={"name"})
+ *    }
  * )
  * @ORM\Entity(repositoryClass="App\Entity\Repository\AccountStatusTypeRepository")
  * @ORM\HasLifecycleCallbacks()

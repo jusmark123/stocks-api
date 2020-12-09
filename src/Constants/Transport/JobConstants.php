@@ -22,6 +22,7 @@ final class JobConstants
     const JOB_INCOMPLETE = 'INCOMPLETE';
     const JOB_INITIATED = 'INITIATED';
     const JOB_PENDING = 'PENDING';
+    const JOB_IN_PROGRESS = 'IN_PROGRESS';
     const JOB_PROCESSED = 'PROCESSED';
     const JOB_RECEIVED = 'RECEIVED';
 

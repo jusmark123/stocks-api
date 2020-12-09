@@ -42,6 +42,19 @@ parameters:
     broadcast.service.version: '%env(SERVICE_VERSION)%'
     broadcast.service.name: '%env(SERVICE_NAME)%'
     broadcast.service.namespace: '%env(SERVICE_NAMESPACE)%'
+    stocks_api_doctrine:
+        fixtures_load:
+            exclude_from_purge:
+                - account_status_type
+                - position_status_type
+                - order_status_type
+                - order_type
+                - source_type
+                - user_type
+        schema_tables_drop:
+            exclude_environment:
+                - prod
+            exclude_from_drop: []
 
 imports:
     - resource: 'api_filters/*.yml'
@@ -52,6 +65,7 @@ services:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
         public: false
+
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -65,7 +79,7 @@ services:
     ####### BrokerageService Provider ######
 
     _instanceof:
-        App\Service\Brokerage\Interfaces\BrokerageServiceInterface:
+        App\Service\Brokerage\BrokerageServiceInterface:
             tags: [ 'stocks_api.brokerage_services_provider' ]
 
     ####### Commands ##########
@@ -107,6 +121,10 @@ services:
             - { name: kernel.event_subscriber }
 
     App\Service\AccountService:
+        arguments:
+            $brokerageServices: !tagged stocks_api.brokerage_services_provider
+
+    App\Service\OrderService:
         arguments:
             $brokerageServices: !tagged stocks_api.brokerage_services_provider
 
@@ -225,6 +243,6 @@ services:
         public: true
         alias: App\MessageClient\ClientPublisher\BunnyClientPublisher
 
-    App\MessageClien\SyncClientFactory:
+    App\MessageClient\SyncClientFactory:
         public: true
         alias: App\MessageClient\BunnyAmqpSyncClientFactory

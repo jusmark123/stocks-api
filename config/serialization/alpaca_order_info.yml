@@ -1,0 +1,93 @@
+App\DTO\Brokerage\Alpaca\Order\AlpacaOrderInfo:
+  attributes:
+    account:
+      groups:
+        - alpaca_order_info.get
+    order:
+      groups:
+        - alpaca_order_info.get
+    id:
+      groups:
+        - alpaca_order_info.get
+    clientOrderId:
+      groups:
+        - alpaca_order_info.get
+    createdAt:
+      groups:
+        - alpaca_order_info.get
+    updatedAt:
+      groups:
+        - alpaca_order_info.get
+    submittedAt:
+      groups:
+        - alpaca_order_info.get
+    filledAt:
+      groups:
+        - alpaca_order_info.get
+    expiredAt:
+      groups:
+        - alpaca_order_info.get
+    cancelledAt:
+      groups:
+        - alpaca_order_info.get
+    failedAt:
+      groups:
+        - alpaca_order_info.get
+    replacedAt:
+      groups:
+        - alpaca_order_info.get
+    replacedBy:
+      groups:
+        - alpaca_order_info.get
+    replaces:
+      groups:
+        - alpaca_order_info.get
+    assetId:
+      groups:
+        - alpaca_order_info.get
+    symbol:
+      groups:
+        - alpaca_order_info.get
+    assetClass:
+      groups:
+        - alpaca_order_info.get
+    qty:
+      groups:
+        - alpaca_order_info.get
+    filledQty:
+      groups:
+        - alpaca_order_info.get
+    type:
+      groups:
+        - alpaca_order_info.get
+    side:
+      groups:
+        - alpaca_order_info.get
+    timeInForce:
+      groups:
+        - alpaca_order_info.get
+    limitPrice:
+      groups:
+        - alpaca_order_info.get
+    filledAvgPrice:
+      groups:
+        - alpaca_order_info.get
+    status:
+      groups:
+        - alpaca_order_info.get
+    extendedHours:
+      groups:
+        - alpaca_order_info.get
+    legs:
+      groups:
+        - alpaca_order_info.get
+    trailPrice:
+      groups:
+        - alpaca_order_info.get
+    trailPercent:
+      groups:
+        - alpaca_order_info.get
+    hwm:
+      groups:
+        - alpaca_order_info.get
+

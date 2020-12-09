@@ -34,3 +34,7 @@ behat.yml
 /config/jwt/*.pem
 ###< lexik/jwt-authentication-bundle ###
 /config/jwt/passphrase.txt
+
+###> friends-of-behat/symfony-extension ###
+/behat.yml
+###< friends-of-behat/symfony-extension ###

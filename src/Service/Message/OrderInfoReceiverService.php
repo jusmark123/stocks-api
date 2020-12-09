@@ -66,7 +66,7 @@ class OrderInfoReceiverService extends ReceiverService
      */
     public function receive(array $message)
     {
-        $this->preReceive('DB:Listener start receiving job message');
+        $this->preReceive('DB:Handler start receiving job message');
 
         $this->logger->debug('packet', $message);
 

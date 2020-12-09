@@ -13,7 +13,7 @@ use App\Event\AbstractEvent;
 
 class OrderInfoReceivedEvent extends AbstractEvent
 {
-    const EVENT_NAME = 'order-info.reveived';
+    const EVENT_NAME = 'order-info.received';
 
     /** @var Job */
     private $job;

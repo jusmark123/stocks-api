@@ -6,7 +6,7 @@
 
 declare(strict_types=1);
 
-namespace App\Entity\Manager\Interfaces;
+namespace App\Entity\Manager;
 
 use App\Entity\AbstractEntity;
 use Doctrine\ORM\EntityManagerInterface;

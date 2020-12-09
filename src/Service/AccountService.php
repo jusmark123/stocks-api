@@ -22,11 +22,6 @@ class AccountService extends AbstractService
     use BrokerageServiceAwareTrait;
 
     /**
-     * @var AccountEntityManager
-     */
-    private $entityManager;
-
-    /**
      * @var BrokerageClient
      */
     private $brokerageClient;
@@ -47,7 +42,7 @@ class AccountService extends AbstractService
         LoggerInterface $logger,
         ValidationHelper $validator
     ) {
-        $this->entityManager = $accountEntityManager;
+        $this->entityManager = $entityManager;
         $this->brokerageClient = $brokerageClient;
         $this->brokerageServices = $brokerageServices;
         parent::__construct($entityManager, $validator, $logger);

@@ -24,14 +24,9 @@ class OrderService extends AbstractService
     use BrokerageServiceAwareTrait;
 
     /**
-     * @var OrderEntityManager
+     * @var BrokerageClient
      */
     private $brokerageClient;
-
-    /**
-     * @var OrderEntityManager
-     */
-    private $entityManager;
 
     /**
      * OrderService constructor.
@@ -67,7 +62,7 @@ class OrderService extends AbstractService
 
         $order = $brokerageService->createOrderFromOrderInfo($orderInfo);
 
-        $this->validator->validate($order);
+        $this->save($order);
 
         return $order;
     }

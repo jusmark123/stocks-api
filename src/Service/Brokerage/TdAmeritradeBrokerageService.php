@@ -9,12 +9,13 @@ declare(strict_types=1);
 namespace App\Service\Brokerage;
 
 use App\Client\BrokerageClient;
-use App\Client\Interfaces\BrokerageClientInterface;
+use App\Client\BrokerageClientInterface;
 use App\Constants\Brokerage\TdAmeritradeConstants;
 use App\DTO\Brokerage\Interfaces\AccountInfoInterface;
 use App\DTO\Brokerage\Interfaces\OrderInfoInterface;
 use App\Entity\Account;
 use App\Entity\Brokerage;
+use App\Entity\Order;
 use App\Helper\SerializerHelper;
 use App\Helper\ValidationHelper;
 use Psr\Http\Client\ClientExceptionInterface;
@@ -59,16 +60,36 @@ class TdAmeritradeBrokerageService extends AbstractBrokerageService
     }
 
     /**
+     * @param OrderInfoInterface $orderInfo
+     *
+     * @return Order
+     */
+    public function createOrderFromOrderInfo(OrderInfoInterface $orderInfo): Order
+    {
+        // TODO: Implement createOrderFromOrderInfo() method.
+    }
+
+    /**
+     * @param array $orderInfoMessage
+     *
+     * @return OrderInfoInterface|null
+     */
+    public function createOrderInfoFromMessage(array $orderInfoMessage): ?OrderInfoInterface
+    {
+        // TODO: Implement createOrderInfoFromMessage() method.
+    }
+
+    /**
      * @param Account $account
      *
      * @throws ClientExceptionInterface
      *
      * @return AccountInfoInterface
      */
-    public function getAccountInfo(Account $account): AccountInfoInterface
+    public function getAccountInfo(Account $account): ?AccountInfoInterface
     {
         $request = $this->brokerageClient->createRequest(
-            $this->getUri($account, TdAmeritradeConstants::ACCOUNT_ENDPOINT),
+            $this->getUri(TdAmeritradeConstants::ACCOUNT_ENDPOINT, $account),
             'GET',
             $this->getRequestHeaders($account)
         );

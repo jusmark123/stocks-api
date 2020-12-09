@@ -26,13 +26,13 @@ class OrderInfoReceiveFailedEvent extends AbstractFailedEvent implements OrderIn
      *
      * @param array                   $orderInfoMessage
      * @param \Exception              $exception
-     * @param Job                     $job
+     * @param Job|null                $job
      * @param OrderInfoInterface|null $orderInfo
      */
     public function __construct(
         array $orderInfoMessage,
         \Exception $exception,
-        Job $job,
+        ?Job $job,
         ?OrderInfoInterface $orderInfo = null
     ) {
         $this->job = $job;

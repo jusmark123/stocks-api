@@ -1,0 +1,48 @@
+App\Entity\Algorithm:
+  attributes:
+    guid:
+      groups:
+        - algorithm.get
+    name:
+      groups:
+        - algorithm.get
+        - algorithm.post
+        - algorithm.put
+    description:
+      groups:
+        - algorithm.get
+        - algorithm.post
+        - algorithm.put
+    filename:
+      groups:
+        - algorithm.get
+        - algorithm.post
+        - algorithm.put
+    config:
+      groups: 
+        - algorithm.get
+        - algorithm.post
+        - algorithm.put
+    source:
+      groups:
+        - algorithm.get
+        - algorithm.post
+        - algorithm.put
+    createdAt:
+      groups:
+        - algorithm.get
+    createdBy:
+      groups:
+        - algorithm.get
+    modifiedAt:
+      groups:
+        - algorithm.get
+    modifiedBy:
+      groups:
+        - algorithm.get
+    deactivatedAt:
+      groups:
+        - algorithm.get
+    deactivatedBy:
+      groups:
+        - algorithm.get

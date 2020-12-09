@@ -91,6 +91,11 @@ class Account extends AbstractGuidEntity
     private $name;
 
     /**
+     * @var array|null
+     */
+    private $streams;
+
+    /**
      * @var ArrayCollection|Job[]|PersistentCollection
      *
      * @ORM\OneToMany(targetEntity="Job", mappedBy="account", fetch="LAZY")

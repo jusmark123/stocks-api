@@ -65,7 +65,7 @@ class JobReceiverService extends ReceiverService
     public function receive(array $message)
     {
         try {
-            $this->preReceive('DB:Listener start receiving job message');
+            $this->preReceive('DB:Handler start receiving job message');
 
             $job = $this->jobFactory->createFromMessage($message);
             $job->setStatus(JobConstants::JOB_RECEIVED_STATUS);
@@ -90,7 +90,7 @@ class JobReceiverService extends ReceiverService
             if ($job instanceof Job) {
                 $this->entityManager->persist($job);
             }
-            $this->postReceive('DB:Listener end receiving job message');
+            $this->postReceive('DB:Handler end receiving job message');
         }
     }
 }

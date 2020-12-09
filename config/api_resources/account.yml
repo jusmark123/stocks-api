@@ -17,7 +17,7 @@ resources:
         path: /account/{id}/account_history
         force_eager: false
         defaults:
-          _api_subresource_context:
+          _api_resource_context:
             identifiers:
               - [ id, App\Entity\Account, true ]
         normalization_context:
@@ -58,13 +58,14 @@ resources:
 
       account_sync_orders:
         method: GET
-        path: /account/{id}/sync_orders
+        path: /account/{id}/sync_orders/{source_id}
         output: App\Entity\Job
         force_eager: false
         defaults:
           _api_subresource_context:
             identifiers:
               - [ id, App\Entity\Account, true ]
+              - [ source_id, App\Entity\Source, true]
         normalization_context:
           groups: [ job.get ]
         swagger_context:
@@ -89,6 +90,10 @@ resources:
             - name: id
               in: path
               required: true
+            - name: source_id
+              description: 'Optionally add a source to apply to processed data requiring source attribution'
+              in: path
+              required: false
             - name: status
               in: query
               required: false

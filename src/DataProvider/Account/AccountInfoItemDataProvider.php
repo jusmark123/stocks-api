@@ -10,6 +10,7 @@ namespace App\DataProvider\Account;
 
 use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
+use App\DTO\Brokerage\Interfaces\AccountInfoInterface;
 use App\Entity\Account;
 use App\Entity\Manager\AccountEntityManager;
 use App\Service\AccountService;

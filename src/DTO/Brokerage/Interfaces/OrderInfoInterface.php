@@ -15,8 +15,6 @@ interface OrderInfoInterface
 {
     public function getId(): string;
 
-    public function setId(string $id): OrderInfoInterface;
-
     public function getAccount(): Account;
 
     public function setAccount(Account $account): OrderInfoInterface;
@@ -27,9 +25,5 @@ interface OrderInfoInterface
 
     public function getStatus(): string;
 
-    public function setStatus(string $status): OrderInfoInterface;
-
-    public function getCreatetAt(): \DateTime;
-
-    public function setCreatetAt(string $createdAt): OrderInfoInterface;
+    public function getCreatedAt(): \DateTime;
 }

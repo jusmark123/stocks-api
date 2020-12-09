@@ -10,7 +10,6 @@ namespace App\Service\Brokerage;
 
 use App\Constants\Brokerage\BrokerageConstants;
 use App\Entity\Brokerage;
-use App\Service\Brokerage\Interfaces\BrokerageServiceInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -35,7 +34,7 @@ trait BrokerageServiceAwareTrait
                 break;
             }
 
-            if (null === $this->brokerageService) {
+            if (null === $brokerageService) {
                 throw new NotFoundHttpException(BrokerageConstants::BROKERAGE_SERVICE_NOT_FOUND);
             }
         }

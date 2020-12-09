@@ -72,7 +72,9 @@ class OrderInfoProcessorEventSubscriber extends AbstractMessageEventSubscriber
     public function receive(OrderInfoReceivedEvent $event)
     {
         try {
-            $this->orderInfoProcessorService->process($event);
+            $job = $event->getJob();
+            $message = $event->getOrderInfoMessage();
+            $this->logger->info(sprintf('OrderInfo Message Received: %s ', $message['id']));
         } catch (\Exception $e) {
             $this->dispatcher->dispatch(
                 new OrderInfoProcessFailedEvent(
@@ -82,6 +84,7 @@ class OrderInfoProcessorEventSubscriber extends AbstractMessageEventSubscriber
                 ),
                 OrderInfoProcessFailedEvent::getEventName()
             );
+            throw $e;
         }
     }
 

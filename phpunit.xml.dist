@@ -13,6 +13,19 @@
         <server name="SHELL_VERBOSITY" value="-1" />
         <server name="SYMFONY_PHPUNIT_REMOVE" value="" />
         <server name="SYMFONY_PHPUNIT_VERSION" value="7.5" />
+
+        <!-- ###+ aymfony/framework-bundle ### -->
+        <env name="APP_ENV" value="dev"/>
+        <env name="APP_SECRET" value="3a36441656c1792190f2bb6fae802418"/>
+        <!-- ###- symfony/framework-bundle ### -->
+
+        <!-- ###+ nelmio/cors-bundle ### -->
+        <env name="CORS_ALLOW_ORIGIN" value="^https?://(localhost|127\.0\.0\.1)(:[0-9]+)?$"/>
+        <!-- ###- nelmio/cors-bundle ### -->
+
+        <!-- ###+ doctrine/doctrine-bundle ### -->
+        <env name="DATABASE_URL" value="mysql://db_user:db_password@127.0.0.1:3306/db_name?serverVersion=8.0"/>
+        <!-- ###- doctrine/doctring-bundle ### -->
     </php>
 
     <testsuites>

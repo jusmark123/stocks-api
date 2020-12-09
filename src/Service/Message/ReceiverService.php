@@ -39,7 +39,7 @@ abstract class ReceiverService extends AbstractMessageService implements Receive
         ValidationHelper $validator
     ) {
         $this->entityManager = $entityManager;
-        parent::__construct($dispatcher, $entityManager, $logger, $validator);
+        parent::__construct($dispatcher, $logger, $validator);
     }
 
     /**

@@ -18,8 +18,8 @@ abstract class AbstractMessageEventSubscriber extends AbstractEventSubscriber
 {
     const ENTITY_LOG_FORMAT = 'json';
 
-    use SerializerAwareTrait;
     use LoggerAwareTrait;
+    use SerializerAwareTrait;
 
     /** @var EventDispatcherInterface
      *

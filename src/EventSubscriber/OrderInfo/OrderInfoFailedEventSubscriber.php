@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace App\EventSubscriber\OrderInfo;
 
+use App\Constants\Transport\JobConstants;
 use App\Event\Job\JobIncompleteEvent;
 use App\Event\OrderInfo\OrderInfoFailedEventInterface;
 use App\Event\OrderInfo\OrderInfoProcessFailedEvent;
@@ -94,6 +95,8 @@ class OrderInfoFailedEventSubscriber extends AbstractMessageEventSubscriber
         $orderInfoMessage = $event->getOrderInfoMessage();
         $orderInfo = $event->getOrderInfo();
         $job = $event->getJob();
+        $data = $job->getData();
+        $data[$orderInfoMessage['id']] = JobConstants::JOB_FAILED;
         $this->logger->error($event->getException()->getMessage(), [
             'exception' => $event->getException(),
             'order_info_message' => $orderInfoMessage ?? json_decode(

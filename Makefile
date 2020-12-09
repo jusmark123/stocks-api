@@ -72,9 +72,28 @@ show-log:
 	tail -f var/log/dev.log
 .PHONY: show-log
 
-unit-test:
+test: test-unit test-feature
+.PHONY: test
+
+test-feature:
+	php -d memory_limit=-1 vendor/bin/behat --format progress -vv --stop-on-failure
+.PHONY: test-feature
+
+test-unit:
 	./vendor/bin/simple-phpunit --coverage-html build/coverage --coverage-clover build/coverage/clover.xml
 .PHONY: unit-test
+
+start-consumers:
+	supervisorctl --configuration /etc/supervisor/conf.d/supervisord.conf start all
+.PHONY: start-consumers
+
+stop-consumers:
+	supervisorctl --configuration /etc/supervisor/conf.d/supervisord.conf stop all
+.PHONY: stop-consumers
+
+sync-tickers:
+	bin/console stocks-api:api:sync-tickers
+.PHONY: sync-tickers
 
 ##### Satis Commands ####
 

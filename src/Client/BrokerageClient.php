@@ -8,7 +8,6 @@ declare(strict_types=1);
 
 namespace App\Client;
 
-use App\Client\Interfaces\BrokerageClientInterface;
 use App\Entity\Account;
 use App\Entity\Brokerage;
 use Http\Client\HttpClient;

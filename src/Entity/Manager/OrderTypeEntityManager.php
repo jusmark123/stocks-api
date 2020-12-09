@@ -8,9 +8,12 @@ declare(strict_types=1);
 
 namespace App\Entity\Manager;
 
-use App\Entity\AbstractEntity;
+use App\Entity\OrderType;
 
-class OrderTypeEntityManager extends AbstractEntity
+/**
+ * Class OrderTypeEntityManager.
+ */
+class OrderTypeEntityManager extends AbstractEntityManager
 {
     const ENTITY_CLASS = OrderType::class;
 }

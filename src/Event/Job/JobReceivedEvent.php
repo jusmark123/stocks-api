@@ -24,20 +24,13 @@ class JobReceivedEvent extends AbstractEvent
     protected $job;
 
     /**
-     * @var array
-     */
-    protected $message;
-
-    /**
      * JobReceivedEvent constructor.
      *
-     * @param array    $message
-     * @param Job|null $job
+     * @param Job $job
      */
-    public function __construct(array $message, ?Job $job)
+    public function __construct(Job $job)
     {
         $this->job = $job;
-        $this->message = $message;
     }
 
     /**
@@ -46,13 +39,5 @@ class JobReceivedEvent extends AbstractEvent
     public function getJob(): Job
     {
         return $this->job;
-    }
-
-    /**
-     * @return array
-     */
-    public function getMessage(): array
-    {
-        return $this->message;
     }
 }

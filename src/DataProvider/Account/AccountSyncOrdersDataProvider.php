@@ -18,6 +18,7 @@ use App\Entity\Account;
 use App\Entity\Factory\JobFactory;
 use App\Entity\Job;
 use App\Entity\Manager\AccountEntityManager;
+use App\Entity\Manager\SourceEntityManager;
 use App\Entity\Source;
 use App\Entity\User;
 use App\Event\Job\JobInitiatedEvent;
@@ -115,9 +116,21 @@ class AccountSyncOrdersDataProvider extends AbstractJobRequestDataProvider
     {
         $job = null;
         try {
-            $systemSource = $this->entityManager->getRepository(Source::class)->findOneBy(
-                ['guid' => SourceConstants::SYSTEM_SOURCE_GUID]);
+            if (\array_key_exists('source_id', $context['subresource_identifiers'])) {
+                $source = $this->entityManager->getRepository(Source::class)->findOneBy([
+                    'guid' => $context['subresource_identifiers']['source_id'],
+                ]);
+            } else {
+                $source = $this->entityManager->getRepository(Source::class)->findOneBy([
+                    'guid' => SourceConstants::SYSTEM_SOURCE_GUID,
+                ]);
+            }
 
+            if (!$source instanceof Source) {
+                throw new ItemNotFoundException(SourceEntityManager::SOURCE_NOT_FOUND);
+            }
+
+            /** @var User $systemUser */
             $systemUser = $this->entityManager->getRepository(User::class)->findOneBy(
                 ['guid' => UserConstants::SYSTEM_USER_GUID]);
 
@@ -137,8 +150,6 @@ class AccountSyncOrdersDataProvider extends AbstractJobRequestDataProvider
                 return $job;
             }
 
-            $this->accountService->setBrokerageService($account->getBrokerage());
-
             $filters = $this->validateFilters($account, $context);
 
             $orderHistory = $this->accountService->getOrderHistory($account, $filters);
@@ -155,9 +166,13 @@ class AccountSyncOrdersDataProvider extends AbstractJobRequestDataProvider
                 ->setAccount($account)
                 ->setName(JobConstants::REQUEST_SYNC_ORDER_REQUEST)
                 ->setDescription(sprintf(JobConstants::ACCOUNT_SYNC_ORDERS_REQUEST, $account->getGuid()))
+                ->setStatus(JobConstants::JOB_INITIATED)
                 ->setData($data)
-                ->setSource($systemSource)
+                ->setSource($source)
                 ->setUser($systemUser);
+
+            $this->entityManager->persist($job);
+            $this->entityManager->flush();
 
             $this->dispatcher->dispatch(
                 new JobInitiatedEvent($job),
@@ -179,7 +194,7 @@ class AccountSyncOrdersDataProvider extends AbstractJobRequestDataProvider
                         $this->clientPublisher->publish($packet);
                     } catch (PublishException $e) {
                         $this->dispatcher->dispatch(
-                            new OrderInfoPublishFailedEvent($orderInfo, $e),
+                            new OrderInfoPublishFailedEvent($orderInfo, $e, $job),
                             OrderInfoPublishFailedEvent::getEventName()
                         );
                     }
@@ -201,6 +216,7 @@ class AccountSyncOrdersDataProvider extends AbstractJobRequestDataProvider
                     ->setErrorTrace($e->getTraceAsString())
                     ->setStatus(JobConstants::JOB_FAILED);
             }
+            throw $e;
         }
 
         return $job;
@@ -215,7 +231,7 @@ class AccountSyncOrdersDataProvider extends AbstractJobRequestDataProvider
     private function validateFilters(Account $account, $context = [])
     {
         try {
-            $constantsClass = $this->accountService->getBrokerageService()->getConstantsClass();
+            $constantsClass = $this->accountService->getBrokerageService($account->getBrokerage())->getConstantsClass();
             $constantsClass = new \ReflectionClass($constantsClass);
             $constants = $constantsClass->getConstants();
             $filtersConstants = $constants['ORDERS_FILTERS_DATATYPE'];

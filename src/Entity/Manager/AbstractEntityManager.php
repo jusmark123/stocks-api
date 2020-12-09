@@ -9,7 +9,6 @@ declare(strict_types=1);
 namespace App\Entity\Manager;
 
 use App\Entity\AbstractEntity;
-use App\Entity\Manager\Interfaces\BaseEntityManagerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectRepository;
 

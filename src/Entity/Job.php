@@ -53,9 +53,9 @@ class Job extends AbstractGuidEntity
     private $description;
 
     /**
-     * @var array|null
+     * @var mixed
      *
-     * @ORM\Column(name="data", type="json_document", options={"jsonb": true})
+     * @ORM\Column(name="data", type="text", length=65535, nullable=false)
      */
     private $data;
 
@@ -151,21 +151,21 @@ class Job extends AbstractGuidEntity
     }
 
     /**
-     * @return array|null
+     * @return mixed
      */
-    public function getData(): ?string
+    public function getData()
     {
-        return $this->data;
+        return unserialize($this->data);
     }
 
     /**
-     * @param array|null $data
+     * @param mixed $data
      *
      * @return Job
      */
-    public function setData(?array $data): Job
+    public function setData($data): Job
     {
-        $this->data = $data;
+        $this->data = serialize($data);
 
         return $this;
     }

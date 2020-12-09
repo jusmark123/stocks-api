@@ -73,77 +73,73 @@ class JobProcessorEventSubscriber extends AbstractMessageEventSubscriber
         return [
             JobInitiatedEvent::getEventName() => [
                 [
-                    'jobInitiated',
+                    'initiated',
                 ],
             ],
             JobReceivedEvent::getEventName() => [
                 [
-                    'jobReceived',
+                    'inProgress',
                 ],
             ],
             JobProcessedEvent::getEventName() => [
                 [
-                    'jobProcessed',
-                ],
-            ],
-            JobCompleteEvent::getEventName() => [
-                [
-                    'jobComplete',
+                    'complete',
                 ],
             ],
         ];
     }
 
-    public function jobInitiated(JobInitiatedEvent $event)
+    /**
+     * @param JobInitiatedEvent $event
+     */
+    public function initiated(JobInitiatedEvent $event)
     {
-        $job = $event->getJob()
-            ->setStatus(jobConstants::JOB_INITIATED);
-
-        $this->jobSuccess($event, $job);
+        $this->publish($event);
     }
 
-    public function jobReceived(JobReceivedEvent $event)
+    /**
+     * @param JobReceivedEvent $event
+     */
+    public function inProgress(JobReceivedEvent $event)
     {
         $job = $event->getJob()
-            ->setStatus(JobConstants::JOB_RECEIVED);
-
-        $this->jobSuccess($event, $job);
+            ->setStatus(JobConstants::JOB_IN_PROGRESS);
+        $this->jobSuccess($event);
     }
 
-    public function jobProcessedEvent(JobProcessedEvent $event)
-    {
-        $job = $event->getJob()
-            ->setStatus(JobConstants::JOB_PROCESSED);
-
-        $this->jobSuccess($event, $job);
-    }
-
-    public function jobCompleteEvent(JobCompleteEvent $event)
+    /**
+     * @param JobCompleteEvent $event
+     */
+    public function complete(JobCompleteEvent $event)
     {
         $job = $event->getJob()
             ->setStatus(JobConstants::JOB_COMPLETE);
-
-        $this->jobSuccess($event, $job);
+        $this->jobSuccess($event);
     }
 
-    public function jobSuccess(AbstractEvent $event, Job $job)
+    /**
+     * @param AbstractEvent $event
+     */
+    public function jobSuccess(AbstractEvent $event)
     {
         $this->jobService->save($job);
         $this->publish($event, $job);
-
-        $this->logger->info($event::getEventName(), [
-            'job' => json_decode($this->serializer->serialize($job, self::ENTITY_LOG_FORMAT), true),
-            'jobUUID' => $job->getId(),
-        ]);
     }
 
-    private function publish(AbstractEvent $event, Job $job, array $headers = [])
+    /**
+     * @param AbstractEvent $event
+     * @param array         $headers
+     */
+    private function publish(AbstractEvent $event, array $headers = [])
     {
-        $headers = array_merge(
-            self::HEADERS,
+        $headers = array_merge(self::HEADERS,
             [Queue::EVENT_NAME_REQUEST_HEADER => $event::getEventName()],
             $headers
         );
+
+        $job = $event->getJob();
+
+        $this->logger->info(sprintf('Job %s %s', $job->getId(), $job->getStatus()));
 
         try {
             // Publish job initiated message

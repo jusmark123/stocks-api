@@ -6,7 +6,7 @@
 
 declare(strict_types=1);
 
-namespace App\Client\Interfaces;
+namespace App\Client;
 
 interface BrokerageClientInterface
 {

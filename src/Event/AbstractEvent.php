@@ -15,7 +15,7 @@ use Symfony\Contracts\EventDispatcher\Event;
  */
 abstract class AbstractEvent extends Event
 {
-    const EVENT_DOMAIN = 'stocks-api.receiver';
+    const EVENT_DOMAIN = 'stocks-api';
 
     const EVENT_NAME = '';
 
@@ -24,6 +24,6 @@ abstract class AbstractEvent extends Event
      */
     public static function getEventName()
     {
-        return static::EVENT_DOMAIN.static::EVENT_NAME;
+        return static::EVENT_DOMAIN.'.'.static::EVENT_NAME;
     }
 }

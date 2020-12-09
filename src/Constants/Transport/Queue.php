@@ -16,6 +16,7 @@ final class Queue
     const SYSTEM_PUBLISHER_NAME = 'api.stocks-api';
 
     const JOB_PERSISTENT_ROUTING_KEY = 'stocks-api.job';
+    const TICKERS_PERSISTENT_ROUTING_KEY = 'stocks-api.ticker';
 
     const ORDER_INFO_PERSISTENT_ROUTING_KEY = 'stocks-api.order.info';
 }

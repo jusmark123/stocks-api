@@ -82,6 +82,9 @@ class OrderInfoProcessorService extends AbstractMessageService
     {
         $job = $event->getJob();
         $orderInfoMessage = $event->getOrderInfoMessage();
+        $orderInfoMessage['account'] = $job->getAccount();
+        $orderInfoMessage['source'] = $job->getSource();
+
         $orderInfo = $this->accountService->createOrderInfoFromMessage($job->getAccount(), $orderInfoMessage);
         $order = $this->orderService->createOrderFromOrderInfo($orderInfo);
         $data[$orderInfo->getId()] = JobConstants::JOB_PROCESSED;

@@ -44,8 +44,8 @@ class SerializerHelper
      */
     public static function CamelCaseToSnakeCaseNormalizer(?ClassMetadataFactory $classMetaDataFactory = null): Serializer
     {
-        $normalizer = new ObjectNormalizer($classMetaDataFactory, new CamelCaseToSnakeCaseNameConverter());
+        $normalizer = new ObjectNormalizer($classMetaDataFactory, new CamelCaseToSnakeCaseNameConverter(), null, new ReflectionExtractor());
 
-        return new Serializer([$normalizer], [new JsonEncoder()]);
+        return new Serializer([new DateTimeNormalizer(), $normalizer], [new JsonEncoder()]);
     }
 }

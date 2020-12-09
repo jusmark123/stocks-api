@@ -12,9 +12,9 @@ use App\Entity\Job;
 use App\Event\AbstractEvent;
 
 /**
- * Class JobPublishEvent.
+ * Class JobPublishedEvent.
  */
-class JobPublishEvent extends AbstractEvent
+class JobPublishedEvent extends AbstractEvent
 {
     const EVENT_NAME = 'job.publish';
 
@@ -24,7 +24,7 @@ class JobPublishEvent extends AbstractEvent
     private $job;
 
     /**
-     * JobPublishEvent constructor.
+     * JobPublishedEvent constructor.
      *
      * @param Job $job
      */

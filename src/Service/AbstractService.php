@@ -9,7 +9,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\AbstractEntity;
-use App\Entity\Manager\Interfaces\BaseEntityManagerInterface;
+use App\Entity\Manager\BaseEntityManagerInterface;
 use App\Helper\ValidationHelper;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -55,6 +55,22 @@ abstract class AbstractService implements LoggerAwareInterface
     public function setValidator(ValidationHelper $validator)
     {
         $this->validator = $validator;
+    }
+
+    /**
+     * @return BaseEntityManagerInterface
+     */
+    public function getEntityManager(): BaseEntityManagerInterface
+    {
+        return $this->entityManager;
+    }
+
+    /**
+     * @return ValidationHelper
+     */
+    public function getValidator(): ValidationHelper
+    {
+        return $this->validator;
     }
 
     public function save(AbstractEntity $entity)

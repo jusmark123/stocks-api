@@ -85,6 +85,11 @@ class Source extends AbstractGuidEntity
         return $this->name;
     }
 
+    /**
+     * @param string $name
+     *
+     * @return $this
+     */
     public function setName(string $name): Source
     {
         $this->name = $name;
@@ -100,6 +105,11 @@ class Source extends AbstractGuidEntity
         return $this->description;
     }
 
+    /**
+     * @param string|null $description
+     *
+     * @return $this
+     */
     public function setDescription(string $description = null): Source
     {
         $this->description = $description;
@@ -107,11 +117,19 @@ class Source extends AbstractGuidEntity
         return $this;
     }
 
+    /**
+     * @return SourceType
+     */
     public function getSourceType(): SourceType
     {
         return $this->sourceType;
     }
 
+    /**
+     * @param SourceType $sourceType
+     *
+     * @return $this
+     */
     public function setSourceType(SourceType $sourceType): Source
     {
         $this->sourceType = $sourceType;
@@ -119,6 +137,11 @@ class Source extends AbstractGuidEntity
         return $this;
     }
 
+    /**
+     * @param Order $order
+     *
+     * @return $this
+     */
     public function addOrder(Order $order): Source
     {
         $this->orders->add($order);
@@ -129,7 +152,7 @@ class Source extends AbstractGuidEntity
     /**
      * @return ArrayCollection|Order[]|PersistentCollection
      */
-    public function getOrders(): array
+    public function getOrders()
     {
         return $this->orders;
     }
@@ -142,9 +165,9 @@ class Source extends AbstractGuidEntity
     }
 
     /**
-     * @param ArrayCollection|Order[]|PersistentCollection $order
+     * @param ArrayCollection|Order[]|PersistentCollection $orders
      */
-    public function setOrders(array $order): Source
+    public function setOrders(array $orders): Source
     {
         $this->orders = $orders;
 

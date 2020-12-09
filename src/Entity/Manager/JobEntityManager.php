@@ -10,6 +10,9 @@ namespace App\Entity\Manager;
 
 use App\Entity\Job;
 
+/**
+ * Class JobEntityManager.
+ */
 class JobEntityManager extends AbstractEntityManager
 {
     const ENTITY_CLASS = Job::class;
