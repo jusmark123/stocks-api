@@ -22,6 +22,8 @@ trait JsonContextTrait
     protected $jsonContext;
 
     /**
+     * @BeforeScenario
+     *
      * @param ScenarioScope $scope
      */
     public function setJsonContext(ScenarioScope $scope)

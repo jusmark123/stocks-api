@@ -22,6 +22,8 @@ trait DatabaseContextTrait
     protected $databaseContext;
 
     /**
+     * @BeforeScenario
+     *
      * @param ScenarioScope $scope
      */
     public function setDatabaseContext(ScenarioScope $scope)

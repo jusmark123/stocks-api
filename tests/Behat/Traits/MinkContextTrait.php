@@ -22,6 +22,8 @@ trait MinkContextTrait
     protected $minkContext;
 
     /**
+     * @BeforeScenario
+     *
      * @param ScenarioScope $scope
      */
     public function setMinkContext(ScenarioScope $scope)

@@ -8,21 +8,16 @@ declare(strict_types=1);
 
 namespace App\Event\OrderInfo;
 
-use App\DTO\Brokerage\Interfaces\OrderInfoInterface;
-use App\Entity\Job;
+use App\DTO\Brokerage\OrderInfoInterface;
+use App\Entity\JobItem;
 use App\Entity\Order;
 
 trait OrderInfoFailedEventTrait
 {
     /**
-     * @var Job
-     */
-    private $job;
-
-    /**
      * @var Order|null
      */
-    private $order;
+    protected $order;
 
     /**
      * @var OrderInfoInterface|null
@@ -32,14 +27,30 @@ trait OrderInfoFailedEventTrait
     /**
      * @var array|null
      */
-    private $orderInfoMessage;
+    protected $orderInfoMessage;
 
     /**
-     * @return Job
+     * OrderInfoProcessFailedEvent constructor.
+     *
+     * @param \Exception              $exception
+     * @param JobItem|null            $jobItem
+     * @param Order|null              $order
+     * @param OrderInfoInterface|null $orderInfo
      */
-    public function getJob(): Job
-    {
-        return $this->job;
+    public function __construct(
+        \Exception $exception,
+        ?JobItem $jobItem,
+        ?Order $order = null,
+        ?OrderInfoInterface $orderInfo = null
+    ) {
+        $job = null;
+        $this->order = $order;
+        $this->orderInfo = $orderInfo;
+        if (null !== $jobItem) {
+            $job = $jobItem->getJob();
+            $this->orderInfoMessage = $jobItem->getData();
+        }
+        parent::__construct($exception, $job, $jobItem);
     }
 
     /**

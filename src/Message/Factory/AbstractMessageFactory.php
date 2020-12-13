@@ -12,7 +12,7 @@ use App\Helper\SerializerHelper;
 
 abstract class AbstractMessageFactory
 {
-    public function createFromReceivedMessage(array $message, string $class)
+    public static function createFromReceivedMessage(array $message, string $class)
     {
         return SerializerHelper::ObjectNormalizer()->deserialize($message, $class, null);
     }

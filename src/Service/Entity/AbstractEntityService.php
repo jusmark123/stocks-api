@@ -8,53 +8,117 @@ declare(strict_types=1);
 
 namespace App\Service\Entity;
 
-use App\Entity\Factory\AbstractFactory;
-use App\Entity\Manager\AbstractEntityManager;
-use Doctrine\ORM\Mapping\ClassMetadata;
+use App\Entity\AbstractEntity;
+use App\Helper\ValidationHelper;
+use App\Service\AbstractService;
+use App\Service\DefaultTypeService;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
+use Psr\Log\LoggerInterface;
 
+/**
+ * Class AbstractEntityService.
+ */
 abstract class AbstractEntityService extends AbstractService
 {
-    /** @var AbstractEntityManager */
-    protected $entityManager;
-
-    /** @var AbstractFactory|null */
-    protected $factory;
+    /**
+     * @var DefaultTypeService
+     */
+    protected $defaultTypeService;
 
     /**
-     * AbstractEntityService Constructor.
+     * @var EntityManagerInterface
+     */
+    protected $entityManager;
+
+    /**
+     * @var ValidationHelper
+     */
+    protected $validator;
+
+    /**
+     * AbstractEntityService constructor.
      *
-     * @param AbstractEntityManager $entityManager
-     * @param AbstractFactory       $factory
+     * @param DefaultTypeService     $defaultTypeService
+     * @param EntityManagerInterface $entityManager
+     * @param LoggerInterface        $logger
+     * @param ValidationHelper       $validator
      */
     public function __construct(
-         AbstractEntityManager $entityManager,
-         AbstractFactory $factory
-        ) {
+        DefaultTypeService $defaultTypeService,
+        EntityManagerInterface $entityManager,
+        LoggerInterface $logger,
+        ValidationHelper $validator
+    ) {
+        $this->defaultTypeService = $defaultTypeService;
         $this->entityManager = $entityManager;
-        $this->factory = $factory;
+        $this->validator = $validator;
+        parent::__construct($logger);
+    }
+
+    public function checkConnection(): void
+    {
+        if (!$this->entityManager->isOpen()) {
+            $this->entityManager->getConnection()->close();
+            $this->entityManager->getConnection()->connect();
+        }
     }
 
     /**
-     * @return AbstractEntityManager
+     * @return DefaultTypeService
      */
-    public function getEntityManager(): AbstractEntityManager
+    public function getDefaultTypeService(): DefaultTypeService
+    {
+        return $this->defaultTypeService;
+    }
+
+    /**
+     * @return EntityManagerInterface
+     */
+    public function getEntityManager(): EntityManagerInterface
     {
         return $this->entityManager;
     }
 
     /**
-     * @return AbstractFactory
+     * @return ValidationHelper
      */
-    public function getFactory(): AbstractFactory
+    public function getValidator(): ValidationHelper
     {
-        return $this->factory;
+        return $this->validator;
     }
 
     /**
-     * @return ClassMetadata
+     * @param AbstractEntity $entity
+     *
+     * @throws ORMException
+     * @throws OptimisticLockException
+     *
+     * @return AbstractEntity
      */
-    public function getMetadataFor(): ClassMetadata
+    public function save(AbstractEntity $entity)
     {
-        return $this->entityManager->getMetadataFor();
+        $this->validate($entity);
+
+        if (null === $entity->getId()) {
+            $this->entityManager->persist($entity);
+        }
+        $this->update();
+
+        return $entity;
+    }
+
+    public function update()
+    {
+        $this->entityManager->flush();
+    }
+
+    /**
+     * @param AbstractEntity $entity
+     */
+    public function validate(AbstractEntity $entity)
+    {
+        $this->validator->validate($entity);
     }
 }

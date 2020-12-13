@@ -22,6 +22,8 @@ trait RestContextTrait
     protected $restContext;
 
     /**
+     * @BeforeScenario
+     *
      * @param ScenarioScope $scope
      */
     public function setRestContext(ScenarioScope $scope)

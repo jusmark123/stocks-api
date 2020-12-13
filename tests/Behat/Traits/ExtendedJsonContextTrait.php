@@ -22,8 +22,6 @@ trait ExtendedJsonContextTrait
     protected $extendedJsonContext;
 
     /**
-     * ExtendedJsonContextTrait constructor.
-     *
      * @param ScenarioScope $scope
      */
     public function setExtendedJsonContext(ScenarioScope $scope)

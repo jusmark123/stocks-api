@@ -8,16 +8,18 @@ declare(strict_types=1);
 
 namespace App\Message\Factory;
 
-use App\DTO\Brokerage\Interfaces\OrderInfoInterface;
+use App\DTO\Brokerage\OrderInfoInterface;
+use App\Entity\Job;
 
 class OrderInfoMessageFactory extends AbstractMessageFactory
 {
     /**
-     * @param array $message
+     * @param array    $message
+     * @param Job|null $job
      *
-     * @return OrderInfoInterface
+     * @return array|mixed|object
      */
-    public function createFromMessage(array $message): OrderInfoInterface
+    public function createFromMessage(array $message, ?Job $job = null)
     {
         return $this->createFromReceivedMessage($message, OrderInfoInterface::class);
     }

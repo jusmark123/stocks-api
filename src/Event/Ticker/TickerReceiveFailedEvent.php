@@ -8,51 +8,14 @@ declare(strict_types=1);
 
 namespace App\Event\Ticker;
 
-use App\Entity\Ticker;
-use App\Event\AbstractFailedEvent;
+use App\Event\AbstractJobFailedEvent;
 
 /**
  * Class TickerReceiveFailedEvent.
  */
-class TickerReceiveFailedEvent extends AbstractFailedEvent
+class TickerReceiveFailedEvent extends AbstractJobFailedEvent
 {
-    /**
-     * @var array
-     */
-    private $tickerMessage;
+    use TickerFailedEventTrait;
 
-    /**
-     * @var Ticker|null
-     */
-    private $ticker;
-
-    /**
-     * TickerReceiveFailedEvent constructor.
-     *
-     * @param array       $tickerMessage
-     * @param \Exception  $exception
-     * @param Ticker|null $ticker
-     */
-    public function __construct(array $tickerMessage, \Exception $exception, ?Ticker $ticker = null)
-    {
-        $this->tickerMessage = $tickerMessage;
-        $this->ticker = $ticker;
-        parent::__construct($exception);
-    }
-
-    /**
-     * @return array
-     */
-    public function getTickerMessage(): array
-    {
-        return $this->tickerMessage;
-    }
-
-    /**
-     * @return Ticker|null
-     */
-    public function getTicker(): ?Ticker
-    {
-        return $this->ticker;
-    }
+    const EVENT_NAME = 'ticker.receive';
 }
