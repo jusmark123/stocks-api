@@ -10,17 +10,23 @@ namespace App\Service\Brokerage;
 
 use App\Client\BrokerageClient;
 use App\Constants\Brokerage\AlpacaConstants;
-use App\DTO\Brokerage\Interfaces\AccountInfoInterface;
-use App\DTO\Brokerage\Interfaces\OrderInfoInterface;
+use App\DTO\Brokerage\AccountInfoInterface;
+use App\DTO\Brokerage\OrderInfoInterface;
 use App\Entity\Account;
 use App\Entity\Brokerage;
 use App\Entity\Factory\OrderFactory;
-use App\Entity\Manager\SourceEntityManager;
+use App\Entity\Factory\PositionFactory;
 use App\Entity\Order;
+use App\Entity\OrderStatusType;
+use App\Entity\OrderType;
+use App\Entity\PositionSideType;
+use App\Entity\Ticker;
 use App\Helper\SerializerHelper;
 use App\Helper\ValidationHelper;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Log\LoggerInterface;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
 use Symfony\Component\Serializer\Mapping\Loader\YamlFileLoader;
 
@@ -34,26 +40,34 @@ class AlpacaBrokerageService extends AbstractBrokerageService
     private $brokerageClient;
 
     /**
-     * @var SourceEntityManager
+     * @var EntityManagerInterface
      */
-    private $sourceEntityManager;
+    private $entityManager;
+
+    /**
+     * @var PolygonBrokerageService
+     */
+    private $polygonService;
 
     /**
      * AlpacaBrokerageService constructor.
      *
-     * @param SourceEntityManager $sourceEntityManager
-     * @param BrokerageClient     $brokerageClient
-     * @param LoggerInterface     $logger
-     * @param ValidationHelper    $validator
+     * @param EntityManagerInterface  $entityManager
+     * @param BrokerageClient         $brokerageClient
+     * @param LoggerInterface         $logger
+     * @param PolygonBrokerageService $polygonService
+     * @param ValidationHelper        $validator
      */
     public function __construct(
-        SourceEntityManager $sourceEntityManager,
+        EntityManagerInterface $entityManager,
         BrokerageClient $brokerageClient,
         LoggerInterface $logger,
+        PolygonBrokerageService $polygonService,
         ValidationHelper $validator
     ) {
-        $this->sourceEntityManager = $sourceEntityManager;
         $this->brokerageClient = $brokerageClient;
+        $this->entityManager = $entityManager;
+        $this->polygonService = $polygonService;
         parent::__construct($logger, $validator);
     }
 
@@ -74,14 +88,38 @@ class AlpacaBrokerageService extends AbstractBrokerageService
      */
     public function createOrderFromOrderInfo(OrderInfoInterface $orderInfo): Order
     {
+        $orderStatusType = $this->entityManager
+            ->getRepository(OrderStatusType::class)
+            ->findOneBy(['name' => $orderInfo->getStatus()]);
+
+        $orderType = $this->entityManager
+            ->getRepository(OrderType::class)
+            ->findOneBy(['name' => $orderInfo->getType()]);
+
+//        $position = $this->createPositionFromOrderInfo();
+
         $order = OrderFactory::create()
+            ->setGuid(Uuid::fromString($orderInfo->getClientOrderId()))
+            ->setAccount($orderInfo->getAccount())
+            ->setAmountUsd($orderInfo->getFilledAvgPrice() * $orderInfo->getFilledQty())
+            ->setAvgCost($orderInfo->getFilledAvgPrice())
             ->setBrokerOrderId($orderInfo->getId())
             ->setBrokerage($orderInfo->getAccount()->getBrokerage())
-            ->setAccount($orderInfo->getAccount())
+            ->setCreatedAt($orderInfo->getCreatedAt())
+            ->setCreatedby($orderInfo->getUser()->getUsername())
             ->setUser($orderInfo->getUser())
-            ->setAmountUsd($orderInfo->getFilledAvgPrice() * $orderInfo->getFilledQty())
+            ->setFees(0.00)
             ->setFilledQty($orderInfo->getFilledQty())
-            ->setAvgCost($orderInfo->getFilledAvgPrice());
+            ->setModifiedAt($orderInfo->getUpdatedAt())
+            ->setModifiedBy($orderInfo->getUser()->getUsername())
+            ->setOrderStatusType($orderStatusType)
+            ->setOrderType($orderType)
+            ->setPosition($position)
+            ->setSide($orderInfo->getSide())
+            ->setSource($orderInfo->getSource()
+            ->setUser($orderInfo->getUser()));
+
+        $this->validator->validate($order);
 
         return $order;
     }
@@ -100,10 +138,45 @@ class AlpacaBrokerageService extends AbstractBrokerageService
             (string) json_encode($orderInfoArray), AlpacaConstants::ORDER_INFO_ENTITY_CLASS,
             AlpacaConstants::REQUEST_RETURN_DATA_TYPE
         );
-        $orderInfo->getCreatedBy('system_user')->getModifiedBy('system_user');
+
         $this->validator->validate($orderInfo);
 
         return $orderInfo;
+    }
+
+    public function createPositionFromOrderInfo(OrderInfoInterface $orderInfo)
+    {
+        $ticker = $this->getTicker($orderInfo->getSymbol());
+
+        $positionSideType = $this->entityManager
+            ->getRepository(PositionSideType::class)
+            ->findOneBy(['name' => $orderInfo->getSide()]);
+
+        return PositionFactory::create()
+            ->setAccount($orderInfo->getAccount())
+            ->setPositionSideType($positionSideType)
+            ->setExchange($ticker->getExchange())
+            ->setQty($orderInfo->getFilledQty())
+            ->setTicker($ticker);
+    }
+
+    public function getTicker(string $symbol, Account $account)
+    {
+        /** @var Ticker $ticker */
+        $ticker = $this->entityManager
+            ->getRepository(Ticker::class)
+            ->findOneBy(['ticker' => $symbol]);
+
+        if (!$ticker instanceof Ticker) {
+            $uri = $this->getUri(sprintf(AlpacaConstants::ASSETS_ENDPOINT.'/%s', $symbol));
+            $request = $this->createRequest(
+              $uri,
+                'GET',
+                $this->getRequestHeaders($account)
+            );
+            $response = $this->brokerageClient->sendRequest($request);
+            $ticker = $response->getBody();
+        }
     }
 
     /**
@@ -139,11 +212,11 @@ class AlpacaBrokerageService extends AbstractBrokerageService
      *
      * @throws ClientExceptionInterface
      *
-     * @return array|null
+     * @return array
      */
-    public function getOrderHistory(Account $account, array $filters = []): ?array
+    public function getOrderHistory(Account $account, array $filters = []): array
     {
-        $uri = $this->getUri(AlpacaConstants::ACCOUNT_ENDPOINT, $account);
+        $uri = $this->getUri(AlpacaConstants::ORDERS_ENDPOINT, $account);
         $uri .= empty($filters) ? '' : '?'.http_build_query($filters);
 
         $request = $this->brokerageClient->createRequest(

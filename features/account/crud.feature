@@ -15,6 +15,7 @@ Feature:
     And I have an account with the following values:
       | guid              | a883ff93-cc77-40e4-840a-9bbd9cd1fced |
       | name              | Account 1                            |
+      | description       | Account 1 Description                |
       | brokerage         | Brokerage 1                          |
       | accountStatusType | ACTIVE                               |
       | apiEndpointUrl    | http://url.com                       |
@@ -34,7 +35,7 @@ Feature:
         "apiKey": "api-key-1223",
         "apiSecret": "dsdakjld;sknsdas",
         "context": "account2",
-        "accountStatusType": "/api/stocks_api/v1/account_status_types/1"
+        "accountStatusType": "/api/stocks/v1/account_status_types/1"
       }
     """
     Then print last JSON response
@@ -46,7 +47,7 @@ Feature:
     And the JSON node "apiEndpointUrl" should be equal to "https://apiendpoint.com"
     And the JSON node "apiKey" should be equal to "api-key-1223"
     And the JSON node "apiSecret" should be equal to "dsdakjld;sknsdas"
-    And the JSON node "brokerage" should be equal to "/api/stocks_api/v1/brokerages/6e78b7a6-2b06-4381-8773-5b29be39a26e"
+    And the JSON node "brokerage" should be equal to "/api/stocks/v1/brokerages/6e78b7a6-2b06-4381-8773-5b29be39a26e"
 
   Scenario: I should be able to Read all accounts (GET)
     Given the request has default headers
@@ -54,15 +55,15 @@ Feature:
     And the response status code should be 200
     And print last JSON response
     And the JSON node "root[0].guid" should exist
-    And the JSON node "root[0].name" should be equal to "Account 2"
-    And the JSON node "root[0].description" should be equal to "Account 2 Description"
-    And the JSON node "root[1].username" should exist
-    And the JSON node "root[1].username" should be equal to "Account 1"
-    And the JSON node "root[1].description" should be equal to "Account 1 Description"
+    And the JSON node "root[0].name" should be equal to "Account 1"
+    And the JSON node "root[0].description" should be equal to "Account 1 Description"
+    And the JSON node "root[1].name" should exist
+    And the JSON node "root[1].name" should be equal to "Account 2"
+    And the JSON node "root[1].description" should be equal to "Account 2 Description"
 
   Scenario: I should be able to Read an account (GET)
     Given the request has default headers
-    When I send a "GET" request to "/accounts/a883ff93-cc77-40e4-840a-9bbd9cd1fced" with body:
+    When I send a "GET" request to "/accounts/a883ff93-cc77-40e4-840a-9bbd9cd1fced"
     And the response status code should be 200
     And the response should be in JSON
 
@@ -76,9 +77,10 @@ Feature:
       }
     """
     And the response status code should be 200
+    And print last JSON response
     And the response should be in JSON
     And the JSON nodes should be equal to:
-      | username          | Account 1 Updated                                              |
+      | name              | Account 1                                                      |
       | brokerage         | /api/stocks/v1/brokerages/6e78b7a6-2b06-4381-8773-5b29be39a26e |
       | description       | Account 1 Description Updated                                  |
       | accountStatusType | /api/stocks/v1/account_status_types/1                          |

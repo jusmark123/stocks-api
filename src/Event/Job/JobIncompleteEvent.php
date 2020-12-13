@@ -9,17 +9,14 @@ declare(strict_types=1);
 namespace App\Event\Job;
 
 use App\Entity\Job;
-use App\Event\AbstractFailedEvent;
+use App\Event\AbstractJobFailedEvent;
 
 /**
  * Class JobIncompleteEvent.
  */
-class JobIncompleteEvent extends AbstractFailedEvent
+class JobIncompleteEvent extends AbstractJobFailedEvent
 {
     const EVENT_NAME = 'job.incomplete';
-
-    /** @var Job */
-    private $job;
 
     /**
      * JobIncompleteEvent constructor.
@@ -27,19 +24,8 @@ class JobIncompleteEvent extends AbstractFailedEvent
      * @param Job        $job
      * @param \Exception $exception
      */
-    public function __construct(
-        Job $job,
-        \Exception $exception
-    ) {
-        $this->job = $job;
-        parent::__construct($exception);
-    }
-
-    /**
-     * @return Job
-     */
-    public function getJob()
+    public function __construct(Job $job, \Exception $exception)
     {
-        return $this->job;
+        parent::__construct($job, $exception);
     }
 }

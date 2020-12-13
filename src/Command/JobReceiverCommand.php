@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace App\Command;
 
-use App\Service\Message\JobReceiverService;
+use App\Service\Message\JobMessageService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -21,19 +21,19 @@ class JobReceiverCommand extends AbstractProcessCommand
     const COMMAND_NAME = 'stocks-api:api:job-receiver';
 
     /**
-     * @var JobReceiverService
+     * @var JobMessageService
      */
     private $jobReceiverService;
 
     /**
      * JobReceiverCommand constructor.
      *
-     * @param LoggerInterface    $logger
-     * @param JobReceiverService $jobReceiverService
+     * @param LoggerInterface   $logger
+     * @param JobMessageService $jobReceiverService
      */
     public function __construct(
         LoggerInterface $logger,
-        JobReceiverService $jobReceiverService
+        JobMessageService $jobReceiverService
     ) {
         $this->jobReceiverService = $jobReceiverService;
         parent::__construct($logger);

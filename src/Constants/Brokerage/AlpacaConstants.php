@@ -15,6 +15,7 @@ final class AlpacaConstants
 
     // Api Endpoints
     const ACCOUNT_ENDPOINT = self::API_VERSION.'/account';
+    const ASSETS_ENDPOINT = self::API_VERSION.'/assets';
     const ORDERS_ENDPOINT = self::API_VERSION.'/orders';
 
     // AlpacaAccountInfoEntity Class

@@ -9,19 +9,14 @@ declare(strict_types=1);
 namespace App\Event\Job;
 
 use App\Entity\Job;
-use App\Event\AbstractFailedEvent;
+use App\Event\AbstractJobFailedEvent;
 
 /**
  * Class JobPublishFailedEvent.
  */
-class JobPublishFailedEvent extends AbstractFailedEvent
+class JobPublishFailedEvent extends AbstractJobFailedEvent
 {
     const EVENT_NAME = 'job.publish';
-
-    /**
-     * @var Job
-     */
-    private $job;
 
     /**
      * JobPublishFailedEvent constructor.
@@ -31,15 +26,6 @@ class JobPublishFailedEvent extends AbstractFailedEvent
      */
     public function __construct(Job $job, \Exception $exception)
     {
-        $this->job = $job;
-        parent::__construct($exception);
-    }
-
-    /**
-     * @return Job
-     */
-    public function getJob(): Job
-    {
-        return $this->job;
+        parent::__construct($job, $exception);
     }
 }

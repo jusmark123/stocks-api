@@ -8,9 +8,10 @@ declare(strict_types=1);
 
 namespace App\DTO\Brokerage\TdAmeritrade;
 
-use App\DTO\Brokerage\Interfaces\OrderInfoInterface;
+use App\DTO\Brokerage\OrderInfoInterface;
 use App\Entity\Account;
 use App\Entity\Order;
+use App\Entity\User;
 
 class TdAmeritradeOrderInfo implements OrderInfoInterface
 {
@@ -19,10 +20,15 @@ class TdAmeritradeOrderInfo implements OrderInfoInterface
      */
     private $account;
 
-    /**
+    /**w
      * @var Order|null
      */
     private $order;
+
+    /**
+     * @var User|null
+     */
+    private $user;
 
     /**
      * @var string
@@ -150,6 +156,26 @@ class TdAmeritradeOrderInfo implements OrderInfoInterface
     public function setOrder(?Order $order): OrderInfoInterface
     {
         $this->order = $order;
+
+        return $this;
+    }
+
+    /**
+     * @return User|null
+     */
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    /**
+     * @param User|null $user
+     *
+     * @return TdAmeritradeOrderInfo
+     */
+    public function setUser(?User $user): TdAmeritradeOrderInfo
+    {
+        $this->user = $user;
 
         return $this;
     }

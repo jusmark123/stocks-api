@@ -8,7 +8,9 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\PersistentCollection;
 use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
@@ -30,14 +32,9 @@ class Ticker extends AbstractGuidEntity
     /**
      * @var string
      *
-     * @ORM\Column(name="ticker", type="string", length=10, nullable=false)
+     * @ORM\Column(name="symbol", type="string", length=10, nullable=false)
      */
-    private $ticker;
-
-    /**
-     * @var string
-     */
-    private $updated;
+    private $symbol;
 
     /**
      * @var string
@@ -90,21 +87,28 @@ class Ticker extends AbstractGuidEntity
     private $type;
 
     /**
-     * @return string
+     * @var ArrayCollection|Brokerage[]|PersistentCollection
+     *
+     * @ORM\ManyToMany(targetEntity="Brokerage", mappedBy="tickers", fetch="LAZY")
      */
-    public function getTicker(): string
+    private $brokerages;
+
+    /**
+     * @return bool
+     */
+    public function isActive(): bool
     {
-        return $this->ticker;
+        return $this->active;
     }
 
     /**
-     * @param string $ticker
+     * @param bool $active
      *
      * @return Ticker
      */
-    public function setTicker(string $ticker): Ticker
+    public function setActive(bool $active): Ticker
     {
-        $this->ticker = $ticker;
+        $this->active = $active;
 
         return $this;
     }
@@ -112,19 +116,39 @@ class Ticker extends AbstractGuidEntity
     /**
      * @return string
      */
-    public function getName(): string
+    public function getCurrency(): string
     {
-        return $this->name;
+        return $this->currency;
     }
 
     /**
-     * @param string $name
+     * @param string $currency
      *
      * @return Ticker
      */
-    public function setName(string $name): Ticker
+    public function setCurrency(string $currency): Ticker
     {
-        $this->name = $name;
+        $this->currency = $currency;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLocale(): string
+    {
+        return $this->locale;
+    }
+
+    /**
+     * @param string $locale
+     *
+     * @return Ticker
+     */
+    public function setLocale(string $locale): Ticker
+    {
+        $this->locale = $locale;
 
         return $this;
     }
@@ -152,39 +176,19 @@ class Ticker extends AbstractGuidEntity
     /**
      * @return string
      */
-    public function getCurrency(): string
+    public function getName(): string
     {
-        return $this->currency;
+        return $this->name;
     }
 
     /**
-     * @param string $currency
+     * @param string $name
      *
      * @return Ticker
      */
-    public function setCurrency(string $currency): Ticker
+    public function setName(string $name): Ticker
     {
-        $this->currency = $currency;
-
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isActive(): bool
-    {
-        return $this->active;
-    }
-
-    /**
-     * @param bool $active
-     *
-     * @return Ticker
-     */
-    public function setActive(bool $active): Ticker
-    {
-        $this->active = $active;
+        $this->name = $name;
 
         return $this;
     }
@@ -192,19 +196,19 @@ class Ticker extends AbstractGuidEntity
     /**
      * @return string
      */
-    public function getUrl(): string
+    public function getSymbol(): string
     {
-        return $this->url;
+        return $this->symbol;
     }
 
     /**
-     * @param string $url
+     * @param string $symbol
      *
      * @return Ticker
      */
-    public function setUrl(string $url): Ticker
+    public function setSymbol(string $symbol): Ticker
     {
-        $this->url = $url;
+        $this->symbol = $symbol;
 
         return $this;
     }
@@ -247,5 +251,41 @@ class Ticker extends AbstractGuidEntity
     public function getUpdated(): \DateTime
     {
         return $this->getModifiedAt();
+    }
+
+    /**
+     * @return string
+     */
+    public function getUrl(): string
+    {
+        return $this->url;
+    }
+
+    /**
+     * @param string $url
+     *
+     * @return Ticker
+     */
+    public function setUrl(string $url): Ticker
+    {
+        $this->url = $url;
+
+        return $this;
+    }
+
+    /**
+     * @return Brokerage[]|ArrayCollection|PersistentCollection
+     */
+    public function getBrokerages()
+    {
+        return $this->brokerages;
+    }
+
+    /**
+     * @param Brokerage[]|ArrayCollection|PersistentCollection $brokerages
+     */
+    public function setBrokerages($brokerages): void
+    {
+        $this->brokerages = $brokerages;
     }
 }

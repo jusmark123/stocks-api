@@ -19,7 +19,6 @@ use App\Entity\Factory\AccountFactory;
 use App\Entity\Factory\BrokerageFactory;
 use App\Entity\Factory\SourceFactory;
 use App\Entity\Factory\UserFactory;
-use App\Entity\Manager\AccountStatusTypeEntityManager;
 use App\Entity\Source;
 use App\Entity\SourceType;
 use App\Entity\UserType;
@@ -29,14 +28,6 @@ use Ramsey\Uuid\Uuid;
 
 class AppFixtures extends Fixture
 {
-    /** @var AccountStatusTypeEntityManager */
-    private $accountStatusTypeManager;
-
-    public function __construct(AccountStatusTypeEntityManager $accountStatusTypeManager)
-    {
-        $this->accountStatusTypeManager = $accountStatusTypeManager;
-    }
-
     public function load(ObjectManager $manager)
     {
         // Users

@@ -8,13 +8,16 @@ declare(strict_types=1);
 
 namespace App\Event\Ticker;
 
-use App\Event\AbstractEvent;
+use App\Entity\Job;
+use App\Event\AbstractJobEvent;
 
 /**
  * Class TickerReceivedEvent.
  */
-class TickerReceivedEvent extends AbstractEvent
+class TickerReceivedEvent extends AbstractJobEvent
 {
+    const EVENT_NAME = 'ticker.receive';
+
     /**
      * @var array
      */
@@ -25,9 +28,10 @@ class TickerReceivedEvent extends AbstractEvent
      *
      * @param array $tickerMessage
      */
-    public function __construct(array $tickerMessage)
+    public function __construct(array $tickerMessage, Job $job)
     {
         $this->tickerMessage = $tickerMessage;
+        parent::__construct($job);
     }
 
     /**

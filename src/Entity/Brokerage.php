@@ -79,6 +79,13 @@ class Brokerage extends AbstractGuidEntity
     private $orders;
 
     /**
+     * @var ArrayCollection|Ticker[]|PersistentCollection
+     *
+     * @ORM\ManyToMany(targetEntity="Ticker", inversedBy="brokerages", fetch="LAZY")
+     */
+    private $tickers;
+
+    /**
      * Brokerage constructor.
      *
      * @throws \Exception
@@ -212,5 +219,29 @@ class Brokerage extends AbstractGuidEntity
     public function getOrders()
     {
         return $this->orders->getValues();
+    }
+
+    /**
+     * @param Order[]|ArrayCollection|PersistentCollection $orders
+     */
+    public function setOrders($orders): void
+    {
+        $this->orders = $orders;
+    }
+
+    /**
+     * @return Ticker[]|ArrayCollection|PersistentCollection
+     */
+    public function getTickers()
+    {
+        return $this->tickers;
+    }
+
+    /**
+     * @param Ticker[]|ArrayCollection|PersistentCollection $tickers
+     */
+    public function setTickers($tickers): void
+    {
+        $this->tickers = $tickers;
     }
 }

@@ -8,14 +8,17 @@ declare(strict_types=1);
 
 namespace App\Event\Ticker;
 
+use App\Entity\Job;
 use App\Entity\Ticker;
-use App\Event\AbstractFailedEvent;
+use App\Event\AbstractJobFailedEvent;
 
 /**
  * Class TickerReceiveFailedEvent.
  */
-class TickerReceiveFailedEvent extends AbstractFailedEvent
+class TickerReceiveFailedEvent extends AbstractJobFailedEvent
 {
+    const EVENT_NAME = 'ticker.receive';
+
     /**
      * @var array
      */
@@ -33,11 +36,11 @@ class TickerReceiveFailedEvent extends AbstractFailedEvent
      * @param \Exception  $exception
      * @param Ticker|null $ticker
      */
-    public function __construct(array $tickerMessage, \Exception $exception, ?Ticker $ticker = null)
+    public function __construct(array $tickerMessage, \Exception $exception, Job $job, ?Ticker $ticker = null)
     {
         $this->tickerMessage = $tickerMessage;
         $this->ticker = $ticker;
-        parent::__construct($exception);
+        parent::__construct($job, $exception);
     }
 
     /**

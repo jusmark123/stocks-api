@@ -8,8 +8,12 @@ declare(strict_types=1);
 
 namespace App\Command;
 
+use App\Constants\Transport\JobConstants;
+use App\Entity\Factory\JobFactory;
 use App\Entity\Manager\TickerEntityManager;
-use App\Service\Brokerage\PolygonService;
+use App\Entity\User;
+use App\Service\Brokerage\PolygonBrokerageService;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
@@ -28,7 +32,7 @@ class SyncTickersCommand extends Command implements LoggerAwareInterface
     const NAME = 'stocks-api:api:sync-tickers';
 
     /**
-     * @var PolygonService
+     * @var PolygonBrokerageService
      */
     private $polygonService;
 
@@ -37,11 +41,26 @@ class SyncTickersCommand extends Command implements LoggerAwareInterface
      */
     private $tickerManager;
 
+    /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    /**
+     * SyncTickersCommand constructor.
+     *
+     * @param EntityManagerInterface  $entityManager
+     * @param LoggerInterface         $logger
+     * @param PolygonBrokerageService $polygonService
+     * @param TickerEntityManager     $tickerEntityManager
+     */
     public function __construct(
+        EntityManagerInterface $entityManager,
         LoggerInterface $logger,
-        PolygonService $polygonService,
+        PolygonBrokerageService $polygonService,
         TickerEntityManager $tickerEntityManager
     ) {
+        $this->entityManager = $entityManager;
         $this->polygonService = $polygonService;
         $this->tickerManager = $tickerEntityManager;
 
@@ -62,10 +81,29 @@ class SyncTickersCommand extends Command implements LoggerAwareInterface
             );
     }
 
+    /**
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     *
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     *
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         try {
-            $this->polygonService->syncTickers();
+            $user = $this->entityManager->getRepository(User::class)->findOneBy(['name' => 'system-user']);
+            $job = JobFactory::create()
+                ->setName('Sync Tickers')
+                ->setDescription($this->getDescription())
+                ->setData([])
+                ->setStatus(JobConstants::JOB_INITIATED)
+                ->setUser($user);
+
+            $this->entityManager->persist($job);
+            $this->entityManager->flush();
+
+            $this->polygonService->syncTickers($job);
         } catch (\Exception $e) {
             $this->logger->error($e->getMessage(), [
                'code' => $e->getCode(),

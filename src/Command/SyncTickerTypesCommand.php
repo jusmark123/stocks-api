@@ -9,7 +9,7 @@ declare(strict_types=1);
 namespace App\Command;
 
 use App\Entity\Manager\TickerEntityManager;
-use App\Service\Brokerage\PolygonService;
+use App\Service\Brokerage\PolygonBrokerageService;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
@@ -28,7 +28,7 @@ class SyncTickerTypesCommand extends Command implements LoggerAwareInterface
     const NAME = 'stocks-api:api:sync-ticker-types';
 
     /**
-     * @var PolygonService
+     * @var PolygonBrokerageService
      */
     private $polygonService;
 
@@ -39,7 +39,7 @@ class SyncTickerTypesCommand extends Command implements LoggerAwareInterface
 
     public function __construct(
         LoggerInterface $logger,
-        PolygonService $polygonService,
+        PolygonBrokerageService $polygonService,
         TickerEntityManager $tickerEntityManager
     ) {
         $this->polygonService = $polygonService;

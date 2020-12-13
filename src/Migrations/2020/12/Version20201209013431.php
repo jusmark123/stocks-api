@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * Stocks Api
+ */
+
 declare(strict_types=1);
 
 namespace DoctrineMigrations;
@@ -12,19 +16,19 @@ use Doctrine\Migrations\AbstractMigration;
  */
 final class Version20201209013431 extends AbstractMigration
 {
-    public function getDescription() : string
+    public function getDescription(): string
     {
         return '';
     }
 
-    public function up(Schema $schema) : void
+    public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('ALTER TABLE ticker_type CHANGE code code VARCHAR(20) NOT NULL');
         $this->addSql('CREATE INDEX ticker_type_un_code ON ticker_type (code)');
     }
 
-    public function down(Schema $schema) : void
+    public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql('DROP INDEX ticker_type_un_code ON ticker_type');

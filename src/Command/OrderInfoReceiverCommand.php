@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace App\Command;
 
-use App\Service\Message\OrderInfoReceiverService;
+use App\Service\Message\OrderInfoMessageService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -21,19 +21,19 @@ class OrderInfoReceiverCommand extends AbstractProcessCommand
     const COMMAND_NAME = 'stocks-api:api:order-info-receiver';
 
     /**
-     * @var OrderInfoReceiverService
+     * @var OrderInfoMessageService
      */
     private $orderInfoReceiverService;
 
     /**
      * OrderInfoReceiverCommand constructor.
      *
-     * @param LoggerInterface          $logger
-     * @param OrderInfoReceiverService $orderInfoReceiverService
+     * @param LoggerInterface         $logger
+     * @param OrderInfoMessageService $orderInfoReceiverService
      */
     public function __construct(
         LoggerInterface $logger,
-        OrderInfoReceiverService $orderInfoReceiverService
+        OrderInfoMessageService $orderInfoReceiverService
     ) {
         $this->orderInfoReceiverService = $orderInfoReceiverService;
         parent::__construct($logger);

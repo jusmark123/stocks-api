@@ -32,10 +32,47 @@ use Gedmo\Mapping\Annotation as Gedmo;
 class Order extends AbstractGuidEntity
 {
     /**
+     * @var float
+     * @ORM\Column(name="amount_usd", type="float")
+     */
+    private $amountUsd;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="avg_cost", type="float", nullable=false, options={"default"=0.00})
+     */
+    private $avgCost;
+
+    /**
      * @var string
      * @ORM\Column(name="broker_order_id", type="string", nullable=false)
      */
     private $brokerOrderId;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="fees", type="float", nullable=false, options={"default"=0.00})
+     */
+    private $fees;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="qty", type="integer", nullable=false, options={"default"=0})
+     */
+    private $filledQty;
+
+    /**
+     * @var Account
+     *
+     * @ORM\ManyToOne(targetEntity="Account", inversedBy="orders")
+     * @ORM\JoinColumns({
+     * 		@ORM\JoinColumn(name="account_id", referencedColumnName="id", nullable=false)
+     * })
+     */
+    private $account;
 
     /**
      * @var Brokerage
@@ -47,14 +84,22 @@ class Order extends AbstractGuidEntity
     private $brokerage;
 
     /**
-     * @var Account
-     *
-     * @ORM\ManyToOne(targetEntity="Account", inversedBy="orders")
+     * @var OrderStatusType
+     * @ORM\ManyToOne(targetEntity="OrderStatusType")
      * @ORM\JoinColumns({
-     * 		@ORM\JoinColumn(name="account_id", referencedColumnName="id", nullable=false)
+     * 		@ORM\JoinColumn(name="order_status_type_id", referencedColumnName="id")
      * })
      */
-    private $account;
+    private $orderStatusType;
+
+    /**
+     * @var OrderType
+     * @ORM\ManyToOne(targetEntity="OrderType")
+     * @ORM\JoinColumns({
+     * 		@ORM\JoinColumn(name="order_type_id", referencedColumnName="id")
+     * })
+     */
+    private $orderType;
 
     /**
      * @var Position
@@ -84,58 +129,6 @@ class Order extends AbstractGuidEntity
     private $user;
 
     /**
-     * @var float
-     * @ORM\Column(name="amount_usd", type="float")
-     */
-    private $amountUsd;
-
-    /**
-     * @var OrderType
-     * @ORM\ManyToOne(targetEntity="OrderType")
-     * @ORM\JoinColumns({
-     * 		@ORM\JoinColumn(name="order_type_id", referencedColumnName="id")
-     * })
-     */
-    private $orderType;
-
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="qty", type="integer", nullable=false, options={"default"=0})
-     */
-    private $filledQty;
-
-    /**
-     * @var float
-     *
-     * @ORM\Column(name="avg_cost", type="float", nullable=false, options={"default"=0.00})
-     */
-    private $avgCost;
-
-    /**
-     * @var float
-     *
-     * @ORM\Column(name="fees", type="float", nullable=false, options={"default"=0.00})
-     */
-    private $fees;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="side", type="string", length=5, nullable=false)
-     */
-    private $side;
-
-    /**
-     * @var OrderStatusType
-     * @ORM\ManyToOne(targetEntity="OrderStatusType")
-     * @ORM\JoinColumns({
-     * 		@ORM\JoinColumn(name="order_status_type_id", referencedColumnName="id")
-     * })
-     */
-    private $orderStatusType;
-
-    /**
      * @return int
      */
     public function getFilledQty(): int
@@ -156,7 +149,7 @@ class Order extends AbstractGuidEntity
     }
 
     /**
-     * @return float|null
+     * @return float
      */
     public function getAvgCost(): float
     {
@@ -168,7 +161,7 @@ class Order extends AbstractGuidEntity
      *
      * @return $this
      */
-    public function setAvgCost(float $avgCost = 0.00): Order
+    public function setAvgCost(float $avgCost): Order
     {
         $this->avgCost = $avgCost;
 
@@ -176,7 +169,7 @@ class Order extends AbstractGuidEntity
     }
 
     /**
-     * @return float|null
+     * @return float
      */
     public function getFees(): float
     {
@@ -188,7 +181,7 @@ class Order extends AbstractGuidEntity
      *
      * @return Order
      */
-    public function setFees(float $fees = 0.00): Order
+    public function setFees(float $fees): Order
     {
         $this->fees = $fees;
 

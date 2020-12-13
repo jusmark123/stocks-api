@@ -8,7 +8,9 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\PersistentCollection;
 use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
@@ -53,16 +55,9 @@ class Job extends AbstractGuidEntity
     private $description;
 
     /**
-     * @var mixed
-     *
-     * @ORM\Column(name="data", type="text", length=65535, nullable=false)
-     */
-    private $data;
-
-    /**
      * @var string
      *
-     * @ORM\Column(name="error_message", type="string", length=225, nullable=true)
+     * @ORM\Column(name="error_message", type="string", length=22, nullable=true)
      */
     private $errorMessage;
 
@@ -74,19 +69,19 @@ class Job extends AbstractGuidEntity
     private $errorTrace;
 
     /**
-     * @var Account
+     * @var Account|null
      * @ORM\ManyToOne(targetEntity="Account", inversedBy="jobs", fetch="LAZY")
      * @ORM\JoinColumns({
-     * 		@ORM\JoinColumn(name="account_id", referencedColumnName="id", nullable=false)
+     * 		@ORM\JoinColumn(name="account_id", referencedColumnName="id", nullable=true)
      * })
      */
     private $account;
 
     /**
-     * @var Source
+     * @var Source|null
      * @ORM\ManyToOne(targetEntity="Source", inversedBy="jobs", fetch="LAZY")
      * @ORM\JoinColumns({
-     * 		@ORM\JoinColumn(name="source_id", referencedColumnName="id", nullable=false)
+     * 		@ORM\JoinColumn(name="source_id", referencedColumnName="id", nullable=true)
      * })
      */
     private $source;
@@ -101,12 +96,20 @@ class Job extends AbstractGuidEntity
     private $user;
 
     /**
+     * @var ArrayCollection|JobDataItem[]|PersistentCollection
+     *
+     * @ORM\OneToMany(targetEntity="JobDataItem", mappedBy="job", fetch="LAZY", cascade={"persist","remove"})
+     */
+    private $jobData;
+
+    /**
      * Job constructor.
      *
      * @throws \Exception
      */
     public function __construct()
     {
+        $this->jobData = new ArrayCollection();
         parent::__construct();
     }
 
@@ -139,33 +142,13 @@ class Job extends AbstractGuidEntity
     }
 
     /**
-     * @param string $description
+     * @param string|null $description
      *
      * @return Job
      */
     public function setDescription(string $description = null): Job
     {
         $this->description = $description;
-
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getData()
-    {
-        return unserialize($this->data);
-    }
-
-    /**
-     * @param mixed $data
-     *
-     * @return Job
-     */
-    public function setData($data): Job
-    {
-        $this->data = serialize($data);
 
         return $this;
     }
@@ -231,9 +214,9 @@ class Job extends AbstractGuidEntity
     }
 
     /**
-     * @return Source
+     * @return Source|null
      */
-    public function getSource(): Source
+    public function getSource(): ?Source
     {
         return $this->source;
     }
@@ -243,7 +226,7 @@ class Job extends AbstractGuidEntity
      *
      * @return Job
      */
-    public function setSource(Source $source): Job
+    public function setSource(?Source $source = null): Job
     {
         $this->source = $source;
 
@@ -251,19 +234,19 @@ class Job extends AbstractGuidEntity
     }
 
     /**
-     * @return Account $account
+     * @return Account|null
      */
-    public function getAccount(): Account
+    public function getAccount(): ?Account
     {
         return $this->account;
     }
 
     /**
-     * @param Account $account
+     * @param Account|null $account
      *
-     * @return Job
+     * @return $this
      */
-    public function setAccount(Account $account): Job
+    public function setAccount(?Account $account = null): Job
     {
         $this->account = $account;
 
@@ -286,6 +269,50 @@ class Job extends AbstractGuidEntity
     public function setUser(User $user): Job
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * @param JobDataItem $jobDataItem
+     *
+     * @return $this
+     */
+    public function addJobData(JobDataItem $jobDataItem)
+    {
+        $this->jobData->add($jobDataItem);
+
+        return $this;
+    }
+
+    /**
+     * @param JobDataItem $jobDataItem
+     *
+     * @return $this
+     */
+    public function removeJobData(JobDataItem $jobDataItem): Job
+    {
+        $this->jobData->removeElement($jobDataItem);
+
+        return $this;
+    }
+
+    /**
+     * @return JobDataItem[]|ArrayCollection|PersistentCollection
+     */
+    public function getJobData()
+    {
+        return $this->jobData;
+    }
+
+    /**
+     * @param JobDataItem[]|ArrayCollection|PersistentCollection $jobDataItems
+     *
+     * @return Job
+     */
+    public function setJobData($jobDataItems): Job
+    {
+        $this->jobData = $jobDataItems;
 
         return $this;
     }

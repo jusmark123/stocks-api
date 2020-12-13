@@ -5,6 +5,7 @@ resources:
         groups: [ 'ticker.get' ]
       denormalization_context:
         groups: [ 'ticker.post' ]
+      order: {modifiedAt: DESC, id: DESC}
 
     collectionOperations:
       get:

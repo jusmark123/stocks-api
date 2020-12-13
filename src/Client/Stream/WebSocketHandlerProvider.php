@@ -67,7 +67,7 @@ class WebSocketHandlerProvider implements StreamHandlerProvider, LoggerAwareInte
     public function __construct(
         ClientFactory $clientFactory,
         CredentialHandler $credentialHandler,
-        EventDispatcher $dispatcher,
+        EventDispatcherInterface $dispatcher,
         HandlerFactory $handlerFactory,
         LoggerInterface $logger,
         MessageFactory $messageFactory,

@@ -15,30 +15,12 @@ use App\Event\OrderInfo\OrderInfoProcessFailedEvent;
 use App\Event\OrderInfo\OrderInfoPublishFailedEvent;
 use App\Event\OrderInfo\OrderInfoReceiveFailedEvent;
 use App\EventSubscriber\AbstractMessageEventSubscriber;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * Class OrderInfoFailedEventSubscriber.
  */
 class OrderInfoFailedEventSubscriber extends AbstractMessageEventSubscriber
 {
-    /**
-     * OrderInfoFailedEventSubscriber constructor.
-     *
-     * @param EventDispatcherInterface $dispatcher
-     * @param LoggerInterface          $logger
-     * @param SerializerInterface      $serializer
-     */
-    public function __construct(
-        EventDispatcherInterface $dispatcher,
-        LoggerInterface $logger,
-        SerializerInterface $serializer
-    ) {
-        parent::__construct($dispatcher, $logger, $serializer);
-    }
-
     /**
      * @return \string[][][]
      */

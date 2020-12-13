@@ -8,10 +8,14 @@ declare(strict_types=1);
 
 namespace App\Event\Ticker;
 
+use App\Entity\Job;
 use App\Entity\Ticker;
-use App\Event\AbstractEvent;
+use App\Event\AbstractJobEvent;
 
-class TickerProcessedEvent extends AbstractEvent
+/**
+ * Class TickerProcessedEvent.
+ */
+class TickerProcessedEvent extends AbstractJobEvent
 {
     const EVENT_NAME = 'ticker.processed';
 
@@ -24,10 +28,12 @@ class TickerProcessedEvent extends AbstractEvent
      * TickerProcessedEvent constructor.
      *
      * @param Ticker $ticker
+     * @param Job    $job
      */
-    public function __construct(Ticker $ticker)
+    public function __construct(Ticker $ticker, Job $job)
     {
         $this->ticker = $ticker;
+        parent::__construct($job);
     }
 
     /**

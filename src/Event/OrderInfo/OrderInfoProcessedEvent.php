@@ -11,23 +11,20 @@ namespace App\Event\OrderInfo;
 use App\DTO\Brokerage\Interfaces\OrderInfoInterface;
 use App\Entity\Job;
 use App\Entity\Order;
-use App\Event\AbstractEvent;
+use App\Event\AbstractJobEvent;
 
 /**
  * Class OrderInfoProcessedEvent.
  */
-class OrderInfoProcessedEvent extends AbstractEvent
+class OrderInfoProcessedEvent extends AbstractJobEvent
 {
-    const EVENT_NAME = 'order-info.processed';
+    const EVENT_NAME = 'order-info.process';
 
     /** @var OrderInfoInterface */
     protected $orderInfo;
 
     /** @var Order */
     protected $order;
-
-    /** @var Job */
-    protected $job;
 
     /**
      * OrderInfoProcessedEvent constructor.
@@ -41,9 +38,9 @@ class OrderInfoProcessedEvent extends AbstractEvent
         Order $order,
         Job $job
     ) {
-        $this->job = $job;
         $this->order = $order;
         $this->orderInfo = $orderInfo;
+        parent::__construct($job);
     }
 
     /**
@@ -60,13 +57,5 @@ class OrderInfoProcessedEvent extends AbstractEvent
     public function getOrder(): Order
     {
         return $this->order;
-    }
-
-    /**
-     * @return Job
-     */
-    public function getJob(): Job
-    {
-        return $this->job;
     }
 }

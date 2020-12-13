@@ -13,6 +13,8 @@ use App\Event\Ticker\TickerPublishFailedEvent;
 use App\Event\Ticker\TickerReceivedEvent;
 use App\Event\Ticker\TickerReceiveFailedEvent;
 use App\EventSubscriber\AbstractMessageEventSubscriber;
+use App\MessageClient\ClientPublisher\ClientPublisher;
+use App\MessageClient\Protocol\MessageFactory;
 use App\Service\Entity\TickerEntityService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -32,18 +34,22 @@ class TickerProcessorEventSubscriber extends AbstractMessageEventSubscriber
      * TickerProcessorEventSubscriber constructor.
      *
      * @param EventDispatcherInterface $dispatcher
-     * @param SerializerInterface      $serializer
+     * @param MessageFactory           $messageFactory
      * @param LoggerInterface          $logger
+     * @param SerializerInterface      $serializer
      * @param TickerEntityService      $tickerService
+     * @param ClientPublisher          $publisher
      */
     public function __construct(
         EventDispatcherInterface $dispatcher,
-        SerializerInterface $serializer,
+        MessageFactory $messageFactory,
         LoggerInterface $logger,
-        TickerEntityService $tickerService
+        SerializerInterface $serializer,
+        TickerEntityService $tickerService,
+        ClientPublisher $publisher
     ) {
         $this->tickerService = $tickerService;
-        parent::__construct($dispatcher, $logger, $serializer);
+        parent::__construct($dispatcher, $logger, $messageFactory, $publisher, $serializer);
     }
 
     /**

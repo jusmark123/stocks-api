@@ -139,6 +139,7 @@ class BunnyListenerProvider implements ClientListenerProvider, LoggerAwareInterf
                     throw new QueueConfigurationException('queues cannot have the same name');
                 }
                 $this->listeners[$queueName] = [
+                    'exhangeName' => $listener->getExchangeName(),
                     'topicName' => $topicName,
                     'listener' => $listener,
                 ];
@@ -276,8 +277,9 @@ class BunnyListenerProvider implements ClientListenerProvider, LoggerAwareInterf
 
             /** @var ClientListener $listen */
             $listener = $listenerSetup['listener'];
+            $exchange = $listenerSetup['exchange'] ?? null;
 
-            $subscriptions[] = $this->declareTopicQueue($channel, $queueName, $topicName)->then(
+            $subscriptions[] = $this->declareTopicQueue($channel, $queueName, $topicName, $exchange)->then(
                 function () use ($channel, $queueName, $listener) {
                     return $channel->consume(
                         $this->consumeListener($listener),
@@ -306,17 +308,24 @@ class BunnyListenerProvider implements ClientListenerProvider, LoggerAwareInterf
     }
 
     /**
-     * @param Channel $channel
-     * @param string  $queueName
-     * @param string  $topicName
+     * @param Channel     $channel
+     * @param string      $queueName
+     * @param string      $topicName
+     * @param string|null $exchangeName
      *
      * @return Promise\PromiseInterface
      */
-    protected function declareTopicQueue(Channel $channel, string $queueName, string $topicName)
-    {
+    protected function declareTopicQueue(
+        Channel $channel,
+        string $queueName,
+        string $topicName,
+        ?string $exchangeName = null
+    ) {
+        $exchangeName = $exchangeName ?? 'amq.topic';
+
         return $channel->queueDeclare($queueName, false, true)->then(
-            function () use ($channel, $queueName, $topicName) {
-                return $channel->queueBind($queueName, $this->exchangeName, $topicName);
+            function () use ($channel, $queueName, $topicName, $exchangeName) {
+                return $channel->queueBind($queueName, $exchangeName, $topicName);
             }
         );
     }

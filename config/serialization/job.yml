@@ -9,7 +9,7 @@ App\Entity\Job:
     description:
       groups:
         - job.get
-    data:
+    jobData:
       groups:
         - job.get
     account:

@@ -77,7 +77,6 @@ resources:
               content:
                 application/json:
                   schema:
-                    type: array
                     items:
                       $ref: '#/definitions/Job-job.get'
             400:
@@ -96,8 +95,9 @@ resources:
               required: false
             - name: status
               in: query
-              required: false
+              required: true
               type: string
+              default: 'all'
             - name: limit
               in: query
               required: false

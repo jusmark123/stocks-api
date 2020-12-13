@@ -78,10 +78,9 @@ class JobFailedEventSubscriber extends AbstractMessageEventSubscriber
      */
     public function jobReceiveFailed(JobReceiveFailedEvent $event)
     {
-        $this->logger->error($event->getException()->getMessage(), [
-            'exception' => $event->getException(),
-            'job_message' => json_decode($this->serializer->serialize($event->getMessage(), self::ENTITY_LOG_FORMAT), true),
-        ]);
+        $job = $event->getJob();
+        $this->setJobErrorData($event, $job);
+        $this->createLogEntry($event, $job);
     }
 
     /**

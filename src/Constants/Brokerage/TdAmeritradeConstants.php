@@ -17,5 +17,6 @@ final class TdAmeritradeConstants
 
     const REQUEST_RETURN_DATA_TYPE = '';
 
-    const SERIALIZATION_CONFIG = '';
+    const ACCOUNT_INFO_SERIALIZATION_CONFIG = '/opt/app-root/src/config/serialization/td_ameritrade_account_info.yml';
+    const ORDER_INFO_SERIALIZATION_CONFIG = '/opt/app-root/src/config/serialization/td_ameritrade_order_info.yml';
 }

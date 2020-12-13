@@ -3,6 +3,7 @@ resources:
     atrributes:
       normalization_context:
         groups: ['alpaca_alpaca_account_info.get']
+      order: {modifiedAt: DESC, id: DESC}
 
     itemOperations: 
       get:

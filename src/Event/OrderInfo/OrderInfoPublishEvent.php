@@ -9,14 +9,15 @@ declare(strict_types=1);
 namespace App\Event\OrderInfo;
 
 use App\DTO\Brokerage\Interfaces\OrderInfoInterface;
-use App\Event\AbstractEvent;
+use App\Entity\Job;
+use App\Event\AbstractJobEvent;
 
 /**
  * Class OrderInfoPublishEvent.
  */
-class OrderInfoPublishEvent extends AbstractEvent
+class OrderInfoPublishEvent extends AbstractJobEvent
 {
-    const EVENT_NAME = 'order-info.published';
+    const EVENT_NAME = 'order-info.publish';
 
     /** @var array */
     private $orderInfoMessage;
@@ -32,10 +33,11 @@ class OrderInfoPublishEvent extends AbstractEvent
      * @param array                   $orderInfoMessage
      * @param OrderInfoInterface|null $orderInfo
      */
-    public function __construct(array $orderInfoMessage, ?OrderInfoInterface $orderInfo = null)
+    public function __construct(array $orderInfoMessage, Job $job, ?OrderInfoInterface $orderInfo = null)
     {
         $this->orderInfoMessage = $orderInfoMessage;
         $this->orderInfo = $orderInfo;
+        parent::__construct($job);
     }
 
     /**

@@ -9,16 +9,14 @@ declare(strict_types=1);
 namespace App\Event\OrderInfo;
 
 use App\Entity\Job;
-use App\Event\AbstractEvent;
+use App\Entity\JobDataItem;
+use App\Event\AbstractJobEvent;
 
-class OrderInfoReceivedEvent extends AbstractEvent
+class OrderInfoReceivedEvent extends AbstractJobEvent
 {
-    const EVENT_NAME = 'order-info.received';
+    const EVENT_NAME = 'order-info.receive';
 
-    /** @var Job */
-    private $job;
-
-    /** @var array */
+    /** @var JobDataItem */
     protected $orderInfoMessage;
 
     /**
@@ -29,8 +27,8 @@ class OrderInfoReceivedEvent extends AbstractEvent
      */
     public function __construct(array $orderInfoMessage, Job $job)
     {
-        $this->job = $job;
         $this->orderInfoMessage = $orderInfoMessage;
+        parent::__construct($job);
     }
 
     /**
@@ -39,13 +37,5 @@ class OrderInfoReceivedEvent extends AbstractEvent
     public function getOrderInfoMessage(): array
     {
         return $this->orderInfoMessage;
-    }
-
-    /**
-     * @return Job
-     */
-    public function getJob(): Job
-    {
-        return $this->job;
     }
 }

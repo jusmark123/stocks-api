@@ -10,11 +10,14 @@ namespace App\EventSubscriber\OrderInfo;
 
 use App\Constants\Transport\JobConstants;
 use App\Event\Job\JobCompleteEvent;
+use App\Event\Job\JobInitiatedEvent;
 use App\Event\OrderInfo\OrderInfoProcessedEvent;
 use App\Event\OrderInfo\OrderInfoProcessFailedEvent;
 use App\Event\OrderInfo\OrderInfoReceivedEvent;
 use App\EventSubscriber\AbstractMessageEventSubscriber;
-use App\Service\Message\OrderInfoProcessorService;
+use App\MessageClient\ClientPublisher\ClientPublisher;
+use App\MessageClient\Protocol\MessageFactory;
+use App\Service\Message\OrderInfoMessageService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -25,26 +28,30 @@ use Symfony\Component\Serializer\SerializerInterface;
 class OrderInfoProcessorEventSubscriber extends AbstractMessageEventSubscriber
 {
     /**
-     * @var OrderInfoProcessorService
+     * @var OrderInfoMessageService
      */
     protected $orderInfoProcessorService;
 
     /**
      * OrderInfoProcessorEventSubscriber constructor.
      *
-     * @param EventDispatcherInterface  $dispatcher
-     * @param SerializerInterface       $serializer
-     * @param LoggerInterface           $logger
-     * @param OrderInfoProcessorService $orderProcessorService
+     * @param EventDispatcherInterface $dispatcher
+     * @param MessageFactory           $messageFactory
+     * @param LoggerInterface          $logger
+     * @param OrderInfoMessageService  $orderProcessorService
+     * @param ClientPublisher          $publisher
+     * @param SerializerInterface      $serializer
      */
     public function __construct(
         EventDispatcherInterface $dispatcher,
-        SerializerInterface $serializer,
+        MessageFactory $messageFactory,
         LoggerInterface $logger,
-        OrderInfoProcessorService $orderProcessorService
+        OrderInfoMessageService $orderProcessorService,
+        ClientPublisher $publisher,
+        SerializerInterface $serializer
     ) {
         $this->orderInfoProcessorService = $orderProcessorService;
-        parent::__construct($dispatcher, $logger, $serializer);
+        parent::__construct($dispatcher, $logger, $messageFactory, $publisher, $serializer);
     }
 
     /**
@@ -74,6 +81,9 @@ class OrderInfoProcessorEventSubscriber extends AbstractMessageEventSubscriber
         try {
             $job = $event->getJob();
             $message = $event->getOrderInfoMessage();
+            if (JobConstants::JOB_INITIATED === $job->getStatus()) {
+                $this->dispatch(new JobInitiatedEvent($job));
+            }
             $this->logger->info(sprintf('OrderInfo Message Received: %s ', $message['id']));
         } catch (\Exception $e) {
             $this->dispatcher->dispatch(
@@ -96,11 +106,13 @@ class OrderInfoProcessorEventSubscriber extends AbstractMessageEventSubscriber
     public function processed(OrderInfoProcessedEvent $event)
     {
         $job = $event->getJob();
+        $jobData = $job->getData();
+        $orderInfo = $event->getOrderInfo();
+        $jobData[$orderInfo->getId()] = JobConstants::JOB_PROCESSED;
+        $job->setData($jobData);
+
         if (!\array_key_exists(JobConstants::JOB_PENDING, array_count_values($job->getData()))) {
-            $this->dispatcher->dispatch(
-                new JobCompleteEvent($job),
-                JobCompleteEvent::getEventName()
-            );
+            $this->dispatcher->dispatch(new JobCompleteEvent($job), JobCompleteEvent::getEventName());
         }
     }
 }

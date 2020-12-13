@@ -9,16 +9,11 @@ declare(strict_types=1);
 namespace App\Event\Job;
 
 use App\Entity\Job;
-use App\Event\AbstractEvent;
+use App\Event\AbstractJobEvent;
 
-class JobCancelledEvent extends AbstractEvent
+class JobCancelledEvent extends AbstractJobEvent
 {
     const EVENT_NAME = 'job.cancelled';
-
-    /**
-     * @var Job
-     */
-    protected $job;
 
     /**
      * JobCancelledEvent Constructor.
@@ -27,14 +22,6 @@ class JobCancelledEvent extends AbstractEvent
      */
     public function __construct(Job $job)
     {
-        $this->job = $job;
-    }
-
-    /**
-     * @return Job
-     */
-    public function getJob(): Job
-    {
-        return $this->job;
+        parent::__construct($job);
     }
 }

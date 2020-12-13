@@ -8,13 +8,24 @@ declare(strict_types=1);
 
 namespace App\DTO\Brokerage\Alpaca\Order;
 
-use App\DTO\Brokerage\Interfaces\OrderInfoInterface;
+use App\DTO\Brokerage\OrderInfoInterface;
 use App\Entity\Account;
 use App\Entity\Order;
+use App\Entity\Source;
+use App\Entity\Traits\CreatedAtTrait;
+use App\Entity\Traits\CreatedByTrait;
+use App\Entity\Traits\ModifiedAtTrait;
+use App\Entity\Traits\ModifiedByTrait;
+use App\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 
 class AlpacaOrderInfo implements OrderInfoInterface
 {
+    use CreatedByTrait;
+    use CreatedAtTrait;
+    use ModifiedAtTrait;
+    use ModifiedByTrait;
+
     /**
      * @var Account
      */
@@ -26,6 +37,16 @@ class AlpacaOrderInfo implements OrderInfoInterface
     private $order;
 
     /**
+     * @var User|null
+     */
+    private $user;
+
+    /**
+     * @var Source
+     */
+    private $source;
+
+    /**
      * @var string
      */
     private $id;
@@ -34,11 +55,6 @@ class AlpacaOrderInfo implements OrderInfoInterface
      * @var string
      */
     private $clientOrderId;
-
-    /**
-     * @var \DateTime
-     */
-    private $createdAt;
 
     /**
      * @var \DateTime|null
@@ -233,6 +249,46 @@ class AlpacaOrderInfo implements OrderInfoInterface
     }
 
     /**
+     * @return Source
+     */
+    public function getSource(): Source
+    {
+        return $this->source;
+    }
+
+    /**
+     * @param Source $source
+     *
+     * @return AlpacaOrderInfo
+     */
+    public function setSource(Source $source): AlpacaOrderInfo
+    {
+        $this->source = $source;
+
+        return $this;
+    }
+
+    /**
+     * @return User|null
+     */
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    /**
+     * @param User|null $user
+     *
+     * @return AlpacaOrderInfo
+     */
+    public function setUser(?User $user): AlpacaOrderInfo
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
      * @return string
      */
     public function getId(): string
@@ -273,31 +329,9 @@ class AlpacaOrderInfo implements OrderInfoInterface
     }
 
     /**
-     * @return \DateTime
-     */
-    public function getCreatedAt(): \DateTime
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * @param string $createdAt
-     *
-     * @throws \Exception
-     *
-     * @return $this
-     */
-    public function setCreatedAt(string $createdAt): AlpacaOrderInfo
-    {
-        $this->createdAt = new \DateTime($createdAt);
-
-        return $this;
-    }
-
-    /**
      * @return \DateTime|null
      */
-    public function getUpdatedAtt(): ?\DateTime
+    public function getUpdatedAt(): ?\DateTime
     {
         return $this->updatedAt;
     }
@@ -389,7 +423,7 @@ class AlpacaOrderInfo implements OrderInfoInterface
      */
     public function setCancelledAt(\DateTime $cancelledAt = null): AlpacaOrderInfo
     {
-        $this->cancelledAt = $canclledAt;
+        $this->cancelledAt = $cancelledAt;
 
         return $this;
     }
@@ -569,7 +603,7 @@ class AlpacaOrderInfo implements OrderInfoInterface
      */
     public function setFilledQty(string $filledQty = '0'): AlpacaOrderInfo
     {
-        $this->filledQty = $filledQty;
+        $this->filledQty = (int) $filledQty;
 
         return $this;
     }

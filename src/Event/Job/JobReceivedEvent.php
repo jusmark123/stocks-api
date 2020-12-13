@@ -16,12 +16,12 @@ use App\Event\AbstractEvent;
  */
 class JobReceivedEvent extends AbstractEvent
 {
-    const EVENT_NAME = 'job.recieved';
+    const EVENT_NAME = 'job.receive';
 
     /**
      * @var Job
      */
-    protected $job;
+    private $job;
 
     /**
      * JobReceivedEvent constructor.
@@ -36,7 +36,7 @@ class JobReceivedEvent extends AbstractEvent
     /**
      * @return Job
      */
-    public function getJob(): Job
+    public function getJob()
     {
         return $this->job;
     }

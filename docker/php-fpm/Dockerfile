@@ -1,4 +1,4 @@
-FROM alpine:3.10
+FROM alpine:3.11
 
 LABEL maintainer="Vincent Composieux <vincent.composieux@gmail.com>"
 
@@ -65,3 +65,6 @@ CMD ["php-fpm7", "-F"]
 WORKDIR /opt/app-root/src
 EXPOSE 9000
 EXPOSE 9001
+EXPOSE 9090
+
+RUN php -v

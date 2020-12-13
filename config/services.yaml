@@ -81,12 +81,19 @@ services:
     _instanceof:
         App\Service\Brokerage\BrokerageServiceInterface:
             tags: [ 'stocks_api.brokerage_services_provider' ]
+        App\JobHandler\JobHandlerInterface:
+            tags: [ 'stocks_api.job_handler_provider' ]
 
     ####### Commands ##########
 
 
-
     ####### Controller ########
+
+    ####### JobHandlers #######
+
+    App\JobHandler\JobHandlerProvider:
+        arguments:
+            $jobHandlers: !tagged stocks_api.job_handler_provider
 
     # controllers are imported separately to make sure services can be injected
     # as action arguments even if you don't extend any base controller class
@@ -106,34 +113,38 @@ services:
         tags:
             - { name: doctrine.orm.entity_listener, lazy: true }
 
-    ###### Entity Managers #######
+    ###### Entity Managers ######
 
     App\Entity\Manager\:
         resource: '../src/Entity/Manager/*'
 
-    App\Entity\Factory\:
-        resource: '../src/Entity/Factory/*'
-
+    ###### Event Subscribers #####
 
     App\EventSubscriber\:
         resource: '../src/EventSubscriber/*'
         tags:
             - { name: kernel.event_subscriber }
 
-    App\Service\AccountService:
+    ###### Services ######
+
+    App\Service\Brokerage\BrokerageServiceProvider:
         arguments:
             $brokerageServices: !tagged stocks_api.brokerage_services_provider
 
-    App\Service\OrderService:
-        arguments:
-            $brokerageServices: !tagged stocks_api.brokerage_services_provider
+    ###### DataProviders ######
 
-    App\DataProvider\:
-        resource: '../src/DataProvider/*'
 
-    App\DataProvider\Account\AccountSyncOrdersDataProvider:
-        arguments:
-            $entityManager: '@doctrine.orm.entity_manager'
+    ###### DataPersisters ######
+
+
+    ###### Swagger Decorator ######
+
+    App\Swagger\SwaggerDecorator:
+        decorates: 'api_platform.swagger.normalizer.api_gateway'
+        arguments: [ '@App\Swagger\SwaggerDecorator.inner' ]
+        autoconfigure: false
+
+    ###### Message Client #######
 
     GuzzleHttp\ClientInterface:
         alias: guzzle.client
@@ -141,12 +152,6 @@ services:
     guzzle.client:
         class: GuzzleHttp\Client
 
-    App\Swagger\SwaggerDecorator:
-        decorates: 'api_platform.swagger.normalizer.api_gateway'
-        arguments: [ '@App\Swagger\SwaggerDecorator.inner' ]
-        autoconfigure: false
-
-    ####### Message Client ##########
     React\EventLoop\LoopInterface:
         public: true
         factory: React\EventLoop\Factory::create

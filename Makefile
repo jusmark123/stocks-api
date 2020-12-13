@@ -7,7 +7,6 @@ local: .env
 .PHONY:local
 
 build-cache:
-	rm -rf var/cache/*
 	bin/console cache:warmup --no-debug --no-interaction
 PHONY: build-cache
 
@@ -57,6 +56,12 @@ clean: clean-cs clear-cache
 	rm -f composer.lock
 	rm -f symfony.lock
 .PHONY: clean
+
+clean-composer:
+	rm -rf vendor/
+	rm -rf ~/.composer/cache
+	rm -rf composer.lock symfony.lock
+.PHONY: clean-composer
 
 clean-cs:
 	rm -f .php_cs.cache

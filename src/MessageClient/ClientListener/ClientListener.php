@@ -24,6 +24,11 @@ interface ClientListener
     public function getSubscribedTopics();
 
     /**
+     * @return mixed
+     */
+    public function getExchangeName();
+
+    /**
      * @param Packet  $packet
      * @param Channel $channel
      *

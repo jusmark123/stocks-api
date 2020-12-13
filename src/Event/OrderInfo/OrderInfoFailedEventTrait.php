@@ -9,16 +9,10 @@ declare(strict_types=1);
 namespace App\Event\OrderInfo;
 
 use App\DTO\Brokerage\Interfaces\OrderInfoInterface;
-use App\Entity\Job;
 use App\Entity\Order;
 
 trait OrderInfoFailedEventTrait
 {
-    /**
-     * @var Job
-     */
-    private $job;
-
     /**
      * @var Order|null
      */
@@ -33,14 +27,6 @@ trait OrderInfoFailedEventTrait
      * @var array|null
      */
     private $orderInfoMessage;
-
-    /**
-     * @return Job
-     */
-    public function getJob(): Job
-    {
-        return $this->job;
-    }
 
     /**
      * @return Order|null

@@ -20,11 +20,8 @@ use Gedmo\Mapping\Annotation as Gedmo;
  * 		name="position",
  * 		uniqueConstraints={
  * 			@ORM\UniqueConstraint(name="position_un_guid", columns={"guid"}),
- * 			@ORM\UniqueConstraint(name="position_un_symbol_account_id", columns={"symbol", "account_id"}),
  * 		},
- * 		indexes={
- * 			@ORM\Index(name="position_ix_symbol", columns={"symbol"})
- * 		}
+ * 		indexes={}
  * )
  * @ORM\Entity(repositoryClass="App\Entity\Repository\PositionRepository")
  * @ORM\HasLifecycleCallbacks()
@@ -33,10 +30,29 @@ use Gedmo\Mapping\Annotation as Gedmo;
 class Position extends AbstractGuidEntity
 {
     /**
-     * @var string
-     * @ORM\Column(name="symbol", type="string", length=20, nullable=false)
+     * @var float
+     *
+     * @ORM\Column(name="change_today", type="float", nullable=false, options={"default": 0.00})
      */
-    private $symbol;
+    private $changeToday;
+
+    /**
+     * @var float
+     * @ORM\Column(name="cost_basis", type="float", nullable=false, options={"default": 0.00})
+     */
+    private $costBasis;
+
+    /**
+     * @var string
+     * @ORM\Column(name="exchange", type="string", nullable=false)
+     */
+    private $exchange;
+
+    /**
+     * @var float
+     * @ORM\Column(name="market_value", type="float", nullable=false, options={"default": 0.00})
+     */
+    private $marketValue;
 
     /**
      * @var int
@@ -54,10 +70,11 @@ class Position extends AbstractGuidEntity
     private $account;
 
     /**
-     * @var string
-     * @ORM\Column(name="exchange", type="string", nullable=false)
+     * @var ArrayCollection|Order[]|PersistentCollection
+     *
+     * @ORM\OneToMany(targetEntity="Order", mappedBy="position", fetch="LAZY")
      */
-    private $exchange;
+    private $orders;
 
     /**
      * @var PositionSideType
@@ -69,29 +86,24 @@ class Position extends AbstractGuidEntity
     private $positionSideType;
 
     /**
-     * @var float
-     * @ORM\Column(name="market_value", type="float", nullable=false, options={"default": 0.00})
-     */
-    private $marketValue;
-
-    /**
-     * @var float
+     * @var Source
      *
-     * @ORM\Column(name="change_today", type="float", nullable=false, options={"default": 0.00})
+     * @ORM\ManyToOne(targetEntity="Source", inversedBy="positions", fetch="LAZY")
+     * @ORM\JoinColumns({
+     * 		@ORM\JoinColumn(name="source_id", referencedColumnName="id", nullable=false)
+     * })
      */
-    private $changeToday;
+    private $source;
 
     /**
-     * @var float
-     * @ORM\Column(name="cost_basis", type="float", nullable=false, options={"default": 0.00})
+     * @var Ticker
+     *
+     * @ORM\ManyToOne(targetEntity="Ticker", fetch="LAZY")
+     * @ORM\JoinColumns({
+     *      @ORM\JoinColumn(name="ticker_id", referencedColumnName="id", nullable=false)
+     * })
      */
-    private $costBasis;
-
-    /**
-     * @var ArrayColections|Order[]|PersistentCollection
-     * @ORM\OneToMany(targetEntity="Order", mappedBy="position", fetch="LAZY")
-     * */
-    private $orders;
+    private $ticker;
 
     /**
      * Position constructor.
@@ -104,35 +116,39 @@ class Position extends AbstractGuidEntity
         $this->orders = new ArrayCollection();
     }
 
-    public function getSymbol(): string
-    {
-        return $this->symbol;
-    }
-
-    public function setSymbol(string $symbol): Position
-    {
-        $this->symbol = $symbol;
-
-        return $this;
-    }
-
+    /**
+     * @return int
+     */
     public function getQty(): int
     {
         return $this->qty;
     }
 
+    /**
+     * @param int $qty
+     *
+     * @return $this
+     */
     public function setQty(int $qty): Position
     {
-        $this->symbol = $symbol;
+        $this->qty = $qty;
 
         return $this;
     }
 
+    /**
+     * @return Account
+     */
     public function getAccount(): Account
     {
         return $this->account;
     }
 
+    /**
+     * @param Account $account
+     *
+     * @return $this
+     */
     public function setAccount(Account $account): Position
     {
         $this->account = $account;
@@ -140,11 +156,19 @@ class Position extends AbstractGuidEntity
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getExchange(): string
     {
         return $this->exchange;
     }
 
+    /**
+     * @param string $exchange
+     *
+     * @return $this
+     */
     public function setExchange(string $exchange): Position
     {
         $this->exchange = $exchange;
@@ -152,11 +176,19 @@ class Position extends AbstractGuidEntity
         return $this;
     }
 
+    /**
+     * @return PositionSideType
+     */
     public function getPositionSideType(): PositionSideType
     {
         return $this->positionSideType;
     }
 
+    /**
+     * @param PositionSideType $positionSideType
+     *
+     * @return $this
+     */
     public function setPositionSideType(PositionSideType $positionSideType): Position
     {
         $this->positionSideType = $positionSideType;
@@ -164,11 +196,19 @@ class Position extends AbstractGuidEntity
         return $this;
     }
 
+    /**
+     * @return float
+     */
     public function getMarketValue(): float
     {
         return $this->marketValue;
     }
 
+    /**
+     * @param float $marketValue
+     *
+     * @return $this
+     */
     public function setMarketValue(float $marketValue): Position
     {
         $this->marketValue = $marketValue;
@@ -176,11 +216,19 @@ class Position extends AbstractGuidEntity
         return $this;
     }
 
+    /**
+     * @return float
+     */
     public function getChangeToday(): float
     {
-        return $this->changeToday();
+        return $this->changeToday;
     }
 
+    /**
+     * @param float $changeToday
+     *
+     * @return $this
+     */
     public function setChangeToday(float $changeToday): Position
     {
         $this->changeToday = $changeToday;
@@ -188,14 +236,82 @@ class Position extends AbstractGuidEntity
         return $this;
     }
 
+    /**
+     * @return float
+     */
     public function getCostBasis(): float
     {
         return $this->costBasis;
     }
 
+    /**
+     * @param float $costBasis
+     *
+     * @return $this
+     */
     public function setCostBasis(float $costBasis): Position
     {
         $this->costBasis = $costBasis;
+
+        return $this;
+    }
+
+    /**
+     * @return Order[]|ArrayCollection|PersistentCollection
+     */
+    public function getOrders()
+    {
+        return $this->orders;
+    }
+
+    /**
+     * @param Order[]|ArrayCollection|PersistentCollection $orders
+     *
+     * @return Position
+     */
+    public function setOrders($orders)
+    {
+        $this->orders = $orders;
+
+        return $this;
+    }
+
+    /**
+     * @return Source
+     */
+    public function getSource(): Source
+    {
+        return $this->source;
+    }
+
+    /**
+     * @param Source $source
+     *
+     * @return Position
+     */
+    public function setSource(Source $source): Position
+    {
+        $this->source = $source;
+
+        return $this;
+    }
+
+    /**
+     * @return Ticker
+     */
+    public function getTicker(): Ticker
+    {
+        return $this->ticker;
+    }
+
+    /**
+     * @param Ticker $ticker
+     *
+     * @return Position
+     */
+    public function setTicker(Ticker $ticker): Position
+    {
+        $this->ticker = $ticker;
 
         return $this;
     }

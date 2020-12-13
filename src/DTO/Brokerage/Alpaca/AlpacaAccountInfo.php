@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace App\DTO\Brokerage\Alpaca;
 
-use App\DTO\Brokerage\Interfaces\AccountInfoInterface;
+use App\DTO\Brokerage\AccountInfoInterface;
 use App\Entity\Account;
 
 class AlpacaAccountInfo implements AccountInfoInterface
@@ -44,7 +44,7 @@ class AlpacaAccountInfo implements AccountInfoInterface
     private $createdAt;
 
     /**
-     * @var float
+     * @var string
      */
     private $currency;
 
@@ -271,9 +271,9 @@ class AlpacaAccountInfo implements AccountInfoInterface
     }
 
     /**
-     * @return float
+     * @return string
      */
-    public function getCurrency(): float
+    public function getCurrency(): string
     {
         return $this->currency;
     }
@@ -285,7 +285,7 @@ class AlpacaAccountInfo implements AccountInfoInterface
      */
     public function setCurrency(string $currency): AlpacaAccountInfo
     {
-        $this->currency = (float) $currency;
+        $this->currency = $currency;
 
         return $this;
     }

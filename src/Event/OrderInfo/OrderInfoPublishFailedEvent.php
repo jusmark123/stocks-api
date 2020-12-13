@@ -10,12 +10,12 @@ namespace App\Event\OrderInfo;
 
 use App\DTO\Brokerage\Interfaces\OrderInfoInterface;
 use App\Entity\Job;
-use App\Event\AbstractFailedEvent;
+use App\Event\AbstractJobFailedEvent;
 
 /**
  * Class OrderInfoPublishFailedEvent.
  */
-class OrderInfoPublishFailedEvent extends AbstractFailedEvent implements OrderInfoFailedEventInterface
+class OrderInfoPublishFailedEvent extends AbstractJobFailedEvent implements OrderInfoFailedEventInterface
 {
     use OrderInfoFailedEventTrait;
 
@@ -35,9 +35,8 @@ class OrderInfoPublishFailedEvent extends AbstractFailedEvent implements OrderIn
         Job $job,
         ?OrderInfoInterface $orderInfo = null
     ) {
-        $this->job = $job;
         $this->orderInfoMessage = $orderInfoMessage;
         $this->orderInfo = $orderInfo;
-        parent::__construct($exception);
+        parent::__construct($job, $exception);
     }
 }

@@ -8,8 +8,8 @@ declare(strict_types=1);
 
 namespace App\Service\Brokerage;
 
-use App\DTO\Brokerage\Interfaces\AccountInfoInterface;
-use App\DTO\Brokerage\Interfaces\OrderInfoInterface;
+use App\DTO\Brokerage\AccountInfoInterface;
+use App\DTO\Brokerage\OrderInfoInterface;
 use App\Entity\Account;
 use App\Entity\Brokerage;
 use App\Entity\Order;
@@ -34,6 +34,14 @@ interface BrokerageServiceInterface
     public function getAccountInfo(Account $account): ?AccountInfoInterface;
 
     /**
+     * @param Account $account
+     * @param array   $filters
+     *
+     * @return array
+     */
+    public function getOrderHistory(Account $account, array $filters): array;
+
+    /**
      * @param OrderInfoInterface $orderInfo
      *
      * @return Order
@@ -41,8 +49,7 @@ interface BrokerageServiceInterface
     public function createOrderFromOrderInfo(OrderInfoInterface $orderInfo): ?Order;
 
     /**
-     * @param Account $account
-     * @param array   $orderInfoMessage
+     * @param array $orderInfoMessage
      *
      * @return OrderInfoInterface|null
      */

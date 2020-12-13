@@ -11,13 +11,16 @@ namespace App\Event\OrderInfo;
 use App\DTO\Brokerage\Interfaces\OrderInfoInterface;
 use App\Entity\Job;
 use App\Entity\Order;
-use App\Event\AbstractFailedEvent;
+use App\Event\AbstractJobFailedEvent;
 
-class OrderInfoProcessFailedEvent extends AbstractFailedEvent implements OrderInfoFailedEventInterface
+/**
+ * Class OrderInfoProcessFailedEvent.
+ */
+class OrderInfoProcessFailedEvent extends AbstractJobFailedEvent implements OrderInfoFailedEventInterface
 {
     use OrderInfoFailedEventTrait;
 
-    const EVENT_NAME = 'order-info.';
+    const EVENT_NAME = 'order-info.process';
 
     /**
      * OrderInfoProcessFailedEvent constructor.
@@ -35,10 +38,9 @@ class OrderInfoProcessFailedEvent extends AbstractFailedEvent implements OrderIn
         ?Order $order = null,
         ?OrderInfoInterface $orderInfo = null
     ) {
-        $this->job = $job;
         $this->order = $order;
         $this->orderInfo = $orderInfo;
         $this->orderInfoMessage = $orderInfoMessage;
-        parent::__construct($exception);
+        parent::__construct($job, $exception);
     }
 }

@@ -11,7 +11,6 @@ namespace App\Service\Brokerage;
 use App\Client\BrokerageClient;
 use App\Client\BrokerageClientInterface;
 use App\Constants\Brokerage\TdAmeritradeConstants;
-use App\DTO\Brokerage\Interfaces\AccountInfoInterface;
 use App\DTO\Brokerage\Interfaces\OrderInfoInterface;
 use App\Entity\Account;
 use App\Entity\Brokerage;
@@ -22,8 +21,10 @@ use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
 use Symfony\Component\Serializer\Mapping\Loader\YamlFileLoader;
-use Symfony\Component\Serializer\Serializer;
 
+/**
+ * Class TdAmeritradeBrokerageService.
+ */
 class TdAmeritradeBrokerageService extends AbstractBrokerageService
 {
     const BROKERAGE_CONSTANTS = TdAmeritradeConstants::class;
@@ -34,19 +35,19 @@ class TdAmeritradeBrokerageService extends AbstractBrokerageService
     private $brokerageClient;
 
     /**
-     * @var Serializer
+     * TdAmeritradeBrokerageService constructor.
+     *
+     * @param BrokerageClient  $brokerageClient
+     * @param LoggerInterface  $logger
+     * @param ValidationHelper $validator
      */
-    private $serializer;
-
     public function __construct(
         BrokerageClient $brokerageClient,
         LoggerInterface $logger,
         ValidationHelper $validator
     ) {
-        $classMetaDataFactory = new ClassMetadataFactory(new YamlFileLoader(TdAmeritradeConstants::SERIALIZATION_CONFIG));
         $this->brokerageClient = $brokerageClient;
-        $this->serializer = SerializerHelper::CamelCaseToSnakeCaseNormalizer($classMetaDataFactory);
-        parent::__construct($validator, $logger);
+        parent::__construct($logger, $validator);
     }
 
     /**
@@ -60,11 +61,11 @@ class TdAmeritradeBrokerageService extends AbstractBrokerageService
     }
 
     /**
-     * @param OrderInfoInterface $orderInfo
+     * @param \App\DTO\Brokerage\OrderInfoInterface $orderInfo
      *
-     * @return Order
+     * @return Order|null
      */
-    public function createOrderFromOrderInfo(OrderInfoInterface $orderInfo): Order
+    public function createOrderFromOrderInfo(\App\DTO\Brokerage\OrderInfoInterface $orderInfo): ?Order
     {
         // TODO: Implement createOrderFromOrderInfo() method.
     }
@@ -72,9 +73,9 @@ class TdAmeritradeBrokerageService extends AbstractBrokerageService
     /**
      * @param array $orderInfoMessage
      *
-     * @return OrderInfoInterface|null
+     * @return \App\DTO\Brokerage\OrderInfoInterface|null
      */
-    public function createOrderInfoFromMessage(array $orderInfoMessage): ?OrderInfoInterface
+    public function createOrderInfoFromMessage(array $orderInfoMessage): ?\App\DTO\Brokerage\OrderInfoInterface
     {
         // TODO: Implement createOrderInfoFromMessage() method.
     }
@@ -84,10 +85,13 @@ class TdAmeritradeBrokerageService extends AbstractBrokerageService
      *
      * @throws ClientExceptionInterface
      *
-     * @return AccountInfoInterface
+     * @return \App\DTO\Brokerage\AccountInfoInterface|null
      */
-    public function getAccountInfo(Account $account): ?AccountInfoInterface
+    public function getAccountInfo(Account $account): ?\App\DTO\Brokerage\AccountInfoInterface
     {
+        $classMetaDataFactory = new ClassMetadataFactory(
+            new YamlFileLoader(TdAmeritradeConstants::ORDER_INFO_SERIALIZATION_CONFIG));
+        $serializer = SerializerHelper::CamelCaseToSnakeCaseNormalizer($classMetaDataFactory);
         $request = $this->brokerageClient->createRequest(
             $this->getUri(TdAmeritradeConstants::ACCOUNT_ENDPOINT, $account),
             'GET',
@@ -96,11 +100,22 @@ class TdAmeritradeBrokerageService extends AbstractBrokerageService
 
         $response = $this->brokerageClient->sendRequest($request);
 
-        return $this->serializer->deserialize(
+        return $serializer->deserialize(
             (string) $response->getBody(),
             TdAmeritradeConstants::ACCOUNT_INFO_ENTITY_CLASS,
             TdAmeritradeConstants::REQUEST_RETURN_DATA_TYPE
         );
+    }
+
+    /**
+     * @param Account $account
+     * @param array   $filters
+     *
+     * @return array
+     */
+    public function getOrderHistory(Account $account, array $filters): array
+    {
+        // TODO: Implement getOrderHistory() method.
     }
 
     /**
