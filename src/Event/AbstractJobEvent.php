@@ -9,27 +9,24 @@ declare(strict_types=1);
 namespace App\Event;
 
 use App\Entity\Job;
+use App\Entity\JobItem;
+use App\Event\Job\JobEventTrait;
 
 /**
  * Class AbstractJobEvent.
  */
 class AbstractJobEvent extends AbstractEvent
 {
-    /**
-     * @var Job
-     */
-    protected $job;
+    use JobEventTrait;
 
-    public function __construct(Job $job)
+    /**
+     * AbstractJobEvent constructor.
+     *
+     * @param JobItem $jobItem
+     */
+    public function __construct(Job $job, ?JobItem $jobItem = null)
     {
         $this->job = $job;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getJob()
-    {
-        return $this->job;
+        $this->jobItem = $jobItem;
     }
 }

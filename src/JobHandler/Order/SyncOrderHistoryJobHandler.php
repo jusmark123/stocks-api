@@ -11,19 +11,17 @@ namespace App\JobHandler\Order;
 use App\Constants\Transport\JobConstants;
 use App\Constants\Transport\Queue;
 use App\Entity\Job;
-use App\Entity\JobDataItem;
+use App\Entity\JobItem;
+use App\Event\Job\JobInitiatedEvent;
+use App\Event\Job\JobInitiateFailedEvent;
 use App\Event\OrderInfo\OrderInfoProcessedEvent;
+use App\Event\OrderInfo\OrderInfoProcessFailedEvent;
 use App\Exception\EmptyJobDataException;
-use App\Exception\EmptyOrderHistoryException;
 use App\JobHandler\AbstractJobHandler;
 use App\MessageClient\ClientPublisher\ClientPublisher;
-use App\MessageClient\Exception\InvalidMessage;
-use App\MessageClient\Exception\PublishException;
 use App\MessageClient\Protocol\MessageFactory;
 use App\Service\JobService;
 use App\Service\OrderService;
-use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -80,48 +78,58 @@ class SyncOrderHistoryJobHandler extends AbstractJobHandler
     /**
      * @param Job $job
      *
-     * @throws EmptyOrderHistoryException
-     * @throws InvalidMessage
-     * @throws PublishException
+     * @throws EmptyJobDataException
      *
-     * @return bool|mixed|void
+     * @return mixed|void
      */
     public function prepare(Job $job)
     {
-        $jobData = $job->getJobData();
-
-        if (null === $jobData || empty($jobData)) {
-            throw new EmptyJobDataException();
+        try {
+            $this->orderService->getOrderHistory($job->getAccount(), $job->getConfig(), $job);
+        } catch (\Exception $e) {
+            $this->dispatcher->dispatch(new JobInitiateFailedEvent($e, $job));
+            throw $e;
         }
-
-        foreach ($jobData as $jobDataItem) {
-            $packet = $this->messageFactory->createPacket(
-                Queue::ORDER_INFO_PERSISTENT_ROUTING_KEY,
-                serialize($jobDataItem),
-                self::HEADERS
-            );
-            $this->publisher->publish($packet);
-        }
+        $this->dispatcher->dispatch(new JobInitiatedEvent($job));
     }
 
     /**
-     * @param JobDataItem $jobData
-     * @param Job         $job
-     *
-     * @throws ORMException
-     * @throws OptimisticLockException
+     * @param JobItem $jobItem
+     * @param Job     $job
      *
      * @return bool|void
      */
-    public function execute(JobDataItem $jobData, Job $job)
+    public function execute(JobItem $jobItem, Job $job): bool
     {
-        $account = $job->getAccount();
-        $orderInfo = $this->orderService->createOrderInfoFromMessage($account, $jobData->getData())
-            ->setSource($job->getSource());
-        $order = $this->orderService->createOrderFromOrderInfo($account, $orderInfo);
-        $this->dispatcher->dispatch(
-            new OrderInfoProcessedEvent($orderInfo, $order, $job),
-            OrderInfoProcessedEvent::getEventName()
-        );
+        $order = null;
+        $orderInfo = null;
+        try {
+            $this->jobItemProcessing($jobItem);
+
+            $orderInfo = $this->orderService->createOrderInfoFromMessage($job->getAccount(), $jobItem->getData())
+                ->setSource($job->getSource())
+                ->setAccount($job->getAccount());
+
+            $order = $this->orderService->createOrderFromOrderInfo($job->getAccount(), $orderInfo);
+
+            $this->dispatcher->dispatch(
+                new OrderInfoProcessedEvent($job, $jobItem, $orderInfo, $order),
+                OrderInfoProcessedEvent::getEventName()
+            );
+        } catch (\Exception $e) {
+            $this->dispatcher->dispatch(
+                new OrderInfoProcessFailedEvent(
+                    $e,
+                    $jobItem,
+                    $order,
+                    $orderInfo
+                ),
+                OrderInfoProcessFailedEvent::getEventName()
+            );
+
+            return false;
+        }
+
+        return true;
     }
 }

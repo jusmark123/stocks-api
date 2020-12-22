@@ -11,12 +11,10 @@ namespace App\DataProvider\Job;
 use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use ApiPlatform\Core\Exception\ItemNotFoundException;
-use App\Constants\Transport\JobConstants;
 use App\Entity\Job;
-use App\Service\Entity\JobEntityService;
+use App\Service\JobService;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Contracts\Cache\ItemInterface;
 
 class JobItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
 {
@@ -29,7 +27,7 @@ class JobItemDataProvider implements ItemDataProviderInterface, RestrictedDataPr
     private $entityManager;
 
     /**
-     * @var JobEntityService
+     * @var JobService
      */
     private $jobService;
 
@@ -42,13 +40,12 @@ class JobItemDataProvider implements ItemDataProviderInterface, RestrictedDataPr
      * JobItemDataProvider constructor.
      *
      * @param EntityManagerInterface $entityManager
-     * @param JobEntityService       $jobService
+     * @param JobService             $jobService
      * @param LoggerInterface        $logger
-     * @param TagAwareCacheInterface $jobCache
      */
     public function __construct(
         EntityManagerInterface $entityManager,
-        JobEntityService $jobService,
+        JobService $jobService,
         LoggerInterface $logger
     ) {
         $this->entityManager = $entityManager;
@@ -78,21 +75,13 @@ class JobItemDataProvider implements ItemDataProviderInterface, RestrictedDataPr
      */
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = [])
     {
+        /** @var Job $job */
         $job = $this->entityManager->getRepository(Job::class)->findOneBy(['guid' => $id]);
 
         if (!$job instanceof Job) {
-            throw new ItemNotFoundException(JobConstants::JOB_NOT_FOUND);
+            throw new ItemNotFoundException('Job Not Found');
         }
-        $cacheKey = $this->jobService->getCacheKey($job);
 
-        $data = $this->jobCache->get($cacheKey, function (ItemInterface $item) {
-            $item->tag(['job']);
-
-            return [];
-        });
-
-        $this->logger->debug(self::class, ['cacheKey' => $cacheKey, 'data' => $data]);
-
-        return $job->setData($data);
+        return $job->setPercentComplete($this->jobService->calculateJobPercentageComplete($job));
     }
 }

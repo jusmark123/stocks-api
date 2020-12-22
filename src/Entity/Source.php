@@ -175,7 +175,7 @@ class Source extends AbstractGuidEntity
     /**
      * @param ArrayCollection|Order[]|PersistentCollection $orders
      */
-    public function setOrders(array $orders): Source
+    public function setOrders($orders): Source
     {
         $this->orders = $orders;
 

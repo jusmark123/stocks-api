@@ -19,34 +19,34 @@ use Psr\Log\LoggerInterface;
 class JobEntityService extends AbstractEntityService
 {
     /**
-     * @var JobDataItemEntityService
+     * @var JobItemEntityService
      */
     private $jobItemDataService;
 
     /**
      * JobDataPersister constructor.
      *
-     * @param DefaultTypeService       $defaultTypeService
-     * @param EntityManagerInterface   $entityManager
-     * @param JobDataItemEntityService $jobDataItemService
-     * @param LoggerInterface          $logger
-     * @param ValidationHelper         $validator
+     * @param DefaultTypeService     $defaultTypeService
+     * @param EntityManagerInterface $entityManager
+     * @param JobItemEntityService   $jobItemService
+     * @param LoggerInterface        $logger
+     * @param ValidationHelper       $validator
      */
     public function __construct(
         DefaultTypeService $defaultTypeService,
         EntityManagerInterface $entityManager,
-        JobDataItemEntityService $jobDataItemService,
+        JobItemEntityService $jobItemService,
         LoggerInterface $logger,
         ValidationHelper $validator
     ) {
-        $this->jobItemDataService = $jobDataItemService;
+        $this->jobItemDataService = $jobItemService;
         parent::__construct($defaultTypeService, $entityManager, $logger, $validator);
     }
 
     /**
-     * @return JobDataItemEntityService
+     * @return JobItemEntityService
      */
-    public function getJobDataItemService()
+    public function getJobItemService()
     {
         return $this->jobItemDataService;
     }

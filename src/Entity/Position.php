@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\DTO\Brokerage\TickerInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\PersistentCollection;
@@ -21,7 +22,10 @@ use Gedmo\Mapping\Annotation as Gedmo;
  * 		uniqueConstraints={
  * 			@ORM\UniqueConstraint(name="position_un_guid", columns={"guid"}),
  * 		},
- * 		indexes={}
+ * 		indexes={
+ *          @ORM\Index(name="position_ix_account_id", columns={"account_id"}),
+ *          @ORM\Index(name="position_ix_source_id", columns={"source_id"}),
+ *     }
  * )
  * @ORM\Entity(repositoryClass="App\Entity\Repository\PositionRepository")
  * @ORM\HasLifecycleCallbacks()
@@ -29,31 +33,6 @@ use Gedmo\Mapping\Annotation as Gedmo;
  */
 class Position extends AbstractGuidEntity
 {
-    /**
-     * @var float
-     *
-     * @ORM\Column(name="change_today", type="float", nullable=false, options={"default": 0.00})
-     */
-    private $changeToday;
-
-    /**
-     * @var float
-     * @ORM\Column(name="cost_basis", type="float", nullable=false, options={"default": 0.00})
-     */
-    private $costBasis;
-
-    /**
-     * @var string
-     * @ORM\Column(name="exchange", type="string", nullable=false)
-     */
-    private $exchange;
-
-    /**
-     * @var float
-     * @ORM\Column(name="market_value", type="float", nullable=false, options={"default": 0.00})
-     */
-    private $marketValue;
-
     /**
      * @var int
      * @ORM\Column(name="quantity", type="integer", nullable=false, options={"default": 0})
@@ -77,13 +56,11 @@ class Position extends AbstractGuidEntity
     private $orders;
 
     /**
-     * @var PositionSideType
-     * @ORM\ManyToOne(targetEntity="PositionSideType")
-     * @ORM\JoinColumns({
-     * 		@ORM\JoinColumn(name="position_side_type_id", referencedColumnName="id", nullable=false)
-     * })
+     * @var string
+     *
+     * @ORM\Column(name="side", type="string", nullable=false)
      */
-    private $positionSideType;
+    private $side;
 
     /**
      * @var Source
@@ -96,12 +73,14 @@ class Position extends AbstractGuidEntity
     private $source;
 
     /**
-     * @var Ticker
+     * @var string
      *
-     * @ORM\ManyToOne(targetEntity="Ticker", fetch="LAZY")
-     * @ORM\JoinColumns({
-     *      @ORM\JoinColumn(name="ticker_id", referencedColumnName="id", nullable=false)
-     * })
+     * @ORM\Column(name="symbol", type="string", length=10, nullable=false)
+     */
+    private $symbol;
+
+    /**
+     * @var TickerInterface|null
      */
     private $ticker;
 
@@ -177,86 +156,6 @@ class Position extends AbstractGuidEntity
     }
 
     /**
-     * @return PositionSideType
-     */
-    public function getPositionSideType(): PositionSideType
-    {
-        return $this->positionSideType;
-    }
-
-    /**
-     * @param PositionSideType $positionSideType
-     *
-     * @return $this
-     */
-    public function setPositionSideType(PositionSideType $positionSideType): Position
-    {
-        $this->positionSideType = $positionSideType;
-
-        return $this;
-    }
-
-    /**
-     * @return float
-     */
-    public function getMarketValue(): float
-    {
-        return $this->marketValue;
-    }
-
-    /**
-     * @param float $marketValue
-     *
-     * @return $this
-     */
-    public function setMarketValue(float $marketValue): Position
-    {
-        $this->marketValue = $marketValue;
-
-        return $this;
-    }
-
-    /**
-     * @return float
-     */
-    public function getChangeToday(): float
-    {
-        return $this->changeToday;
-    }
-
-    /**
-     * @param float $changeToday
-     *
-     * @return $this
-     */
-    public function setChangeToday(float $changeToday): Position
-    {
-        $this->changeToday = $changeToday;
-
-        return $this;
-    }
-
-    /**
-     * @return float
-     */
-    public function getCostBasis(): float
-    {
-        return $this->costBasis;
-    }
-
-    /**
-     * @param float $costBasis
-     *
-     * @return $this
-     */
-    public function setCostBasis(float $costBasis): Position
-    {
-        $this->costBasis = $costBasis;
-
-        return $this;
-    }
-
-    /**
      * @return Order[]|ArrayCollection|PersistentCollection
      */
     public function getOrders()
@@ -297,19 +196,59 @@ class Position extends AbstractGuidEntity
     }
 
     /**
-     * @return Ticker
+     * @return string
      */
-    public function getTicker(): Ticker
+    public function getSymbol(): string
+    {
+        return $this->symbol;
+    }
+
+    /**
+     * @param string $symbol
+     *
+     * @return Position
+     */
+    public function setSymbol(string $symbol): Position
+    {
+        $this->symbol = $symbol;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSide(): string
+    {
+        return $this->side;
+    }
+
+    /**
+     * @param string $side
+     *
+     * @return Position
+     */
+    public function setSide(string $side): Position
+    {
+        $this->side = $side;
+
+        return $this;
+    }
+
+    /**
+     * @return TickerInterface|null
+     */
+    public function getTicker(): ?TickerInterface
     {
         return $this->ticker;
     }
 
     /**
-     * @param Ticker $ticker
+     * @param TickerInterface|null $ticker
      *
      * @return Position
      */
-    public function setTicker(Ticker $ticker): Position
+    public function setTicker(?TickerInterface $ticker): Position
     {
         $this->ticker = $ticker;
 

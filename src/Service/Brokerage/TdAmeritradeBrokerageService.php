@@ -11,9 +11,10 @@ namespace App\Service\Brokerage;
 use App\Client\BrokerageClient;
 use App\Client\BrokerageClientInterface;
 use App\Constants\Brokerage\TdAmeritradeConstants;
-use App\DTO\Brokerage\Interfaces\OrderInfoInterface;
+use App\DTO\Brokerage\OrderInfoInterface;
 use App\Entity\Account;
 use App\Entity\Brokerage;
+use App\Entity\Job;
 use App\Entity\Order;
 use App\Helper\SerializerHelper;
 use App\Helper\ValidationHelper;
@@ -25,7 +26,7 @@ use Symfony\Component\Serializer\Mapping\Loader\YamlFileLoader;
 /**
  * Class TdAmeritradeBrokerageService.
  */
-class TdAmeritradeBrokerageService extends AbstractBrokerageService
+class TdAmeritradeBrokerageService
 {
     const BROKERAGE_CONSTANTS = TdAmeritradeConstants::class;
 
@@ -65,7 +66,7 @@ class TdAmeritradeBrokerageService extends AbstractBrokerageService
      *
      * @return Order|null
      */
-    public function createOrderFromOrderInfo(\App\DTO\Brokerage\OrderInfoInterface $orderInfo): ?Order
+    public function createOrderFromOrderInfo(OrderInfoInterface $orderInfo): ?Order
     {
         // TODO: Implement createOrderFromOrderInfo() method.
     }
@@ -75,7 +76,7 @@ class TdAmeritradeBrokerageService extends AbstractBrokerageService
      *
      * @return \App\DTO\Brokerage\OrderInfoInterface|null
      */
-    public function createOrderInfoFromMessage(array $orderInfoMessage): ?\App\DTO\Brokerage\OrderInfoInterface
+    public function createOrderInfoFromMessage(array $orderInfoMessage): ?OrderInfoInterface
     {
         // TODO: Implement createOrderInfoFromMessage() method.
     }
@@ -108,12 +109,13 @@ class TdAmeritradeBrokerageService extends AbstractBrokerageService
     }
 
     /**
+     * @param Job     $job
      * @param Account $account
      * @param array   $filters
      *
      * @return array
      */
-    public function getOrderHistory(Account $account, array $filters): array
+    public function getOrderHistory(Account $account, ?array $filters = [], ?Job $job = null): array
     {
         // TODO: Implement getOrderHistory() method.
     }

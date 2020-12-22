@@ -38,13 +38,6 @@ class Order extends AbstractGuidEntity
     private $amountUsd;
 
     /**
-     * @var float
-     *
-     * @ORM\Column(name="avg_cost", type="float", nullable=false, options={"default"=0.00})
-     */
-    private $avgCost;
-
-    /**
      * @var string
      * @ORM\Column(name="broker_order_id", type="string", nullable=false)
      */
@@ -63,6 +56,20 @@ class Order extends AbstractGuidEntity
      * @ORM\Column(name="qty", type="integer", nullable=false, options={"default"=0})
      */
     private $filledQty;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="side", type="string", nullable=false)
+     */
+    private $side;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="symbol", type="string", length=10, nullable=false)
+     */
+    private $symbol;
 
     /**
      * @var Account
@@ -102,8 +109,8 @@ class Order extends AbstractGuidEntity
     private $orderType;
 
     /**
-     * @var Position
-     * @ORM\ManyToOne(targetEntity="Position", inversedBy="orders", fetch="LAZY")
+     * @var Position|null
+     * @ORM\ManyToOne(targetEntity="Position", inversedBy="orders", fetch="LAZY", cascade={"persist", "remove"})
      * @ORM\JoinColumns({
      * 		@ORM\JoinColumn(name="position_id", referencedColumnName="id", nullable=true)
      * })
@@ -112,7 +119,8 @@ class Order extends AbstractGuidEntity
 
     /**
      * @var Source
-     * @ORM\ManyToOne(targetEntity="Source", inversedBy="orders", fetch="LAZY")
+     * @ORM\ManyToOne(targetEntity="Source", inversedBy="orders", fetch="LAZY", cascade={"remove"})
+     *
      * @ORM\JoinColumns({
      * 		@ORM\JoinColumn(name="source_id", referencedColumnName="id", nullable=false)
      * })
@@ -121,7 +129,7 @@ class Order extends AbstractGuidEntity
 
     /**
      * @var User|null
-     * @ORM\ManyToOne(targetEntity="User", inversedBy="orders", fetch="LAZY")
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="orders", fetch="LAZY", cascade={"remove"})
      * @ORM\JoinColumns({
      * 		@ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
      * })
@@ -144,26 +152,6 @@ class Order extends AbstractGuidEntity
     public function setFilledQty(int $filledQty): Order
     {
         $this->filledQty = $filledQty;
-
-        return $this;
-    }
-
-    /**
-     * @return float
-     */
-    public function getAvgCost(): float
-    {
-        return $this->avgCost;
-    }
-
-    /**
-     * @param float $avgCost
-     *
-     * @return $this
-     */
-    public function setAvgCost(float $avgCost): Order
-    {
-        $this->avgCost = $avgCost;
 
         return $this;
     }
@@ -239,21 +227,41 @@ class Order extends AbstractGuidEntity
     }
 
     /**
-     * @return Position
+     * @return Position|null
      */
-    public function getPosition(): Position
+    public function getPosition(): ?Position
     {
         return $this->position;
     }
 
     /**
-     * @param Position $position
+     * @param Position|null $position
+     *
+     * @return $this
+     */
+    public function setPosition(?Position $position): Order
+    {
+        $this->position = $position;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSymbol(): string
+    {
+        return $this->symbol;
+    }
+
+    /**
+     * @param string $symbol
      *
      * @return Order
      */
-    public function setPosition(Position $position): Order
+    public function setSymbol(string $symbol): Order
     {
-        $this->position = $position;
+        $this->symbol = $symbol;
 
         return $this;
     }
@@ -323,7 +331,7 @@ class Order extends AbstractGuidEntity
      */
     public function getOrderType(): OrderType
     {
-        return $this->orderType = $orderType;
+        return $this->orderType;
     }
 
     /**

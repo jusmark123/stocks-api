@@ -89,22 +89,24 @@ class JobMessageService extends AbstractMessageService
         $job = null;
         try {
             $this->preReceive('Job:Handler start receiving job message');
-            $job = unserialize($packet->getMessage());
+
+            $message = json_decode($packet->getMessage(), true);
+
+            /** @var Job $job */
             $job = $this->entityManager
                 ->getRepository(Job::class)
-                ->findOneBy(['guid' => $job->getGuid()->toString()]);
+                ->findOneBy(['guid' => $message['jobUUID']]);
 
             if (!$job instanceof Job) {
                 throw new ItemNotFoundException();
             }
 
+            $job->setConfig($message['config']);
             $this->dispatch(new JobReceivedEvent($job));
-
             $jobHandler = $this->jobHandlerProvider->getJobHandler($job);
             $jobHandler->prepare($job);
-        } catch (\Throwable $e) {
-            $this->logError($job, $e);
-            $this->dispatch(new JobReceiveFailedEvent($packet->getMessage(), $e, $job));
+        } catch (\Exception $e) {
+            $this->dispatch(new JobReceiveFailedEvent($e, $job));
             throw $e;
         } finally {
             $this->postReceive('Job:Handler end receiving job message');

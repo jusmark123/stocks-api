@@ -73,6 +73,7 @@ class JobTopicReceiverListener extends AbstractCommandListener
         ) {
             try {
                 $this->jobMessageService->receive($packet);
+
                 return P\resolve();
             } catch (\Throwable $e) {
                 return P\reject($e);

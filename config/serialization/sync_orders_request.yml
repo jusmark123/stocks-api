@@ -1,0 +1,17 @@
+App\DTO\SyncOrdersRequest:
+  attributes:
+    account:
+      groups:
+        - sync_orders_request.post
+    source:
+      groups:
+        - sync_orders_request.post
+    filters:
+      groups:
+        - sync_orders_request.post
+    brokerageOrderIds:
+      groups:
+        - sync_orders_request.post
+    limit:
+      groups:
+        - sync_orders_request.post

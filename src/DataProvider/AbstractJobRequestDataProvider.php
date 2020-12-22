@@ -14,6 +14,9 @@ use App\Entity\AbstractEntity;
 use App\Entity\Job;
 use App\Event\AbstractEvent;
 use App\Helper\ValidationHelper;
+use App\MessageClient\ClientPublisher\ClientPublisher;
+use App\MessageClient\Listener\MessageListener;
+use App\MessageClient\Protocol\MessageFactory;
 use App\Service\JobService;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerAwareInterface;
@@ -50,6 +53,16 @@ abstract class AbstractJobRequestDataProvider implements ItemDataProviderInterfa
     protected $jobService;
 
     /**
+     * @var MessageFactory
+     */
+    protected $messageFactory;
+
+    /**
+     * @var ClientPublisher
+     */
+    protected $publisher;
+
+    /**
      * @var ValidationHelper
      */
     protected $validator;
@@ -61,6 +74,8 @@ abstract class AbstractJobRequestDataProvider implements ItemDataProviderInterfa
      * @param EventDispatcherInterface $dispatcher
      * @param JobService               $jobService
      * @param LoggerInterface          $logger
+     * @param MessageListener          $messageFactory
+     * @param ClientPublisher          $publisher
      * @param ValidationHelper         $validator
      */
     public function __construct(
@@ -68,12 +83,16 @@ abstract class AbstractJobRequestDataProvider implements ItemDataProviderInterfa
         EventDispatcherInterface $dispatcher,
         JobService $jobService,
         LoggerInterface $logger,
+        MessageFactory $messageFactory,
+        ClientPublisher $publisher,
         ValidationHelper $validator
     ) {
         $this->setLogger($logger);
         $this->entityManager = $entityManager;
         $this->dispatcher = $dispatcher;
         $this->jobService = $jobService;
+        $this->messageFactory = $messageFactory;
+        $this->publisher = $publisher;
         $this->validator = $validator;
     }
 

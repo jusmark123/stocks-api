@@ -11,6 +11,7 @@ namespace App\Constants\Brokerage;
 final class TdAmeritradeConstants
 {
     const BROKERAGE_NAME = 'TD Ameritrade';
+    const BROKERAGE_CONTEXT = 'td_ameritrade';
 
     const ACCOUNT_ENDPOINT = '';
     const ACCOUNT_INFO_ENTITY_CLASS = '';

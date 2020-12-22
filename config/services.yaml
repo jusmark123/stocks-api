@@ -131,6 +131,14 @@ services:
         arguments:
             $brokerageServices: !tagged stocks_api.brokerage_services_provider
 
+    App\Service\PaginatorService:
+        autowire: true
+
+    ###### Paginator Factory ##########
+
+    App\Paginator\PaginatorFactory:
+        autowire: true
+
     ###### DataProviders ######
 
 

@@ -9,9 +9,13 @@ declare(strict_types=1);
 namespace App\Service\Message;
 
 use ApiPlatform\Core\Exception\ItemNotFoundException;
-use App\Entity\JobDataItem;
+use App\Constants\Transport\JobConstants;
+use App\Entity\Job;
+use App\Entity\JobItem;
+use App\Event\JobItem\JobItemCancelledEvent;
 use App\Event\OrderInfo\OrderInfoReceivedEvent;
 use App\Event\OrderInfo\OrderInfoReceiveFailedEvent;
+use App\Exception\JobCancelledException;
 use App\Helper\ValidationHelper;
 use App\JobHandler\JobHandlerProvider;
 use App\MessageClient\ClientPublisher\ClientPublisher;
@@ -22,8 +26,6 @@ use App\Service\JobService;
 use App\Service\OrderService;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
-use React\Promise as P;
-use React\Promise\ExtendedPromiseInterface as Promise;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -94,38 +96,48 @@ class OrderInfoMessageService extends AbstractMessageService
     }
 
     /**
-     * @param array $message
+     * @param Packet $packet
+     *
+     * @return mixed|void
      */
-    public function receive(Packet $packet): Promise
+    public function receive(Packet $packet)
     {
-        $jobDataItem = null;
+        $jobItem = null;
         $job = null;
         try {
             $this->preReceive('Job:Handler start receiving job message');
-            $jobDataItem = unserialize($packet->getMessage());
-            $jobDataItem = $this->entityManager
-                ->getRepository(JobDataItem::class)
-                ->findOneBy(['guid' => $jobDataItem->getGuid()->toString()]);
+            $message = json_decode($packet->getMessage(), true);
 
-            if (!$jobDataItem instanceof JobDataItem) {
+            /** @var JobItem $jobItem */
+            $jobItem = $this->entityManager
+                ->getRepository(JobItem::class)
+                ->findOneBy(['guid' => $message['jobItemUUID']]);
+
+            /** @var Job $job */
+            $job = $this->entityManager
+                ->getRepository(Job::class)
+                ->findOneBy(['guid' => $message['jobUUID']]);
+
+            if (!$jobItem instanceof JobItem) {
                 throw new ItemNotFoundException();
             }
 
-            $job = $jobDataItem->getJob();
+            if (JobConstants::JOB_CANCELLED === $job->getStatus()) {
+                $this->dispatch(new JobItemCancelledEvent($jobItem));
+                throw new JobCancelledException();
+            }
 
-            $this->dispatch(new OrderInfoReceivedEvent($jobDataItem->getData(), $job));
-
+            $this->dispatch(new OrderInfoReceivedEvent($job, $jobItem));
             $jobHandler = $this->jobHandlerProvider->getJobHandler($job);
-            $jobHandler->execute($jobDataItem, $job);
-
-            return P\resolve();
+            $jobHandler->execute($jobItem, $job);
+        } catch (ItemNotFoundException | JobCancelledException $e) {
+            throw $e;
         } catch (\Exception $e) {
             $this->dispatcher->dispatch(
-                new OrderInfoReceiveFailedEvent($packet->getMessage(), $e, $job),
+                new OrderInfoReceiveFailedEvent($e, $jobItem),
                 OrderInfoReceiveFailedEvent::getEventName()
             );
-
-            return P\reject($e);
+            throw $e;
         }
     }
 }

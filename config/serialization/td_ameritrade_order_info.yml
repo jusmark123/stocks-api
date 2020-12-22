@@ -1,2 +1,2 @@
-App\DTO\TdAmeritrade\TdAmeritradeOrderInfo:
+App\DTO\Brokerage\TdAmeritrade\TdAmeritradeOrderInfo:
   attributes: ~

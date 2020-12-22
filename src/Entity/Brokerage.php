@@ -79,11 +79,32 @@ class Brokerage extends AbstractGuidEntity
     private $orders;
 
     /**
+     * @var ArrayCollection|OrderStatusType[]|PersistentCollection
+     *
+     * @ORM\OneToMany(targetEntity="OrderStatusType", mappedBy="brokerage", fetch="LAZY")
+     */
+    private $orderStatusTypes;
+
+    /**
+     * @var ArrayCollection|OrderType[]|PersistentCollection
+     *
+     * @ORM\OneToMany(targetEntity="OrderType", mappedBy="brokerage", fetch="LAZY")
+     */
+    private $orderTypes;
+
+    /**
      * @var ArrayCollection|Ticker[]|PersistentCollection
      *
-     * @ORM\ManyToMany(targetEntity="Ticker", inversedBy="brokerages", fetch="LAZY")
+     * @ORM\ManyToMany(targetEntity="Ticker", mappedBy="brokerages", fetch="LAZY")
      */
     private $tickers;
+
+    /**
+     * @var ArrayCollection|PositionSideType[]|PersistentCollection
+     *
+     * @ORM\OneToMany(targetEntity="PositionSideType", mappedBy="brokerage", fetch="LAZY")
+     */
+    private $positionSideTypes;
 
     /**
      * Brokerage constructor.
@@ -95,6 +116,9 @@ class Brokerage extends AbstractGuidEntity
         parent::__construct();
         $this->accounts = new ArrayCollection();
         $this->orders = new ArrayCollection();
+        $this->tickers = new ArrayCollection();
+        $this->orderTypes = new ArrayCollection();
+        $this->orderStatusTypes = new ArrayCollection();
     }
 
     /**
@@ -227,6 +251,66 @@ class Brokerage extends AbstractGuidEntity
     public function setOrders($orders): void
     {
         $this->orders = $orders;
+    }
+
+    /**
+     * @return OrderStatusType[]|ArrayCollection|PersistentCollection
+     */
+    public function getOrderStatusTypes()
+    {
+        return $this->orderStatusTypes;
+    }
+
+    /**
+     * @param OrderStatusType[]|ArrayCollection|PersistentCollection $orderStatusTypes
+     *
+     * @return Brokerage
+     */
+    public function setOrderStatusTypes($orderStatusTypes)
+    {
+        $this->orderStatusTypes = $orderStatusTypes;
+
+        return $this;
+    }
+
+    /**
+     * @return OrderType[]|ArrayCollection|PersistentCollection
+     */
+    public function getOrderTypes()
+    {
+        return $this->orderTypes;
+    }
+
+    /**
+     * @param OrderType[]|ArrayCollection|PersistentCollection $orderTypes
+     *
+     * @return Brokerage
+     */
+    public function setOrderTypes($orderTypes)
+    {
+        $this->orderTypes = $orderTypes;
+
+        return $this;
+    }
+
+    /**
+     * @return PositionSideType[]|ArrayCollection|PersistentCollection
+     */
+    public function getPositionSideTypes()
+    {
+        return $this->positionSideTypes;
+    }
+
+    /**
+     * @param PositionSideType[]|ArrayCollection|PersistentCollection $positionSideTypes
+     *
+     * @return Brokerage
+     */
+    public function setPositionSideTypes($positionSideTypes)
+    {
+        $this->positionSideTypes = $positionSideTypes;
+
+        return $this;
     }
 
     /**

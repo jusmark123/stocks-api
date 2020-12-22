@@ -1,2 +1,2 @@
-App\DTO\Brokerage\TdAmeritradeAccountInfo:
+App\DTO\Brokerage\TdAmeritrade\TdAmeritradeAccountInfo:
   attributes: ~

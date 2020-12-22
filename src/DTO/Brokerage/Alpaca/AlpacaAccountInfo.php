@@ -8,15 +8,15 @@ declare(strict_types=1);
 
 namespace App\DTO\Brokerage\Alpaca;
 
+use App\Constants\Brokerage\AlpacaConstants;
 use App\DTO\Brokerage\AccountInfoInterface;
-use App\Entity\Account;
 
 class AlpacaAccountInfo implements AccountInfoInterface
 {
     /**
-     * @var Account
+     * @var string
      */
-    private $account;
+    private $id;
 
     /**
      * @var bool
@@ -49,6 +49,11 @@ class AlpacaAccountInfo implements AccountInfoInterface
     private $currency;
 
     /**
+     * @var string
+     */
+    private $brokerage;
+
+    /**
      * @var int
      */
     private $daytradeCount;
@@ -56,17 +61,12 @@ class AlpacaAccountInfo implements AccountInfoInterface
     /**
      * @var float
      */
-    private $daytradeBuyingPower;
+    private $daytradingBuyingPower;
 
     /**
      * @var float
      */
     private $equity;
-
-    /**
-     * @var string
-     */
-    private $id;
 
     /**
      * @var float
@@ -149,26 +149,6 @@ class AlpacaAccountInfo implements AccountInfoInterface
     private $transfersBlocked;
 
     /**
-     * @return Account
-     */
-    public function getAccount(): Account
-    {
-        return $this->account;
-    }
-
-    /**
-     * @param Account $account
-     *
-     * @return AlpacaAccountInfo
-     */
-    public function setAccount(Account $account): AlpacaAccountInfo
-    {
-        $this->account = $account;
-
-        return $this;
-    }
-
-    /**
      * @return bool
      */
     public function isAccountBlocked(): bool
@@ -206,6 +186,22 @@ class AlpacaAccountInfo implements AccountInfoInterface
         $this->accountNumber = $accountNumber;
 
         return $this;
+    }
+
+    /**
+     * @return string $brokerageContext
+     */
+    public function getBrokerage(): string
+    {
+        return AlpacaConstants::BROKERAGE_CONTEXT;
+    }
+
+    /**
+     * @param string $brokerage
+     */
+    public function setBrokerage(string $brokerage): void
+    {
+        $this->brokerage = $brokerage;
     }
 
     /**
@@ -303,7 +299,7 @@ class AlpacaAccountInfo implements AccountInfoInterface
      *
      * @return AlpacaAccountInfo
      */
-    public function setDayTradeCount(int $daytradeCount): AlpacaAccountInfo
+    public function setDaytradeCount(int $daytradeCount): AlpacaAccountInfo
     {
         $this->daytradeCount = $daytradeCount;
 
@@ -313,19 +309,19 @@ class AlpacaAccountInfo implements AccountInfoInterface
     /**
      * @return float
      */
-    public function getDaytradeBuyingPower(): float
+    public function getDaytradingBuyingPower(): float
     {
-        return $this->daytradeBuyingPower;
+        return $this->daytradingBuyingPower;
     }
 
     /**
-     * @param string $daytradeBuyingPower
+     * @param string $daytradingBuyingPower
      *
      * @return $this
      */
-    public function setDaytradeBuyingPower(string $daytradeBuyingPower): AlpacaAccountInfo
+    public function setDaytradingBuyingPower(string $daytradingBuyingPower): AlpacaAccountInfo
     {
-        $this->daytradeBuyingPower = (float) $daytradeBuyingPower;
+        $this->daytradingBuyingPower = (float) $daytradingBuyingPower;
 
         return $this;
     }
@@ -423,7 +419,7 @@ class AlpacaAccountInfo implements AccountInfoInterface
      *
      * @return $this
      */
-    public function setLastMaintenaceMargin(string $lastMaintenanceMargin): AlpacaAccountInfo
+    public function setLastMaintenanceMargin(string $lastMaintenanceMargin): AlpacaAccountInfo
     {
         $this->lastMaintenanceMargin = (float) $lastMaintenanceMargin;
 
@@ -479,13 +475,13 @@ class AlpacaAccountInfo implements AccountInfoInterface
     }
 
     /**=
-     * @param  int $multiplier
+     * @param string $multiplier
      *
      * @return AlpacaAccountInfo
      */
-    public function setMultiplier(int $multiplier): AlpacaAccountInfo
+    public function setMultiplier(string $multiplier): AlpacaAccountInfo
     {
-        $this->multiplier = $multiplier;
+        $this->multiplier = (int) $multiplier;
 
         return $this;
     }
@@ -599,13 +595,13 @@ class AlpacaAccountInfo implements AccountInfoInterface
     }
 
     /**
-     * @param int $sma
+     * @param string $sma
      *
      * @return AlpacaAccountInfo
      */
-    public function setSma(int $sma): AlpacaAccountInfo
+    public function setSma(string $sma): AlpacaAccountInfo
     {
-        $this->sma = $sma;
+        $this->sma = (int) $sma;
 
         return $this;
     }

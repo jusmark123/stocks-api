@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace App\Message\Factory;
 
-use App\DTO\Brokerage\Interfaces\OrderInfoInterface;
+use App\DTO\Brokerage\OrderInfoInterface;
 use App\Entity\Job;
 
 class OrderInfoMessageFactory extends AbstractMessageFactory

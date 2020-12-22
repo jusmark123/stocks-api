@@ -25,3 +25,11 @@ framework:
         log: true
 
     cache:
+
+    messenger:
+      transports:
+        async: '%env(MESSENGER_TRANSPORT_DSN)%'
+
+      routing:
+        App\Message\JobNotification: async
+        App\Message\OrderInfoMessage: async

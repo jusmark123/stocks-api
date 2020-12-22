@@ -18,7 +18,7 @@ final class Version20201210172036 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Added JobDataItem table and collection on job table';
+        return 'Added JobItem table and collection on job table';
     }
 
     public function up(Schema $schema): void

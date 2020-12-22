@@ -9,7 +9,8 @@ declare(strict_types=1);
 namespace App\JobHandler;
 
 use App\Entity\Job;
-use App\Entity\JobDataItem;
+use App\Entity\JobItem;
+use App\Event\JobItem\JobItemProcessingEvent;
 use App\MessageClient\ClientPublisher\ClientPublisher;
 use App\MessageClient\Protocol\MessageFactory;
 use App\Service\JobService;
@@ -93,23 +94,13 @@ abstract class AbstractJobHandler implements JobHandlerInterface, LoggerAwareInt
     }
 
     /**
-     * @param Job $job
-     *
-     * @return mixed
+     * @param JobItem $jobItem
      */
-    public function prepare(Job $job)
+    public function jobItemProcessing(JobItem $jobItem)
     {
-        return true;
-    }
-
-    /**
-     * @param JobDataItem $jobData
-     * @param Job         $job
-     *
-     * @return bool
-     */
-    public function execute(JobDataItem $jobData, Job $job)
-    {
-        return true;
+        $this->dispatcher->dispatch(
+            new JobItemProcessingEvent($jobItem),
+            JobItemProcessingEvent::getEventName()
+        );
     }
 }

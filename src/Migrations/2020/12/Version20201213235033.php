@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * Stocks Api
+ */
+
 declare(strict_types=1);
 
 namespace DoctrineMigrations;
@@ -12,12 +16,12 @@ use Doctrine\Migrations\AbstractMigration;
  */
 final class Version20201213235033 extends AbstractMigration
 {
-    public function getDescription() : string
+    public function getDescription(): string
     {
         return 'Added intermediate table for Brokerage/Ticker relationship';
     }
 
-    public function up(Schema $schema) : void
+    public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE TABLE brokerage_ticker (
@@ -47,7 +51,7 @@ final class Version20201213235033 extends AbstractMigration
         $this->addSql('ALTER TABLE ticker CHANGE ticker symbol VARCHAR(10) NOT NULL');
     }
 
-    public function down(Schema $schema) : void
+    public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql('DROP TABLE brokerage_ticker');

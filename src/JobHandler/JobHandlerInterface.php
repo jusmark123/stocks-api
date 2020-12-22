@@ -9,7 +9,7 @@ declare(strict_types=1);
 namespace App\JobHandler;
 
 use App\Entity\Job;
-use App\Entity\JobDataItem;
+use App\Entity\JobItem;
 
 /**
  * Interface JobHandlerInterface.
@@ -25,19 +25,19 @@ interface JobHandlerInterface
     public function supports(string $jobName, ?string $resourceClass = null): bool;
 
     /**
-     * @param JobDataItem $jobData
-     * @param Job         $job
-     *
-     * @return mixed
-     */
-    public function execute(JobDataItem $jobData, Job $job);
-
-    /**
      * @param Job $job
      *
      * @return mixed
      */
     public function prepare(Job $job);
+
+    /**
+     * @param JobItem $jobItem
+     * @param Job     $job
+     *
+     * @return mixed
+     */
+    public function execute(JobItem $jobItem, Job $job);
 
     /**
      * @return string

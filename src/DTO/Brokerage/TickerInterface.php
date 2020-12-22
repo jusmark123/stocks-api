@@ -39,11 +39,6 @@ interface TickerInterface
     public function getSymbol(): string;
 
     /**
-     * @return string
-     */
-    public function getTicker(): string;
-
-    /**
      * @return bool
      */
     public function isActive(): bool;

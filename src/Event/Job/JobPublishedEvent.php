@@ -8,7 +8,6 @@ declare(strict_types=1);
 
 namespace App\Event\Job;
 
-use App\Entity\Job;
 use App\Event\AbstractJobEvent;
 
 /**
@@ -16,15 +15,5 @@ use App\Event\AbstractJobEvent;
  */
 class JobPublishedEvent extends AbstractJobEvent
 {
-    const EVENT_NAME = 'job.publish';
-
-    /**
-     * JobPublishedEvent constructor.
-     *
-     * @param Job $job
-     */
-    public function __construct(Job $job)
-    {
-        parent::__construct($job);
-    }
+    const EVENT_NAME = 'job.published';
 }

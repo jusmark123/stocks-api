@@ -16,7 +16,8 @@ use Doctrine\ORM\Mapping as ORM;
 trait DeactivatedByTrait
 {
     /**
-     * @var \DateTime|null
+     * @var string|null
+     *
      * @ORM\Column(name="deactivated_by", type="string", nullable=true)
      */
     protected $deactivatedBy;
@@ -30,9 +31,11 @@ trait DeactivatedByTrait
     }
 
     /**
+     * @param string|null $deactivatedBy
+     *
      * @return $this
      */
-    public function setDeactivatedBy(string $deactivatedBy)
+    public function setDeactivatedBy(?string $deactivatedBy = null)
     {
         $this->deactivatedBy = $deactivatedBy;
 

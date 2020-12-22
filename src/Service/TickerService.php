@@ -8,8 +8,13 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\DTO\Brokerage\TickerInterface;
+use App\Entity\Account;
+use App\MessageClient\Exception\InvalidMessage;
+use App\MessageClient\Exception\PublishException;
 use App\Service\Brokerage\PolygonBrokerageService;
 use App\Service\Entity\TickerEntityService;
+use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -45,7 +50,7 @@ class TickerService extends AbstractService
     }
 
     /**
-     * @throws \Psr\Http\Client\ClientExceptionInterface
+     * @throws ClientExceptionInterface
      */
     public function syncTickerTypes(): void
     {
@@ -53,12 +58,32 @@ class TickerService extends AbstractService
     }
 
     /**
-     * @throws \App\MessageClient\Exception\InvalidMessage
-     * @throws \App\MessageClient\Exception\PublishException
-     * @throws \Psr\Http\Client\ClientExceptionInterface
+     * @param Account $account
+     *
+     * @throws ClientExceptionInterface
+     * @throws InvalidMessage
+     * @throws PublishException
      */
-    public function syncTickers(): void
+    public function syncTickers(Account $account): void
     {
-        $this->polygonBrokerageService->syncTickers();
+        $this->polygonBrokerageService->syncTickers($account);
+    }
+
+    /**
+     * @param Account $account
+     * @param array   $message
+     */
+    public function createTickerFromMessage(Account $account, array $message)
+    {
+        $this->polygonBrokerageService->createTickerFromMessage($account, $message);
+    }
+
+    /**
+     * @param Account         $account
+     * @param TickerInterface $tickerInfo
+     */
+    public function createTickerFromTickerInfo(Account $account, TickerInterface $tickerInfo)
+    {
+        $this->polygonBrokerageService->createTickerFromTickerInfo($tickerInfo, $account);
     }
 }

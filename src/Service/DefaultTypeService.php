@@ -8,9 +8,9 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Constants\Entity\SourceConstants;
 use App\Constants\Entity\UserConstants;
 use App\Entity\Manager\OrderStatusTypeEntityManager;
+use App\Entity\PositionSideType;
 use App\Entity\Source;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
@@ -38,6 +38,10 @@ class DefaultTypeService extends AbstractService
         parent::__construct($logger);
     }
 
+    public function getDefaultPositionSideType(): PositionSideType
+    {
+    }
+
     /**
      * @return Source
      */
@@ -45,7 +49,7 @@ class DefaultTypeService extends AbstractService
     {
         return $this->entityManager
             ->getRepository(Source::class)
-            ->findOneBy(['guid' => SourceConstants::SYSTEM_SOURCE_GUID]);
+            ->find(1);
     }
 
     /**

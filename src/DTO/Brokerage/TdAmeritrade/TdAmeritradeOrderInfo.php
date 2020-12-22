@@ -13,7 +13,7 @@ use App\Entity\Account;
 use App\Entity\Order;
 use App\Entity\User;
 
-class TdAmeritradeOrderInfo implements OrderInfoInterface
+class TdAmeritradeOrderInfo
 {
     /**
      * @var Account

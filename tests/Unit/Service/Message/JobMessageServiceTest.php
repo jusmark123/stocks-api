@@ -14,7 +14,6 @@ use App\Event\LoggerEvent;
 use App\Helper\ValidationHelper;
 use App\JobHandler\JobHandlerProvider;
 use App\JobHandler\Order\SyncOrderHistoryJobHandler;
-use App\Message\Factory\JobMessageFactory;
 use App\MessageClient\ClientPublisher\ClientPublisher;
 use App\MessageClient\Protocol\MessageFactory;
 use App\MessageClient\Protocol\Packet;
@@ -27,7 +26,6 @@ use Phake;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class JobMessageServiceTest extends TestCase
 {

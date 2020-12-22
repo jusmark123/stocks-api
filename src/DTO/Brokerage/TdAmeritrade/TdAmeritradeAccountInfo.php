@@ -8,8 +8,8 @@ declare(strict_types=1);
 
 namespace App\DTO\Brokerage\TdAmeritrade;
 
+use App\Constants\Brokerage\TdAmeritradeConstants;
 use App\DTO\Brokerage\AccountInfoInterface;
-use App\Entity\Account;
 
 /**
  * Class TdAmeritradeAccountInfo.
@@ -17,7 +17,15 @@ use App\Entity\Account;
 class TdAmeritradeAccountInfo implements AccountInfoInterface
 {
     /**
-     * @var Account
+     * @var string
      */
-    private $account;
+    private $brokerage;
+
+    /**
+     * @return mixed
+     */
+    public function getBrokerage()
+    {
+        return TdAmeritradeConstants::BROKERAGE_CONTEXT;
+    }
 }

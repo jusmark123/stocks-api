@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace App\MessageClient\Bridge\Symfony\Messenger\Message;
 
 use App\MessageClient\Bridge\Symfony\Messenger\Message\Traits\MessageAwareTrait;
+use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
 /**
@@ -25,6 +26,6 @@ abstract class AbstractMessage implements MessageAwareInterface
      */
     public function __construct(UuidInterface $identifier = null)
     {
-        $this->setIdentifier($identifier ?? \Ramsey\Uuid\Uuid::uuid4());
+        $this->setIdentifier($identifier ?? Uuid::uuid4());
     }
 }

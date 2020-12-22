@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\DTO\Brokerage\AccountInfoInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\PersistentCollection;
@@ -32,6 +33,11 @@ use Gedmo\Mapping\Annotation as Gedmo;
 class Account extends AbstractGuidEntity
 {
     /**
+     * @var AccountInfoInterface|null
+     */
+    private $accountInfo;
+
+    /**
      * @var string|null
      * @ORM\Column(name="account_number", type="string", length=20, nullable=true)
      */
@@ -39,6 +45,7 @@ class Account extends AbstractGuidEntity
 
     /**
      * @var AccountStatusType
+     *
      * @ORM\ManyToOne(targetEntity="AccountStatusType", fetch="LAZY")
      * @ORM\JoinColumns({
      * 		@ORM\JoinColumn(name="account_status_type_id", referencedColumnName="id", nullable=false)
@@ -82,6 +89,11 @@ class Account extends AbstractGuidEntity
      * @ORM\Column(name="description", type="text", length=65535, nullable=true)
      */
     private $description;
+
+    /**
+     * @var bool
+     */
+    private $hasInfo;
 
     /**
      * @var string|null
@@ -139,6 +151,66 @@ class Account extends AbstractGuidEntity
         $this->orders = new ArrayCollection();
         $this->positions = new ArrayCollection();
         $this->users = new ArrayCollection();
+    }
+
+    /**
+     * @return AccountInfoInterface|null
+     */
+    public function getAccountInfo(): ?AccountInfoInterface
+    {
+        return $this->accountInfo;
+    }
+
+    /**
+     * @param AccountInfoInterface|null $accountInfo
+     *
+     * @return Account
+     */
+    public function setAccountInfo(?AccountInfoInterface $accountInfo): Account
+    {
+        $this->accountInfo = $accountInfo;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getAccountNumber(): ?string
+    {
+        return $this->accountNumber;
+    }
+
+    /**
+     * @param string|null $accountNumber
+     *
+     * @return Account
+     */
+    public function setAccountNumber(?string $accountNumber): Account
+    {
+        $this->accountNumber = $accountNumber;
+
+        return $this;
+    }
+
+    /**
+     * @return array|null
+     */
+    public function getStreams(): ?array
+    {
+        return $this->streams;
+    }
+
+    /**
+     * @param array|null $streams
+     *
+     * @return Account
+     */
+    public function setStreams(?array $streams): Account
+    {
+        $this->streams = $streams;
+
+        return $this;
     }
 
     /**
@@ -261,6 +333,11 @@ class Account extends AbstractGuidEntity
         return $this;
     }
 
+    public function hasInfo()
+    {
+        return null !== $this->accountInfo;
+    }
+
     /**
      * @return string $name
      */
@@ -358,12 +435,17 @@ class Account extends AbstractGuidEntity
      */
     public function removePosition(Position $position): Account
     {
-        $this->position->removeElement($position);
+        $this->positions->removeElement($position);
 
         return $this;
     }
 
-    public function addOrder(Order $order): Source
+    /**
+     * @param Order $order
+     *
+     * @return $this
+     */
+    public function addOrder(Order $order): Account
     {
         $this->orders->add($order);
 
@@ -381,9 +463,9 @@ class Account extends AbstractGuidEntity
     /**
      * @param Order $order
      *
-     * @return Source
+     * @return $this
      */
-    public function removeOrder(Order $order): Source
+    public function removeOrder(Order $order): Account
     {
         $this->orders->removeElement($order);
 
@@ -391,9 +473,11 @@ class Account extends AbstractGuidEntity
     }
 
     /**
-     * @param ArrayCollection|Order[]|PersistentCollection $order
+     * @param array $orders
+     *
+     * @return Source
      */
-    public function setOrders(array $order): Source
+    public function setOrders(array $orders): Account
     {
         $this->orders = $orders;
 

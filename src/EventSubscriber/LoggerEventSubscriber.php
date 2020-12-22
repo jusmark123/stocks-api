@@ -40,7 +40,7 @@ class LoggerEventSubscriber extends AbstractEventSubscriber
     }
 
     /**
-     * @return \string[][][]
+     * @return array
      */
     public static function getSubscribedEvents()
     {

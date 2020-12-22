@@ -15,6 +15,9 @@ use App\Service\DefaultTypeService;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 
+/**
+ * Class TickerEntityService.
+ */
 class TickerEntityService extends AbstractEntityService
 {
     private $tickerTypeService;
@@ -70,4 +73,3 @@ class TickerEntityService extends AbstractEntityService
             ->findOneBy(['symbol' => $symbol]);
     }
 }
-

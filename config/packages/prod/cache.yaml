@@ -9,7 +9,7 @@ framework:
 
         # Redis
         app: cache.adapter.redis
-        system: cache.adapter.filesystem
+        system: cache.adapter.redis
         default_redis_provider: redis://stocks-api-redis:6379
 
         # APCu (not recommended with heavy random-write workloads as memory fragmentation can cause perf issues)

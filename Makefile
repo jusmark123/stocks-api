@@ -17,11 +17,11 @@ build: .env build-dependencies build-database
 .PHONY: build
 
 build-dependencies:
-	php -d memory_limit=-1 `which composer` install --no-interaction --no-ansi --optimize-autoloader
+	XDEBUG_CONFIG="" php -d memory_limit=-1 `which composer` install --no-interaction --no-ansi --optimize-autoloader
 .PHONY: build-dependencies
 
 build-drop-database:
-	bin/console doctrine:database:drop --force --if-exists
+	bin/console doctrine:database:drop --if-exists --force
 .PHONY: build-drop-database
 
 build-create-database:
@@ -37,6 +37,7 @@ build-migrate:
 .PHONY: build-migrate
 
 build-migration:
+#	bin/console doctrine:cache:clear-metadata
 	bin/console doctrine:migration:diff --formatted
 .PHONY: migration
 
@@ -48,7 +49,22 @@ clear-cache:
 	rm -rf var/cache/*
 	rm -rf /tmp/behat*
 	rm -rf build/
+#	bin/console cache:pool:clear cache.global_clearer --no-debug
 .PHONY: clear-cache
+
+clear-dev-log:
+	rm -rf var/log/dev.log
+.PHONY: clear-dev-log
+
+clear-xdebug-log:
+	rm -rf var/log/xdebug.log
+	touch var/log/xdebug.log
+.PHONY: clear-xdebug-log
+
+clear-logs:
+	rm -rf var/log/*
+	touch var/log/xdebug.log
+.PHONY: clear-logs
 
 clean: clean-cs clear-cache
 	rm -f .env
@@ -76,6 +92,10 @@ fix-cs:
 show-log:
 	tail -f var/log/dev.log
 .PHONY: show-log
+
+show-xdebug-log:
+	tail -f logs/symfony/xdebug.log
+.PHONY: show-xdebug-log
 
 test: test-unit test-feature
 .PHONY: test

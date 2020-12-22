@@ -10,6 +10,7 @@ namespace App\DTO\Brokerage;
 
 use App\Entity\Account;
 use App\Entity\Order;
+use App\Entity\Source;
 
 /**
  * Interface OrderInfoInterface.
@@ -32,6 +33,18 @@ interface OrderInfoInterface
      * @return OrderInfoInterface
      */
     public function setAccount(Account $account): OrderInfoInterface;
+
+    /**
+     * @return Source
+     */
+    public function getSource(): Source;
+
+    /**
+     * @param Source $source
+     *
+     * @return OrderInfoInterface
+     */
+    public function setSource(Source $source): OrderInfoInterface;
 
     /**
      * @return Order|null

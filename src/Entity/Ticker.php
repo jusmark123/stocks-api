@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\DTO\Brokerage\TickerInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\PersistentCollection;
@@ -30,11 +31,33 @@ use Gedmo\Mapping\Annotation as Gedmo;
 class Ticker extends AbstractGuidEntity
 {
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="active", type="boolean", nullable=false)
+     */
+    private $active;
+
+    /**
+     * @var ArrayCollection|Brokerage[]|PersistentCollection
+     *
+     * @ORM\ManyToMany(targetEntity="Brokerage", inversedBy="tickers", cascade={"persist","remove"})
+     * @ORM\JoinTable(name="brokerage_ticker")
+     */
+    private $brokerages;
+
+    /**
      * @var string
      *
-     * @ORM\Column(name="symbol", type="string", length=10, nullable=false)
+     * @ORM\Column(name="exchange", type="string", length=100, nullable=false)
      */
-    private $symbol;
+    private $exchange;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="market", type="string", length=25, nullable=false)
+     */
+    private $market;
 
     /**
      * @var string
@@ -46,35 +69,21 @@ class Ticker extends AbstractGuidEntity
     /**
      * @var string
      *
-     * @ORM\Column(name="market", type="string", length=25, nullable=false)
+     * @ORM\Column(name="sector", type="string", length=100, nullable=false)
      */
-    private $market;
-
-    /**
-     * @var string
-     */
-    private $locale;
+    private $sector;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="currency", type="string", length=5, nullable=false)
+     * @ORM\Column(name="symbol", type="string", length=10, nullable=false)
      */
-    private $currency;
+    private $symbol;
 
     /**
-     * @var bool
-     *
-     * @ORM\Column(name="active", type="boolean", nullable=false)
+     *  @var TickerInterface|null
      */
-    private $active;
-
-    /**
-     * @var string;
-     *
-     * @ORM\Column(name="url", type="string", length=255, nullable=false)
-     */
-    private $url;
+    private $tickerInfo;
 
     /**
      * @var TickerType|null
@@ -87,11 +96,29 @@ class Ticker extends AbstractGuidEntity
     private $type;
 
     /**
-     * @var ArrayCollection|Brokerage[]|PersistentCollection
+     * @var \DateTime
      *
-     * @ORM\ManyToMany(targetEntity="Brokerage", mappedBy="tickers", fetch="LAZY")
+     * @ORM\Column(name="updated_at", type="datetime", nullable=false)
      */
-    private $brokerages;
+    private $updatedAt;
+
+    /**
+     * @var string;
+     *
+     * @ORM\Column(name="url", type="string", length=255, nullable=false)
+     */
+    private $url;
+
+    /**
+     * Ticker constructor.
+     *
+     * @throws \Exception
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        $this->brokerages = new ArrayCollection();
+    }
 
     /**
      * @return bool
@@ -109,6 +136,26 @@ class Ticker extends AbstractGuidEntity
     public function setActive(bool $active): Ticker
     {
         $this->active = $active;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCountry(): string
+    {
+        return $this->country;
+    }
+
+    /**
+     * @param string $country
+     *
+     * @return Ticker
+     */
+    public function setCountry(string $country): Ticker
+    {
+        $this->country = $country;
 
         return $this;
     }
@@ -134,21 +181,21 @@ class Ticker extends AbstractGuidEntity
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getLocale(): string
+    public function getDescription(): ?string
     {
-        return $this->locale;
+        return $this->description;
     }
 
     /**
-     * @param string $locale
+     * @param string|null $description
      *
      * @return Ticker
      */
-    public function setLocale(string $locale): Ticker
+    public function setDescription(?string $description): Ticker
     {
-        $this->locale = $locale;
+        $this->description = $description;
 
         return $this;
     }
@@ -196,61 +243,41 @@ class Ticker extends AbstractGuidEntity
     /**
      * @return string
      */
-    public function getSymbol(): string
+    public function getExchange(): string
     {
-        return $this->symbol;
+        return $this->exchange;
     }
 
     /**
-     * @param string $symbol
+     * @param string $exchange
      *
      * @return Ticker
      */
-    public function setSymbol(string $symbol): Ticker
+    public function setExchange(string $exchange): Ticker
     {
-        $this->symbol = $symbol;
+        $this->exchange = $exchange;
 
         return $this;
     }
 
     /**
-     * @return TickerType|null
+     * @return string
      */
-    public function getType(): ?TickerType
+    public function getExchangeSymbol(): string
     {
-        return $this->type;
+        return $this->exchangeSymbol;
     }
 
     /**
-     * @param TickerType|null $type
-     *
-     * @return $this
-     */
-    public function setType(TickerType $type = null): Ticker
-    {
-        $this->type = $type;
-
-        return $this;
-    }
-
-    /**
-     * @param string $updated
+     * @param string $exchangeSymbol
      *
      * @return Ticker
      */
-    public function setUpdated(string $updated): Ticker
+    public function setExchangeSymbol(string $exchangeSymbol): Ticker
     {
-        $this->setModifiedAt(new \DateTime($updated));
+        $this->exchangeSymbol = $exchangeSymbol;
 
         return $this;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getUpdated(): \DateTime
-    {
-        return $this->getModifiedAt();
     }
 
     /**
@@ -274,11 +301,135 @@ class Ticker extends AbstractGuidEntity
     }
 
     /**
+     * @return string
+     */
+    public function getSymbol(): string
+    {
+        return $this->symbol;
+    }
+
+    /**
+     * @param string $symbol
+     *
+     * @return Ticker
+     */
+    public function setSymbol(string $symbol): Ticker
+    {
+        $this->symbol = $symbol;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSector(): string
+    {
+        return $this->sector;
+    }
+
+    /**
+     * @param string $sector
+     *
+     * @return Ticker
+     */
+    public function setSector(string $sector): Ticker
+    {
+        $this->sector = $sector;
+
+        return $this;
+    }
+
+    /**
+     * @return TickerInterface|null
+     */
+    public function getTickerInfo(): ?TickerInterface
+    {
+        return $this->tickerInfo;
+    }
+
+    /**
+     * @param TickerInterface|null $tickerInfo
+     *
+     * @return Ticker
+     */
+    public function setTickerInfo(?TickerInterface $tickerInfo): Ticker
+    {
+        $this->tickerInfo = $tickerInfo;
+
+        return $this;
+    }
+
+    /**
+     * @return TickerType|null
+     */
+    public function getType(): ?TickerType
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param TickerType|null $type
+     *
+     * @return Ticker
+     */
+    public function setType(?TickerType $type): Ticker
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getUpdated(): \DateTime
+    {
+        return $this->updatedAt;
+    }
+
+    /**
+     * @param \DateTime $updatedAt
+     *
+     * @return Ticker
+     */
+    public function setUpdated(\DateTime $updatedAt): Ticker
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * @param Brokerage $brokerage
+     *
+     * @return $this
+     */
+    public function addBrokerage(Brokerage $brokerage)
+    {
+        $this->brokerages->add($brokerage);
+
+        return $this;
+    }
+
+    /**
      * @return Brokerage[]|ArrayCollection|PersistentCollection
      */
     public function getBrokerages()
     {
         return $this->brokerages;
+    }
+
+    /**
+     * @param Brokerage $brokeraga
+     *
+     * @return $this
+     */
+    public function removeBrokerage(Brokerage $brokeraga)
+    {
+        $this->brokerages->removeElement($brokeraga);
+
+        return $this;
     }
 
     /**

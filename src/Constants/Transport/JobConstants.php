@@ -24,6 +24,7 @@ final class JobConstants
     const REQUEST_SYNC_ORDER_REQUEST = 'sync-order.request';
 
     // Job StatusTypes
+    const JOB_CANCELLED = 'CANCELLED';
     const JOB_COMPLETE = 'COMPLETE';
     const JOB_CREATED = 'CREATED';
     const JOB_FAILED = 'FAILED';

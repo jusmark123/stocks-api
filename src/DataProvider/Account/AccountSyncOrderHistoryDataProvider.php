@@ -15,11 +15,15 @@ use App\Entity\Account;
 use App\Entity\Job;
 use App\Entity\Manager\AccountEntityManager;
 use App\Entity\Source;
-use App\Event\Job\JobInitiateFailedEvent;
 use App\Exception\EmptyOrderHistoryException;
 use App\Helper\ValidationHelper;
 use App\JobHandler\Order\SyncOrderHistoryJobHandler;
+use App\MessageClient\ClientPublisher\ClientPublisher;
+use App\MessageClient\Exception\InvalidMessage;
+use App\MessageClient\Exception\PublishException;
+use App\MessageClient\Protocol\MessageFactory;
 use App\Service\Brokerage\BrokerageServiceProvider;
+use App\Service\DefaultTypeService;
 use App\Service\JobService;
 use App\Service\OrderService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -42,6 +46,11 @@ class AccountSyncOrderHistoryDataProvider extends AbstractJobRequestDataProvider
     private $brokerageServiceProvider;
 
     /**
+     * @var DefaultTypeService
+     */
+    private $defaultTypeService;
+
+    /**
      * @var OrderService
      */
     private $orderService;
@@ -50,25 +59,40 @@ class AccountSyncOrderHistoryDataProvider extends AbstractJobRequestDataProvider
      * AccountSyncOrderHistoryDataProvider constructor.
      *
      * @param BrokerageServiceProvider $brokerageServiceProvider
+     * @param DefaultTypeService       $defaultTypeService
      * @param EntityManagerInterface   $entityManager
      * @param EventDispatcherInterface $dispatcher
      * @param JobService               $jobService
      * @param OrderService             $orderService
      * @param LoggerInterface          $logger
+     * @param MessageFactory           $messageFactory
+     * @param ClientPublisher          $publisher
      * @param ValidationHelper         $validator
      */
     public function __construct(
         BrokerageServiceProvider $brokerageServiceProvider,
+        DefaultTypeService $defaultTypeService,
         EntityManagerInterface $entityManager,
         EventDispatcherInterface $dispatcher,
         JobService $jobService,
         OrderService $orderService,
         LoggerInterface $logger,
+        MessageFactory $messageFactory,
+        ClientPublisher $publisher,
         ValidationHelper $validator
     ) {
         $this->brokerageServiceProvider = $brokerageServiceProvider;
+        $this->defaultTypeService = $defaultTypeService;
         $this->orderService = $orderService;
-        parent::__construct($entityManager, $dispatcher, $jobService, $logger, $validator);
+        parent::__construct(
+            $entityManager,
+            $dispatcher,
+            $jobService,
+            $logger,
+            $messageFactory,
+            $publisher,
+            $validator
+        );
     }
 
     /**
@@ -80,52 +104,43 @@ class AccountSyncOrderHistoryDataProvider extends AbstractJobRequestDataProvider
      * @throws EmptyOrderHistoryException
      * @throws ORMException
      * @throws OptimisticLockException
+     * @throws InvalidMessage
+     * @throws PublishException|\Exception
      *
      * @return Job
      */
     public function createJob(string $resourceClass, $id, string $operationName = null, array $context = []): Job
     {
+        xdebug_break();
         $job = null;
-        try {
-            $account = $this->getAccount($id);
-            $source = $this->getSource($context);
-//            $job = $this->getJob($account,
-//                SyncOrderHistoryJobHandler::getJobName(), [
-//                JobConstants::JOB_INITIATED,
-//                JobConstants::JOB_PENDING,
-//                JobConstants::JOB_QUEUED,
-//                JobConstants::JOB_CREATED,
-//            ]);
+        $account = $this->getAccount($id);
+        $source = $this->getSource($context);
+        $job = $this->getJob(
+            $account,
+            SyncOrderHistoryJobHandler::JOB_NAME,
+            [
+                JobConstants::JOB_INITIATED,
+                JobConstants::JOB_PENDING,
+                JobConstants::JOB_QUEUED,
+                JobConstants::JOB_CREATED,
+            ]
+        );
 
-            if ($job instanceof Job) {
-                return $job;
-            }
-
-            $filters = $this->validateFilters($account, $context);
-            $orderHistory = $this->orderService->getOrderHistory($account, $filters);
-
-            if (empty($orderHistory)) {
-                throw new EmptyOrderHistoryException('No orders returned');
-            }
-
-            $job = $this->jobService->createJob(
-                SyncOrderHistoryJobHandler::JOB_NAME,
-                SyncOrderHistoryJobHandler::JOB_DESCRIPTION,
-                $orderHistory,
-                null,
-                $account,
-                $source
-            );
-        } catch (\Exception $e) {
-            if ($job instanceof Job) {
-                $job->setErrorMessage($e->getMessage())
-                    ->setErrorTrace($e->getTraceAsString())
-                    ->setStatus(JobConstants::JOB_FAILED);
-                $this->dispatch(new JobInitiateFailedEvent($job, $e));
-            }
-
-            throw $e;
+        if ($job instanceof Job) {
+            return $job;
         }
+
+        $filters = $this->validateFilters($account, $context);
+
+        $job = $this->jobService->createJob(
+            SyncOrderHistoryJobHandler::JOB_NAME,
+            SyncOrderHistoryJobHandler::JOB_DESCRIPTION,
+            $filters,
+            null,
+            null,
+            $account,
+            $source
+        );
 
         return $job;
     }
@@ -164,6 +179,10 @@ class AccountSyncOrderHistoryDataProvider extends AbstractJobRequestDataProvider
             $source = $this->entityManager
                 ->getRepository(Source::class)
                 ->findOneBy(['guid' => $context['subresource_identifiers']['source_id']]);
+        }
+
+        if (!$source instanceof Source) {
+            $source = $this->defaultTypeService->getDefaultSource();
         }
 
         return $source;

@@ -9,7 +9,6 @@ declare(strict_types=1);
 namespace App\Service\Message;
 
 use App\MessageClient\Protocol\Packet;
-use React\Promise\ExtendedPromiseInterface;
 
 /**
  * Interface MessageServiceInterface.

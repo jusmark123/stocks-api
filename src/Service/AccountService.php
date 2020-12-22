@@ -9,7 +9,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Client\BrokerageClient;
-use App\DTO\Brokerage\Interfaces\AccountInfoInterface;
+use App\DTO\Brokerage\AccountInfoInterface;
 use App\Entity\Account;
 use App\Service\Brokerage\BrokerageServiceProvider;
 use App\Service\Entity\AccountEntityService;

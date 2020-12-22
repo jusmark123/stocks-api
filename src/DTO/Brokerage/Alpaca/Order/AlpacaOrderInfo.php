@@ -21,8 +21,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 class AlpacaOrderInfo implements OrderInfoInterface
 {
-    use CreatedByTrait;
     use CreatedAtTrait;
+    use CreatedByTrait;
     use ModifiedAtTrait;
     use ModifiedByTrait;
 
@@ -261,7 +261,7 @@ class AlpacaOrderInfo implements OrderInfoInterface
      *
      * @return AlpacaOrderInfo
      */
-    public function setSource(Source $source): AlpacaOrderInfo
+    public function setSource(Source $source): OrderInfoInterface
     {
         $this->source = $source;
 
@@ -717,11 +717,11 @@ class AlpacaOrderInfo implements OrderInfoInterface
     }
 
     /**
-     * @param string $filledAvgPrice
+     * @param string|null $filledAvgPrice
      *
      * @return $this
      */
-    public function setFilledAvgPrice(string $filledAvgPrice): AlpacaOrderInfo
+    public function setFilledAvgPrice(?string $filledAvgPrice = null): AlpacaOrderInfo
     {
         $this->filledAvgPrice = (float) $filledAvgPrice;
 

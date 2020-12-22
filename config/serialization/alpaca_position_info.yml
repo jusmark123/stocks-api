@@ -1,0 +1,38 @@
+App\DTO\Brokerage\Alpaca\AlpacaPositionInfo:
+  attributes:
+    assetId:
+      groups:
+        - alpaca_position_info.get
+    avgEntryPrice:
+      groups:
+        - alpaca_position_info.get
+    changeToday:
+      groups:
+        - alpaca_position_info.get
+    currentPrice:
+      groups:
+        -  alpaca_position_info.get
+    exchange:
+      groups:
+        -  alpaca_position_info.get
+    lastDayPrice:
+      groups:
+        - alpaca_position_info.get
+    marketValue:
+      groups:
+        - alpaca_position_info.get
+    qty:
+      groups:
+        - alpaca_position_info.get
+    side:
+      groups:
+        - alpaca_position_info.get
+    unrealizedPl:
+      groups:
+        - alpaca_position_info.get
+    unrealizedPlpc:
+      groups:
+        - alpaca_position_info.get
+    unrealizeIntradayPl:
+      groups:
+        - alpaca_position_info.get

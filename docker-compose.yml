@@ -1,15 +1,15 @@
-version: '2.1'
+version: '3'
 
 services:
   stocks-api-php:
     build: ./docker/php-fpm
     container_name: ${DOCKER_RUNNING_IMAGE_NAME}
-    ports:
-        - ${PHP_FPM_IMAGE_PORT}9001
     volumes:
         - .:/opt/app-root/src
         - ./logs/symfony:/opt/app-root/src/var/log
         - ./docker/php-fpm/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf
+    ports:
+      - ${PHP_FPM_IMAGE_PORT}9000
     links:
       - stocks-api-database
     env_file:
@@ -52,13 +52,13 @@ services:
         - rabbitmqctl
         - status
 
-#  stocks-api-mailhog:
-#    image: mailhog/mailhog
-#    container_name: ${DOCKER_RUNNING_IMAGE_NAME}-mailhog
-#    ports:
-#      - 1025
-#      - 8025
-#
+  stocks-api-mailhog:
+    image: mailhog/mailhog
+    container_name: ${DOCKER_RUNNING_IMAGE_NAME}-mailhog
+    ports:
+      - 1025
+      - 8025
+
 #  stocks-api-redis:
 #    image: redis
 #    container_name: ${DOCKER_RUNNING_IMAGE_NAME}-redis
@@ -72,7 +72,7 @@ services:
 #    environment:
 #      REDIS_HOST: 'stocks-api-redis'
 
-networks:
-  webproxy:
-    external:
-      name: ${PROXY_NETWORK}
+#networks:
+#  webproxy:
+#    external:
+#      name: ${PROXY_NETWORK}

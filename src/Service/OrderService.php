@@ -9,8 +9,9 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Client\BrokerageClient;
-use App\DTO\Brokerage\Interfaces\OrderInfoInterface;
+use App\DTO\Brokerage\OrderInfoInterface;
 use App\Entity\Account;
+use App\Entity\Job;
 use App\Entity\Order;
 use App\Helper\ValidationHelper;
 use App\Service\Brokerage\BrokerageServiceProvider;
@@ -75,14 +76,15 @@ class OrderService extends AbstractService
     /**
      * @param Account    $account
      * @param array|null $filters
+     * @param Job|null   $job
      *
      * @return array
      */
-    public function getOrderHistory(Account $account, array $filters = []): array
+    public function getOrderHistory(Account $account, array $filters = [], ?Job $job = null): array
     {
         $brokerageService = $this->brokerageServiceProvider->getBrokerageService($account->getBrokerage());
 
-        return $brokerageService->getOrderHistory($account, $filters);
+        return $brokerageService->getOrderHistory($account, $filters, $job);
     }
 
     /**
@@ -109,9 +111,19 @@ class OrderService extends AbstractService
      */
     public function createOrderFromOrderInfo(Account $account, OrderInfoInterface $orderInfo): Order
     {
-        $this->validator->validate($orderInfo);
-
         $brokerageService = $this->brokerageServiceProvider->getBrokerageService($account->getBrokerage());
+
+        $order = $this->orderEntityService
+            ->getEntityManager()
+            ->getRepository(Order::class)
+            ->findOneBy([
+               'brokerOrderId' => $orderInfo->getId(),
+               'account' => $account,
+            ]);
+
+        if ($order instanceof Order) {
+            return $order;
+        }
 
         $orderInfo->setAccount($account);
 

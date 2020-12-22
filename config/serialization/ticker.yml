@@ -1,58 +1,58 @@
-App\Entity\Ticker:
-  attributes:
-    guid:
-      groups:
-        - ticker.get
-    ticker:
-      groups:
-        - ticker.get
-        - ticker.post
-        - ticker.put
-    name:
-      groups:
-        - ticker.get
-        - ticker.post
-        - ticker.put
-    market:
-      groups:
-        - ticker.get
-        - ticker.post
-        - ticker.put
-    currency:
-      groups:
-        - ticker.get
-        - ticker.post
-        - ticker.put
-    active:
-      groups:
-        - ticker.get
-        - ticker.post
-        - ticker.put
-    url:
-      groups:
-        - ticker.get
-        - ticker.post
-        - ticker.put
-    type:
-      groups:
-        - ticker.get
-        - ticker.post
-        - ticker.put
-    createdAt:
-      groups:
-        - ticker.get
-    createdBy:
-      groups:
-        - ticker.get
-    modifiedAt:
-      groups:
-        - ticker.get
-    modifiedBy:
-      groups:
-        - ticker.get
-    deactivatedAt:
-      groups:
-        - ticker.get
-    deactivatedBy:
-      groups:
-        - ticker.get
+#App\Entity\Ticker:
+#  attributes:
+#    guid:
+#      groups:
+#        - ticker.get
+#    ticker:
+#      groups:
+#        - ticker.get
+#        - ticker.post
+#        - ticker.put
+#    name:
+#      groups:
+#        - ticker.get
+#        - ticker.post
+#        - ticker.put
+#    market:
+#      groups:
+#        - ticker.get
+#        - ticker.post
+#        - ticker.put
+#    currency:
+#      groups:
+#        - ticker.get
+#        - ticker.post
+#        - ticker.put
+#    active:
+#      groups:
+#        - ticker.get
+#        - ticker.post
+#        - ticker.put
+#    url:
+#      groups:
+#        - ticker.get
+#        - ticker.post
+#        - ticker.put
+#    type:
+#      groups:
+#        - ticker.get
+#        - ticker.post
+#        - ticker.put
+#    createdAt:
+#      groups:
+#        - ticker.get
+#    createdBy:
+#      groups:
+#        - ticker.get
+#    modifiedAt:
+#      groups:
+#        - ticker.get
+#    modifiedBy:
+#      groups:
+#        - ticker.get
+#    deactivatedAt:
+#      groups:
+#        - ticker.get
+#    deactivatedBy:
+#      groups:
+#        - ticker.get

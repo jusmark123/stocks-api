@@ -1,0 +1,38 @@
+App\Entity\JobItem:
+  attributes:
+    guid:
+      groups:
+        - job_item.get
+        - job.get
+    data:
+      groups:
+        - job_item.get
+    status:
+      groups:
+        - job_item.get
+        - job.get
+    errorMessage:
+      groups:
+        - job_item.get
+        - job.get
+    errorTrace:
+      groups:
+        - job_item.get
+    createdAt:
+      groups:
+        - job_item.get
+    createdBy:
+      groups:
+        - job_item.get
+    modifiedAt:
+      groups:
+        - job_item.get
+    modifiedBy:
+      groups:
+        - job_item.get
+    deactivatedAt:
+      groups:
+        - job_item.get
+    deactivatedBy:
+      groups:
+        - job_item.get

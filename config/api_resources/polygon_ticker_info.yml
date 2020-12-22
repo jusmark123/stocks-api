@@ -1,0 +1,16 @@
+#resources:
+#  App\DTO\Brokerage\Polygon\PolygonTickerInfo:
+#    attribute:
+#      denormalization_context:
+#        groups: [ 'polygon_ticker_info.get' ]
+#      normalization_context:
+#        groups: [ 'polygon_ticker_info.get' ]
+#      order: { modifiedAt: DESC, symbol: DESC }
+#
+#    itemOperations: ~
+#
+#    collectionOperations: ~
+#
+#    properties:
+#      symbol:
+#        identifier: true

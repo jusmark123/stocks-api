@@ -8,6 +8,9 @@ App\Entity\Account:
         - account.get
         - account.post
         - account.put
+    accountInfo:
+      groups:
+        - account.get
     apiEndpointUrl:
       groups:
         - account.get

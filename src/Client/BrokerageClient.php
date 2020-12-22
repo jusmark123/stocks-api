@@ -194,6 +194,6 @@ class BrokerageClient extends AbstractClient implements BrokerageClientInterface
             ]
         );
 
-        throw new \Exception(BrokerageClient::class, $response->getStatusCode());
+        throw new \Exception($response->getReasonPhrase(), $response->getStatusCode());
     }
 }

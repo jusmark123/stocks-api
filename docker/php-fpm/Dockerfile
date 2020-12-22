@@ -1,4 +1,4 @@
-FROM alpine:3.11
+FROM alpine:3.10
 
 LABEL maintainer="Vincent Composieux <vincent.composieux@gmail.com>"
 
@@ -50,8 +50,10 @@ ENV PATH "$PATH:/root/.composer/vendor/bin"
 RUN mkdir /var/run/openrc
 RUN touch /var/run/openrc/softlevel
 RUN touch /var/run/supervisor.sock
-RUN chmod 777 /var/run/supervisor.sock
 
+RUN mkdir /etc/rabbitmq && chmod 775 /etc/rabbitmq
+
+COPY php.ini /etc/php7/conf.d/
 COPY symfony.ini /etc/php7/conf.d/
 COPY symfony.ini /etc/php7/cli/conf.d/
 COPY xdebug.ini  /etc/php7/conf.d/
@@ -63,8 +65,8 @@ RUN supervisord -c /etc/supervisor/conf.d/supervisord.conf
 CMD ["php-fpm7", "-F"]
 
 WORKDIR /opt/app-root/src
+
 EXPOSE 9000
 EXPOSE 9001
-EXPOSE 9090
 
 RUN php -v

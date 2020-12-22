@@ -41,6 +41,16 @@ class OrderStatusType extends AbstractDefaultEntity
     private $description;
 
     /**
+     * @var Brokerage
+     *
+     * @ORM\ManyToOne(targetEntity="Brokerage", inversedBy="orderStatusTypes", fetch="LAZY", cascade={"persist", "remove"})
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="brokerage_id", referencedColumnName="id", nullable=false)
+     * })
+     */
+    private $brokerage;
+
+    /**
      * @return string $name
      */
     public function getName(): string
@@ -66,6 +76,26 @@ class OrderStatusType extends AbstractDefaultEntity
     public function setDescription(string $description): OrderStatusType
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * @return Brokerage
+     */
+    public function getBrokerage(): Brokerage
+    {
+        return $this->brokerage;
+    }
+
+    /**
+     * @param Brokerage $brokerage
+     *
+     * @return OrderStatusType
+     */
+    public function setBrokerage(Brokerage $brokerage): OrderStatusType
+    {
+        $this->brokerage = $brokerage;
 
         return $this;
     }

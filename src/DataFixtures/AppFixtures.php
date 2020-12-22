@@ -15,8 +15,8 @@ use App\Constants\Entity\SourceTypeConstants;
 use App\Constants\Entity\UserConstants;
 use App\Constants\Entity\UserTypeConstants;
 use App\Entity\AccountStatusType;
+use App\Entity\Brokerage;
 use App\Entity\Factory\AccountFactory;
-use App\Entity\Factory\BrokerageFactory;
 use App\Entity\Factory\SourceFactory;
 use App\Entity\Factory\UserFactory;
 use App\Entity\Source;
@@ -52,29 +52,22 @@ class AppFixtures extends Fixture
 
         $manager->persist($systemSource);
 
-        // Alpaca Markets
-        $alpacaBrokerage = BrokerageFactory::create()
-          ->setGuid(Uuid::fromString('9e13594c-0172-45b4-a9db-ed11db638601'))
-          ->setName(AlpacaConstants::BROKERAGE_NAME)
-                    ->setContext('alpaca')
-          ->setDescription('Alpaca Trade Api')
-          ->setUrl('https://alpaca.markets/')
-          ->setApiDocumentUrl('https://alpaca.markets/docs/api-documentation/api-v2/');
-
-        $manager->persist($alpacaBrokerage);
+        $alpacaBrokerage = $manager
+            ->getRepository(Brokerage::class)
+            ->findOneBy(['guid' => AlpacaConstants::BROKERAGE_GUID]);
 
         /** @var AccountStatusType $accountStatusType */
         $accountStatusType = $manager->getRepository(AccountStatusType::class)->find(AccountStatusTypeConstants::ACTIVE);
         $alpacaPaperAccount = AccountFactory::create()
-          ->setGuid(Uuid::fromString('3347b24d-2984-449a-9bde-ccaa5f81946c'))
-          ->setAccountStatusType($accountStatusType)
-          ->setApiKey('PKU2P6NISHZELU5ATWEQ')
-          ->setApiSecret('yACk0pUFDlBQRBrbktzTe5iODUumrQACriY7TSK3')
-          ->setApiEndpointUrl('https://paper-api.alpaca.markets')
-          ->setBrokerage($alpacaBrokerage)
-          ->setDescription('Alpaca paper trading account')
-          ->setName('alpaca-paper')
-          ->addUser($systemUser);
+            ->setGuid(Uuid::fromString('3347b24d-2984-449a-9bde-ccaa5f81946c'))
+            ->setAccountStatusType($accountStatusType)
+            ->setApiKey('PKU2P6NISHZELU5ATWEQ')
+            ->setApiSecret('yACk0pUFDlBQRBrbktzTe5iODUumrQACriY7TSK3')
+            ->setApiEndpointUrl('https://paper-api.alpaca.markets')
+            ->setBrokerage($alpacaBrokerage)
+            ->setDescription('Alpaca paper trading account')
+            ->setName('alpaca-paper')
+            ->addUser($systemUser);
 
         $manager->persist($alpacaPaperAccount);
 
