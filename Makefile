@@ -2,6 +2,7 @@
 	cp .env.dist .env
 
 local: .env
+	aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin 019621153437.dkr.ecr.us-west-2.amazonaws.com
 	docker-compose up -d
 	dev-exec make build
 .PHONY:local
