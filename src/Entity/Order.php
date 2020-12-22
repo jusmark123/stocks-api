@@ -75,7 +75,7 @@ class Order extends AbstractGuidEntity
     private $source;
 
     /**
-     * @var User
+     * @var User|null
      * @ORM\ManyToOne(targetEntity="User", inversedBy="orders", fetch="LAZY")
      * @ORM\JoinColumns({
      * 		@ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
@@ -99,6 +99,34 @@ class Order extends AbstractGuidEntity
     private $orderType;
 
     /**
+     * @var int
+     *
+     * @ORM\Column(name="qty", type="integer", nullable=false, options={"default"=0})
+     */
+    private $filledQty;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="avg_cost", type="float", nullable=false, options={"default"=0.00})
+     */
+    private $avgCost;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="fees", type="float", nullable=false, options={"default"=0.00})
+     */
+    private $fees;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="side", type="string", length=5, nullable=false)
+     */
+    private $side;
+
+    /**
      * @var OrderStatusType
      * @ORM\ManyToOne(targetEntity="OrderStatusType")
      * @ORM\JoinColumns({
@@ -106,6 +134,86 @@ class Order extends AbstractGuidEntity
      * })
      */
     private $orderStatusType;
+
+    /**
+     * @return int
+     */
+    public function getFilledQty(): int
+    {
+        return $this->filledQty;
+    }
+
+    /**
+     * @param int $filledQty
+     *
+     * @return Order
+     */
+    public function setFilledQty(int $filledQty): Order
+    {
+        $this->filledQty = $filledQty;
+
+        return $this;
+    }
+
+    /**
+     * @return float|null
+     */
+    public function getAvgCost(): float
+    {
+        return $this->avgCost;
+    }
+
+    /**
+     * @param float $avgCost
+     *
+     * @return $this
+     */
+    public function setAvgCost(float $avgCost = 0.00): Order
+    {
+        $this->avgCost = $avgCost;
+
+        return $this;
+    }
+
+    /**
+     * @return float|null
+     */
+    public function getFees(): float
+    {
+        return $this->fees;
+    }
+
+    /**
+     * @param float $fees
+     *
+     * @return Order
+     */
+    public function setFees(float $fees = 0.00): Order
+    {
+        $this->fees = $fees;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSide(): string
+    {
+        return $this->side;
+    }
+
+    /**
+     * @param string $side
+     *
+     * @return Order
+     */
+    public function setSide(string $side): Order
+    {
+        $this->side = $side;
+
+        return $this;
+    }
 
     /**
      * @return string $brokerOrderId
@@ -138,6 +246,26 @@ class Order extends AbstractGuidEntity
     }
 
     /**
+     * @return Position
+     */
+    public function getPosition(): Position
+    {
+        return $this->position;
+    }
+
+    /**
+     * @param Position $position
+     *
+     * @return Order
+     */
+    public function setPosition(Position $position): Order
+    {
+        $this->position = $position;
+
+        return $this;
+    }
+
+    /**
      * @return Account $account
      */
     public function getAccount(): Account
@@ -162,7 +290,7 @@ class Order extends AbstractGuidEntity
      */
     public function getSource(): Source
     {
-        return $this->source = source;
+        return $this->source;
     }
 
     /**

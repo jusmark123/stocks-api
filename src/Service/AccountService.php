@@ -9,90 +9,84 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Client\BrokerageClient;
+use App\DTO\Brokerage\Interfaces\AccountInfoInterface;
+use App\DTO\Brokerage\Interfaces\OrderInfoInterface;
 use App\Entity\Account;
-use App\Entity\Brokerage;
-use App\Entity\Interfaces\AccountInfoInterface;
 use App\Entity\Manager\AccountEntityManager;
-use App\Service\Brokerage\Interfaces\BrokerageServiceInterface;
+use App\Helper\ValidationHelper;
+use App\Service\Brokerage\BrokerageServiceAwareTrait;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class AccountService extends AbstractService
 {
-    const BROKERAGE_SERVICE_NOT_FOUND = 'Brokerage Service not found';
+    use BrokerageServiceAwareTrait;
 
     /**
-     * @var AccountEntityManager
+     * @var BrokerageClient
      */
-    private $accountEntityManager;
+    private $brokerageClient;
 
     /**
-     * @var BrokerageServiceInterface
-     */
-    private $brokerageService;
-
-    /**
-     * @var iterable
-     */
-    private $brokerageServices;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
+     * AccountService constructor.
+     *
      * @param AccountEntityManager $entityManager
      * @param BrokerageClient      $brokerageClient
+     * @param iterable             $brokerageServices
      * @param LoggerInterface      $logger
+     * @param ValidationHelper     $validator
      */
     public function __construct(
-      AccountEntityManager $accountEntityManager,
-      BrokerageClient $brokerageClient,
-      iterable $brokerageServices,
-      LoggerInterface $logger)
-    {
-        $this->accountEntityManager = $accountEntityManager;
+        AccountEntityManager $entityManager,
+        BrokerageClient $brokerageClient,
+        iterable $brokerageServices,
+        LoggerInterface $logger,
+        ValidationHelper $validator
+    ) {
+        $this->entityManager = $entityManager;
         $this->brokerageClient = $brokerageClient;
         $this->brokerageServices = $brokerageServices;
-        $this->logger = $logger;
+        parent::__construct($entityManager, $validator, $logger);
     }
 
     /**
      * @param Account $account
      *
-     * @return AccountService
+     * @return AccountInfoInterface
      */
     public function getAccountInfo(Account $account): AccountInfoInterface
     {
-        $this->setBrokerageService($account->getBrokerage());
+        $brokerageService = $this->getBrokerageService($account->getBrokerage());
 
-        return $this->brokerageService->getAccountInfo($account);
+        return $brokerageService->getAccountInfo($account);
     }
 
     /**
-     * @return BrokerageServiceInterface
+     * @param Account    $account
+     * @param array|null $filters
+     *
+     * @return array
      */
-    public function getBrokerageService(): BrokerageServiceInterface
+    public function getOrderHistory(Account $account, array $filters = []): array
     {
-        return $this->brokerageService;
+        $brokerageService = $this->getBrokerageService($account->getBrokerage());
+
+        return $brokerageService->getOrderHistory($account, $filters);
     }
 
     /**
-     * @param Brokerage $brokerage
+     * @param Account $account
+     * @param array   $orderInfoMessage
+     *
+     * @return OrderInfoInterface|null
      */
-    public function setBrokerageService(Brokerage $brokerage): void
+    public function createOrderInfoFromMessage(Account $account, array $orderInfoMessage): ?OrderInfoInterface
     {
-        foreach ($this->brokerageServices as $brokerageService) {
-            if ($brokerageService->supports($brokerage)) {
-                break;
-            }
+        $brokerageService = $this->getBrokerageService($account->getBrokerage());
 
-            if (null === $this->brokerageService) {
-                throw new NotFoundHttpException(BROKERAGE_SERVICE_NOT_FOUND);
-            }
-        }
+        $orderInfo = $brokerageService->createOrderInfoFromMessage($orderInfoMessage);
 
-        $this->brokerageService = $brokerageService;
+        $this->validator->validate($orderInfo);
+
+        return $orderInfo;
     }
 }

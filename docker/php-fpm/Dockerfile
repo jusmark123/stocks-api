@@ -34,7 +34,10 @@ RUN apk add --update --no-cache \
     php7-gmp \
     git \
     make \
-    curl
+    curl \
+    openrc \
+    sudo \
+    supervisor
 RUN echo "$(curl -sS https://composer.github.io/installer.sig) -" > composer-setup.php.sig \
         && curl -sS https://getcomposer.org/installer | tee composer-setup.php | sha384sum -c composer-setup.php.sig \
         && php composer-setup.php && rm composer-setup.php* \
@@ -44,11 +47,18 @@ RUN composer self-update
 RUN composer global require friendsofphp/php-cs-fixer
 ENV PATH "$PATH:/root/.composer/vendor/bin"
 
+RUN mkdir /var/run/openrc
+RUN touch /var/run/openrc/softlevel
+RUN touch /var/run/supervisor.sock
+RUN chmod 777 /var/run/supervisor.sock
+
 COPY symfony.ini /etc/php7/conf.d/
 COPY symfony.ini /etc/php7/cli/conf.d/
 COPY xdebug.ini  /etc/php7/conf.d/
-
+COPY supervisord.conf /etc/supervisor/conf.d/
 COPY symfony.pool.conf /etc/php7/php-fpm.d/
+
+RUN supervisord -c /etc/supervisor/conf.d/supervisord.conf
 
 CMD ["php-fpm7", "-F"]
 

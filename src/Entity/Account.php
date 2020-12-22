@@ -91,6 +91,11 @@ class Account extends AbstractGuidEntity
     private $name;
 
     /**
+     * @var array|null
+     */
+    private $streams;
+
+    /**
      * @var ArrayCollection|Job[]|PersistentCollection
      *
      * @ORM\OneToMany(targetEntity="Job", mappedBy="account", fetch="LAZY")
@@ -123,10 +128,13 @@ class Account extends AbstractGuidEntity
     private $orders;
 
     /**
-     * Account Constructor.
+     * Account constructor.
+     *
+     * @throws \Exception
      */
     public function __construct()
     {
+        parent::__construct();
         $this->jobs = new ArrayCollection();
         $this->orders = new ArrayCollection();
         $this->positions = new ArrayCollection();

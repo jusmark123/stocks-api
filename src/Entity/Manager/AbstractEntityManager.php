@@ -8,10 +8,9 @@ declare(strict_types=1);
 
 namespace App\Entity\Manager;
 
-use App\Entity\Manager\Interfaces\BaseEntityManagerInterface;
-use App\Entity\Manager\Interfaces\EntityInterface;
-use Doctrine\Common\Persistence\ObjectRepository;
+use App\Entity\AbstractEntity;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ObjectRepository;
 
 class AbstractEntityManager implements BaseEntityManagerInterface
 {
@@ -43,7 +42,7 @@ class AbstractEntityManager implements BaseEntityManagerInterface
     /**
      * @return ObjectRepository
      */
-    public function getEntityRepository()
+    public function getEntityRepository(): ObjectRepository
     {
         return $this->entityManager->getRepository(static::ENTITY_CLASS);
     }
@@ -54,7 +53,7 @@ class AbstractEntityManager implements BaseEntityManagerInterface
      *
      * @return mixed
      */
-    public function persist($entity, bool $flush = false): EntityInterface
+    public function persist($entity, bool $flush = false): AbstractEntity
     {
         $this->entityManager->persist($entity);
 
@@ -76,11 +75,11 @@ class AbstractEntityManager implements BaseEntityManagerInterface
     }
 
     /**
-     * @param EntityInterface $entity
+     * @param AbstractEntity $entity
      *
      * @return array
      */
-    public function detach(EntityInterface $entity): array
+    public function detach(AbstractEntity $entity): array
     {
         $this->entityManager->detach($entity);
     }
@@ -109,7 +108,7 @@ class AbstractEntityManager implements BaseEntityManagerInterface
      * @param null       $limit
      * @param null       $offset
      *
-     * @return array|EntityInterface[]
+     * @return array|AbstractEntity[]
      */
     public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
     {
@@ -127,12 +126,12 @@ class AbstractEntityManager implements BaseEntityManagerInterface
     }
 
     /**
-     * @param EntityInterface $entity
-     * @param bool            $flush
+     * @param AbstractEntity $entity
+     * @param bool           $flush
      *
-     * @return EntityInterface
+     * @return AbstractEntity
      */
-    public function remove(EntityInterface $entity, bool $flush = false): EntityInterface
+    public function remove(AbstractEntity $entity, bool $flush = false): AbstractEntity
     {
         $this->entityManager->remove($entity);
 

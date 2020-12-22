@@ -1,0 +1,48 @@
+App\Entity\Screener:
+  attributes:
+    guid:
+      groups:
+        - screener.get
+    name:
+      groups:
+        - screener.get
+        - screener.post
+        - screener.put
+    description:
+      groups:
+        - screener.get
+        - screener.post
+        - screener.put
+    filename:
+      groups:
+        - screener.get
+        - screener.post
+        - screener.put
+    config:
+      groups:
+        - screener.get
+        - screener.post
+        - screener.put
+    source:
+      groups:
+        - screener.get
+        - screener.post
+        - screener.put
+    createdAt:
+      groups:
+        - screener.get
+    createdBy:
+      groups:
+        - screener.get
+    modifiedAt:
+      groups:
+        - screener.get
+    modifiedBy:
+      groups:
+        - screener.get
+    deactivatedAt:
+      groups:
+        - screener.get
+    deactivatedBy:
+      groups:
+        - screener.get    

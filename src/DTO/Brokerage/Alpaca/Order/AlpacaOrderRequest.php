@@ -6,8 +6,9 @@
 
 declare(strict_types=1);
 
-namespace App\DTO\Order\Alpaca;
+namespace App\DTO\Brokerage\Alpaca\Order;
 
+use App\DTO\Brokerage\Interfaces\OrderRequestInterface;
 use App\Entity\Order;
 
 class AlpacaOrderRequest implements OrderRequestInterface
@@ -43,22 +44,22 @@ class AlpacaOrderRequest implements OrderRequestInterface
     private $timeInForce;
 
     /**
-     * @var string
+     * @var float
      */
     private $limitPrice;
 
     /**
-     * @var string
+     * @var float
      */
     private $stopPrice;
 
     /**
-     * @var string
+     * @var float
      */
     private $trailPrice;
 
     /**
-     * @var string
+     * @var float
      */
     private $trailPercent;
 
@@ -78,7 +79,7 @@ class AlpacaOrderRequest implements OrderRequestInterface
     private $orderClass;
 
     /**
-     * @var ApacaTakeProfit
+     * @var AlpacaTakeProfit
      */
     private $takeProfit;
 
@@ -144,7 +145,7 @@ class AlpacaOrderRequest implements OrderRequestInterface
     {
         $this->qty = $qty;
 
-        return $qty;
+        return $this;
     }
 
     /**
@@ -218,11 +219,13 @@ class AlpacaOrderRequest implements OrderRequestInterface
     /**
      * @param float $limitPrice
      *
-     * @return AlpacaOrderRequest
+     * @return $this
      */
     public function setLimitPrice(float $limitPrice): AlpacaOrderRequest
     {
-        $this->limitPrice = (string) $limitPrice;
+        $this->limitPrice = $limitPrice;
+
+        return $this;
     }
 
     /**
@@ -236,11 +239,31 @@ class AlpacaOrderRequest implements OrderRequestInterface
     /**
      * @param float $stopPrice
      *
-     * @return AlpacaOrderRequest
+     * @return $this
      */
     public function setStopPrice(float $stopPrice): AlpacaOrderRequest
     {
-        $this->stopPrice = (string) $stopPrice;
+        $this->stopPrice = $stopPrice;
+
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getTrailPrice(): float
+    {
+        return $this->trailPrice;
+    }
+
+    /**
+     * @param float $trailPrice
+     *
+     * @return AlpacaOrderRequest
+     */
+    public function setTrailPrice(float $trailPrice): AlpacaOrderRequest
+    {
+        $this->trailPrice = $trailPrice;
 
         return $this;
     }
@@ -260,7 +283,7 @@ class AlpacaOrderRequest implements OrderRequestInterface
      */
     public function setTrailPercent(float $trailPercent): AlpacaOrderRequest
     {
-        $this->trailPercent = (string) $trailPercent;
+        $this->trailPercent = $trailPercent;
 
         return $this;
     }
@@ -334,13 +357,13 @@ class AlpacaOrderRequest implements OrderRequestInterface
     }
 
     /**
-     * @param ApacaTakeProfit $takeProfit
+     * @param AlpacaTakeProfit $takeProfit
      *
      * @return AlpacaOrderRequest
      */
-    public function setTakeProfit(ApacaTakeProfit $takeProfit): AlpacaOrderRequest
+    public function setTakeProfit(AlpacaTakeProfit $takeProfit): AlpacaOrderRequest
     {
-        $this->takeProfit - $takeProfit;
+        $this->takeProfit = $takeProfit;
 
         return $this;
     }

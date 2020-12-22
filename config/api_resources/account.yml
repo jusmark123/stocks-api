@@ -12,6 +12,24 @@ resources:
       post:
         method: POST
 
+      account_history:
+        method: GET
+        path: /account/{id}/account_history
+        force_eager: false
+        defaults:
+          _api_resource_context:
+            identifiers:
+              - [ id, App\Entity\Account, true ]
+        normalization_context:
+          groups: [ order_info.get ]
+        swagger_context:
+          summary: Get account history from a brokerage
+          tags: [ Account ]
+          parameters:
+            - name: id
+              in: path
+              required: true
+
     itemOperations:
       get:
         method: GET
@@ -37,6 +55,71 @@ resources:
             - name: id
               in: path
               required: true
+
+      account_sync_orders:
+        method: GET
+        path: /account/{id}/sync_orders/{source_id}
+        output: App\Entity\Job
+        force_eager: false
+        defaults:
+          _api_subresource_context:
+            identifiers:
+              - [ id, App\Entity\Account, true ]
+              - [ source_id, App\Entity\Source, true]
+        normalization_context:
+          groups: [ job.get ]
+        swagger_context:
+          summary: Sync account orders from a brokerage
+          tags: [ Account ]
+          responses:
+            200:
+              description: 'Job Initiated'
+              content:
+                application/json:
+                  schema:
+                    type: array
+                    items:
+                      $ref: '#/definitions/Job-job.get'
+            400:
+              description: "Job Failed"
+            401:
+              description: "Unauthorized"
+            404:
+              description: "Account not found"
+          parameters:
+            - name: id
+              in: path
+              required: true
+            - name: source_id
+              description: 'Optionally add a source to apply to processed data requiring source attribution'
+              in: path
+              required: false
+            - name: status
+              in: query
+              required: false
+              type: string
+            - name: limit
+              in: query
+              required: false
+              type: integer
+            - name: after
+              type: string
+              in: query
+              required: false
+              format: date-time
+            - name: until
+              type: string
+              in: query
+              required: false
+              format: date-time
+            - name: direction
+              type: string
+              in: query
+              required: false
+            - name: nested
+              type: bool
+              in: query
+              required: false
 
     properties:
       id:

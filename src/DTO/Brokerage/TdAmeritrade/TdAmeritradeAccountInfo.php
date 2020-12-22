@@ -6,10 +6,15 @@
 
 declare(strict_types=1);
 
-namespace App\DTO\TdAmeritrade;
+namespace App\DTO\Brokerage\TdAmeritrade;
 
-use App\Entity\Interfaces\AccountInfoInterface;
+use App\DTO\Brokerage\Interfaces\AccountInfoInterface;
+use App\Entity\Account;
 
 class TdAmeritradeAccountInfo implements AccountInfoInterface
 {
+    /**
+     * @var Account
+     */
+    private $account;
 }

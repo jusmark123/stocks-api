@@ -14,13 +14,13 @@ use App\Entity\Interfaces\ModifiedAtInterface;
 use App\Entity\Interfaces\ModifiedByInterface;
 use App\Entity\Traits as Traits;
 
-abstract class AbstractDefaultEntity implements CreatedAtInterface, CreatedByInterface, ModifiedAtInterface, ModifiedByInterface
+abstract class AbstractDefaultEntity extends AbstractEntity implements CreatedAtInterface, CreatedByInterface, ModifiedAtInterface, ModifiedByInterface
 {
-    use Traits\EntityIdTrait;
     use Traits\CreatedAtTrait;
     use Traits\CreatedByTrait;
-    use Traits\ModifiedByTrait;
-    use Traits\ModifiedAtTrait;
     use Traits\DeactivatedAtTrait;
     use Traits\DeactivatedByTrait;
+    use Traits\EntityIdTrait;
+    use Traits\ModifiedAtTrait;
+    use Traits\ModifiedByTrait;
 }

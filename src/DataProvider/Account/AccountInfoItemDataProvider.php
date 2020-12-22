@@ -10,8 +10,8 @@ namespace App\DataProvider\Account;
 
 use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
+use App\DTO\Brokerage\Interfaces\AccountInfoInterface;
 use App\Entity\Account;
-use App\Entity\Interfaces\AccountInfoInterface;
 use App\Entity\Manager\AccountEntityManager;
 use App\Service\AccountService;
 use Psr\Log\LoggerInterface;
@@ -19,9 +19,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class AccountInfoItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
 {
-    const ACCOUNT_NOT_FOUND = 'Account not found';
-
-    const OPERATTION_NAME = 'get_account_info';
+    const RESOURCE_CLASS = Account::class;
+    const OPERATION_NAME = 'get_account_info';
 
     /**
      * @var AccountService
@@ -60,7 +59,7 @@ class AccountInfoItemDataProvider implements ItemDataProviderInterface, Restrict
      */
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Account::class === $resourceClass && self::OPERATTION_NAME === $operationName;
+        return self::RESOURCE_CLASS === $resourceClass && self::OPERATION_NAME === $operationName;
     }
 
     /**
@@ -90,7 +89,7 @@ class AccountInfoItemDataProvider implements ItemDataProviderInterface, Restrict
         $account = $this->accountEntityManager->findOneBy(['guid' => $id]);
 
         if (!$account instanceof Account) {
-            throw new NotFoundHttpException(self::ACCOUNT_NOT_FOUND);
+            throw new NotFoundHttpException(AccountEntityManager::ACCOUNT_NOT_FOUND);
         }
 
         return $account;

@@ -94,10 +94,13 @@ class Position extends AbstractGuidEntity
     private $orders;
 
     /**
-     * Constructor.
+     * Position constructor.
+     *
+     * @throws \Exception
      */
     public function __construct()
     {
+        parent::__construct();
         $this->orders = new ArrayCollection();
     }
 

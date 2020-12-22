@@ -14,7 +14,7 @@ use Doctrine\ORM\PersistentCollection;
 use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
- * class SourceType.
+ * class Source.
  *
  * @ORM\Table(
  * 		name="source",
@@ -22,7 +22,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
  * 			@ORM\UniqueConstraint(name="source_un_guid", columns={"guid"})
  * 		}
  * )
- * @ORM\Entity(repositoryClass="App\Entity\Repository\AccountStatusTypeRepository")
+ * @ORM\Entity(repositoryClass="App\Entity\Repository\SourceRepository")
  * @ORM\HasLifecycleCallbacks()
  * @Gedmo\SoftDeleteable(fieldName="deactivatedAt", timeAware=false)
  */
@@ -66,10 +66,13 @@ class Source extends AbstractGuidEntity
     private $jobs;
 
     /**
-     * Constructor.
+     * Source constructor.
+     *
+     * @throws \Exception
      */
     public function __construct()
     {
+        parent::__construct();
         $this->jobs = new ArrayCollection();
         $this->orders = new ArrayCollection();
     }
@@ -82,6 +85,11 @@ class Source extends AbstractGuidEntity
         return $this->name;
     }
 
+    /**
+     * @param string $name
+     *
+     * @return $this
+     */
     public function setName(string $name): Source
     {
         $this->name = $name;
@@ -97,6 +105,11 @@ class Source extends AbstractGuidEntity
         return $this->description;
     }
 
+    /**
+     * @param string|null $description
+     *
+     * @return $this
+     */
     public function setDescription(string $description = null): Source
     {
         $this->description = $description;
@@ -104,11 +117,19 @@ class Source extends AbstractGuidEntity
         return $this;
     }
 
+    /**
+     * @return SourceType
+     */
     public function getSourceType(): SourceType
     {
         return $this->sourceType;
     }
 
+    /**
+     * @param SourceType $sourceType
+     *
+     * @return $this
+     */
     public function setSourceType(SourceType $sourceType): Source
     {
         $this->sourceType = $sourceType;
@@ -116,6 +137,11 @@ class Source extends AbstractGuidEntity
         return $this;
     }
 
+    /**
+     * @param Order $order
+     *
+     * @return $this
+     */
     public function addOrder(Order $order): Source
     {
         $this->orders->add($order);
@@ -126,7 +152,7 @@ class Source extends AbstractGuidEntity
     /**
      * @return ArrayCollection|Order[]|PersistentCollection
      */
-    public function getOrders(): array
+    public function getOrders()
     {
         return $this->orders;
     }
@@ -139,9 +165,9 @@ class Source extends AbstractGuidEntity
     }
 
     /**
-     * @param ArrayCollection|Order[]|PersistentCollection $order
+     * @param ArrayCollection|Order[]|PersistentCollection $orders
      */
-    public function setOrders(array $order): Source
+    public function setOrders(array $orders): Source
     {
         $this->orders = $orders;
 

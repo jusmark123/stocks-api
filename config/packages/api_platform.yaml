@@ -10,6 +10,8 @@ api_platform:
       Doctrine\ORM\ORMException: 400
       Ramsey\Uuid\Exception\InvalidUuidStringException: 400
 
+      App\Exception\EmptyOrderHistoryException: 400
+
     mapping:
         paths: ['%kernel.project_dir%/config/api_resources']
 

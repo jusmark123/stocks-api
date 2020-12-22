@@ -1,0 +1,12 @@
+services:
+    _defaults:
+        public: true
+        autowire: true
+        autoconfigure: true
+        bind:
+            $kernel: '@kernel'
+
+    App\Tests\Behat\DatabaseContext: ~
+
+    App\Tests\Behat\:
+        resource: '../tests/Behat/*'

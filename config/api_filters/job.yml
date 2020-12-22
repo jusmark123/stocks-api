@@ -1,0 +1,15 @@
+services:
+  job.search_filter:
+    parent: 'api_platform.doctrine.orm.search_filter'
+    arguments:
+      - name: 'partial'
+        status: 'exact'
+        createdBy: 'exact'
+        modifiedBy: 'exact'
+    tags: [ 'api_platform.filter' ]
+
+  job.order_filter:
+    parent: 'api_platform.doctrine.orm.order_filter'
+    arguments:
+      - name: ~
+    tags: [ 'api_platform.filter' ]

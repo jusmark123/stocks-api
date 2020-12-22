@@ -9,10 +9,22 @@ App\Entity\Job:
     description:
       groups:
         - job.get
+    data:
+      groups:
+        - job.get
     account:
       groups:
         - job.get
     source:
+      groups:
+        - job.get
+    status:
+      groups:
+        - job.get
+    errorMessage:
+      groups:
+        - job.get
+    errorTrace:
       groups:
         - job.get
     user:

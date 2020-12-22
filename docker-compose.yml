@@ -9,6 +9,7 @@ services:
     volumes:
         - .:/opt/app-root/src
         - ./logs/symfony:/opt/app-root/src/var/log
+        - ./docker/php-fpm/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf
     links:
       - stocks-api-database
     env_file:
@@ -44,7 +45,7 @@ services:
       - ./docker/rabbitmq:/etc/rabbitmq
     ports:
       - 5672:5672
-      - ${DOCKER_RABBITMQ_MANAGEMENT_PORT}15672
+      - 15672:15672
     healthcheck:
       test:
         - CMD

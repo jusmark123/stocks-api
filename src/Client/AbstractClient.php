@@ -8,7 +8,6 @@ declare(strict_types=1);
 
 namespace App\Client;
 
-use App\Client\Interfaces\BrokerageClientInterface;
 use Http\Client\HttpClient;
 use Http\Message\RequestFactory;
 use Http\Message\UriFactory;
@@ -45,10 +44,10 @@ abstract class AbstractClient implements BrokerageClientInterface
      * @param UriFactory      $uriFactory
      */
     public function __construct(
-         HttpClient $client,
-     LoggerInterface $logger,
-     RequestFactory $requestFactory,
-     UriFactory $uriFactory
+        HttpClient $client,
+        LoggerInterface $logger,
+        RequestFactory $requestFactory,
+        UriFactory $uriFactory
     ) {
         $this->client = $client;
         $this->logger = $logger;

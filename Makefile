@@ -11,7 +11,7 @@ build-cache:
 	bin/console cache:warmup --no-debug --no-interaction
 PHONY: build-cache
 
-build-database: build-cache build-drop-database build-create-database build-migrate build-validate-database build-fixtures
+build-database: build-drop-database build-create-database build-migrate build-validate-database build-fixtures
 .PHONY: build-database
 
 build: .env build-dependencies build-database
@@ -30,20 +30,20 @@ build-create-database:
 .PHONY: build-create-database
 
 build-fixtures:
-	bin/console doctrine:fixture:load --no-interaction
+	bin/console doctrine:fixture:load --no-interaction --append
 .PHONY: build-fixtures
 
 build-migrate:
 	bin/console doctrine:migrations:migrate --no-interaction
 .PHONY: build-migrate
 
+build-migration:
+	bin/console doctrine:migration:diff --formatted
+.PHONY: migration
+
 build-validate-database:
 	bin/console doctrine:schema:validate
 .PHONY: build-validate-database
-
-migration:
-	bin/console doctrine:migration:diff --formatted
-.PHONY: migration
 
 clear-cache:
 	rm -rf var/cache/*
@@ -72,9 +72,28 @@ show-log:
 	tail -f var/log/dev.log
 .PHONY: show-log
 
-unit-test:
+test: test-unit test-feature
+.PHONY: test
+
+test-feature:
+	php -d memory_limit=-1 vendor/bin/behat --format progress -vv --stop-on-failure
+.PHONY: test-feature
+
+test-unit:
 	./vendor/bin/simple-phpunit --coverage-html build/coverage --coverage-clover build/coverage/clover.xml
 .PHONY: unit-test
+
+start-consumers:
+	supervisorctl --configuration /etc/supervisor/conf.d/supervisord.conf start all
+.PHONY: start-consumers
+
+stop-consumers:
+	supervisorctl --configuration /etc/supervisor/conf.d/supervisord.conf stop all
+.PHONY: stop-consumers
+
+sync-tickers:
+	bin/console stocks-api:api:sync-tickers
+.PHONY: sync-tickers
 
 ##### Satis Commands ####
 
