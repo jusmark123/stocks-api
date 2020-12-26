@@ -1,7 +1,7 @@
 .idea/
 .DS_Store
-composer.lock
-symfony.lock
+/composer.lock
+/symfony.lock
 
 ###> symfony/framework-bundle ###
 /.env
