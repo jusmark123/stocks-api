@@ -1,0 +1,7 @@
+services:
+  ticker.search_filter:
+    parent: 'api_platform.doctrine.orm.search_filter'
+    arguments:
+      - name: 'ipartial'
+        ticker: 'ipartial'
+    tags: [ 'api_platform.filter' ]
