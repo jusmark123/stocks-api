@@ -18,7 +18,10 @@ use Gedmo\Mapping\Annotation as Gedmo;
  *      name="ticker",
  *      uniqueConstraints={
  *          @ORM\UniqueConstraint(name="ticker_un_guid", columns={"guid"}),
- *          @ORM\UniqueConstraint(name="ticker_un_name", columns={"name"}),
+ *          @ORM\UniqueConstraint(name="ticker_un_ticker", columns={"ticker"}),
+ *      },
+ *      indexes={
+ *          @ORM\Index(name="ticker_ix_name", columns={"name"}),
  *      }
  * )
  * @ORM\Entity(repositoryClass="App\Entity\Repository\TickerRepository")
