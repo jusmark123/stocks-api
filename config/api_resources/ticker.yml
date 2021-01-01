@@ -1,6 +1,9 @@
 resources:
   App\Entity\Ticker:
     attributes:
+      filters:
+        - ticker.search_filter
+        - ticker.or_search_filter
       normalization_context:
         groups: [ 'ticker.get' ]
       denormalization_context:

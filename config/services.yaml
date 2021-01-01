@@ -82,6 +82,16 @@ services:
         App\Service\Brokerage\BrokerageServiceInterface:
             tags: [ 'stocks_api.brokerage_services_provider' ]
 
+    ####### Filters ###########
+
+    stocks_api.api_platform.orm.or_search_filter:
+        class: App\Filter\OrSearchFilter
+        autowire: true
+        autoconfigure: true
+        arguments:
+            $managerRegistry: '@doctrine'
+        public: false
+
     ####### Commands ##########
 
 
@@ -146,10 +156,10 @@ services:
         arguments: [ '@App\Swagger\SwaggerDecorator.inner' ]
         autoconfigure: false
 
-    ####### Message Client ##########
+    ###### Message Client ##########
     React\EventLoop\LoopInterface:
         public: true
-        factory: React\EventLoop\Factory::create
+        factory: 'React\EventLoop\Factory::create'
 
     App\MessageClient\Protocol\CredentialHandlerDefault:
         arguments:
