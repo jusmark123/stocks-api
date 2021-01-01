@@ -1,12 +1,9 @@
 resources:
   App\Entity\Ticker:
     attributes:
-<<<<<<< Updated upstream
-=======
       filters:
         - ticker.search_filter
         - ticker.or_search_filter
->>>>>>> Stashed changes
       normalization_context:
         groups: [ 'ticker.get' ]
       denormalization_context:
