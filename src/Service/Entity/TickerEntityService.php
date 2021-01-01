@@ -29,13 +29,14 @@ class TickerEntityService extends AbstractService
         TickerTypeEntityManager $tickerTypeManager,
         ValidationHelper $validator,
         LoggerInterface $logger
-    ) {
+    )
+    {
         $this->tickerTypeManager = $tickerTypeManager;
         parent::__construct($entityManager, $validator, $logger);
     }
 
     /**
-     * @param array $tickerMessage
+     * @param array      $tickerMessage
      * @param TickerType $tickerType
      *
      * @return Ticker|object|null
@@ -61,12 +62,13 @@ class TickerEntityService extends AbstractService
 
         $tickerType = $this->tickerTypeManager
             ->getEntityManager()
-            ->find(TickerType::class, $tickerMessage['type']);
+            ->getRepository(TickerType::class)
+            ->findOneBy(['code' => $tickerMessage['type']]);
 
         $tickerMessage['type'] = $tickerType;
 
         foreach ($tickerMessage as $key => $value) {
-            $method = 'set'.ucwords($key);
+            $method = 'set' . ucwords($key);
             if (method_exists($ticker, $method)) {
                 $ticker->{$method}($value);
             }

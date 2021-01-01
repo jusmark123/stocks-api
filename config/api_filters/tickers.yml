@@ -1,0 +1,16 @@
+services:
+  ticker.search_filter:
+    parent: 'api_platform.doctrine.orm.search_filter'
+    arguments:
+      - name: 'ipartial'
+        ticker: 'ipartial'
+    tags: [ 'api_platform.filter' ]
+
+  ticker.or_search_filter:
+    parent: 'stocks_api.api_platform.orm.or_search_filter'
+    arguments:
+      $properties:
+        name: istart
+        ticker: istart
+      $propertySearchName: search
+    tags: [ 'api_platform.filter' ]
