@@ -18,7 +18,7 @@
         "php": ">=7.2.5",
         "ext-ctype": "*",
         "ext-iconv": "*",
-        "ext-json": "^1.7",
+        "ext-json": "*",
         "api-platform/core": "^2.5",
         "bunny/bunny": "^0.4.3",
         "composer/package-versions-deprecated": "1.11.99.1",
