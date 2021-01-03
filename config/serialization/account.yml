@@ -3,6 +3,9 @@ App\Entity\Account:
     guid:
       groups:
         - account.get
+    accountInfo:
+      groups:
+        - account.get
     accountStatusType:
       groups:
         - account.get

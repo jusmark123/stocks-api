@@ -40,11 +40,29 @@ class PositionSideType extends AbstractDefaultEntity
      */
     private $description;
 
+    /**
+     * @var Brokerage
+     *
+     * @ORM\ManyToOne(targetEntity="Brokerage", inversedBy="positionSideTypes", fetch="LAZY")
+     * @ORM\JoinColumns({
+     *      @ORM\JoinColumn(name="brokerage_id", referencedColumnName="id", nullable=false)
+     * })
+     */
+    private $brokerage;
+
+    /**
+     * @return string
+     */
     public function getName(): string
     {
         return $this->name;
     }
 
+    /**
+     * @param string $name
+     *
+     * @return $this
+     */
     public function setName(string $name): PositionSideType
     {
         $this->name = $name;
@@ -52,14 +70,42 @@ class PositionSideType extends AbstractDefaultEntity
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getDescription(): string
     {
         return $this->description;
     }
 
+    /**
+     * @param string $description
+     *
+     * @return $this
+     */
     public function setDescription(string $description): PositionSideType
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * @return Brokerage
+     */
+    public function getBrokerage(): Brokerage
+    {
+        return $this->brokerage;
+    }
+
+    /**
+     * @param Brokerage $brokerage
+     *
+     * @return PositionSideType
+     */
+    public function setBrokerage(Brokerage $brokerage): PositionSideType
+    {
+        $this->brokerage = $brokerage;
 
         return $this;
     }

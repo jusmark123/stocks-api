@@ -12,7 +12,7 @@ use Behat\Behat\Hook\Scope\ScenarioScope;
 use Behatch\Context\JsonContext;
 
 /**
- * Trait JsonContextTrait.
+ * Traits JsonContextTrait.
  */
 trait JsonContextTrait
 {
@@ -22,6 +22,8 @@ trait JsonContextTrait
     protected $jsonContext;
 
     /**
+     * @BeforeScenario
+     *
      * @param ScenarioScope $scope
      */
     public function setJsonContext(ScenarioScope $scope)

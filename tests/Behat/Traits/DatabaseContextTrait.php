@@ -12,7 +12,7 @@ use App\Tests\Behat\DatabaseContext;
 use Behat\Behat\Hook\Scope\ScenarioScope;
 
 /**
- * Trait DatabaseContextTrait.
+ * Traits DatabaseContextTrait.
  */
 trait DatabaseContextTrait
 {
@@ -22,6 +22,8 @@ trait DatabaseContextTrait
     protected $databaseContext;
 
     /**
+     * @BeforeScenario
+     *
      * @param ScenarioScope $scope
      */
     public function setDatabaseContext(ScenarioScope $scope)

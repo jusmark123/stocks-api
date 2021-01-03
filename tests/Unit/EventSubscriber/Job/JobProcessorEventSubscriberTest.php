@@ -13,11 +13,11 @@ use App\Event\Job\JobProcessedEvent;
 use App\Event\Job\JobPublishedEvent;
 use App\Event\Job\JobPublishFailedEvent;
 use App\Event\Job\JobReceivedEvent;
-use App\EventSubscriber\Job\JobProcessorEventSubscriber;
+use App\EventSubscriber\JobProcessorEventSubscriber;
 use App\MessageClient\ClientPublisher\ClientPublisher;
 use App\MessageClient\Protocol\MessageFactory;
 use App\MessageClient\Protocol\Packet;
-use App\Service\JobService;
+use App\Service\JobEntityService;
 use Phake;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -64,7 +64,7 @@ class JobProcessorEventSubscriberTest extends TestCase
     /**
      * @Mock
      *
-     * @var JobService
+     * @var JobEntityService
      */
     private $jobService;
 
@@ -126,7 +126,7 @@ class JobProcessorEventSubscriberTest extends TestCase
     }
 
     /**
-     * @covers \App\EventSubscriber\Job\JobProcessorEventSubscriber::__constructor()
+     * @covers \App\EventSubscriber\JobProcessorEventSubscriber::__constructor()
      */
     public function testConstructor()
     {
@@ -134,7 +134,7 @@ class JobProcessorEventSubscriberTest extends TestCase
     }
 
     /**
-     * @covers  \App\EventSubscriber\Job\JobProcessorEventSubscriber::getSubscribedEvents()
+     * @covers  \App\EventSubscriber\JobProcessorEventSubscriber::getSubscribedEvents()
      */
     public function testGetSubscriberEvent()
     {

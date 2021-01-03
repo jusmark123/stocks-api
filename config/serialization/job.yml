@@ -3,13 +3,13 @@ App\Entity\Job:
     guid:
       groups:
         - job.get
+    config:
+      groups:
+        - job.get
     name:
       groups:
         - job.get
     description:
-      groups:
-        - job.get
-    data:
       groups:
         - job.get
     account:
@@ -19,6 +19,15 @@ App\Entity\Job:
       groups:
         - job.get
     status:
+      groups:
+        - job.get
+    percentComplete:
+      groups:
+        - job.get
+    jobItems:
+      groups:
+        - job.get
+    jobItemCount:
       groups:
         - job.get
     errorMessage:

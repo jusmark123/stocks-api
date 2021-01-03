@@ -3,17 +3,7 @@ App\Entity\Ticker:
     guid:
       groups:
         - ticker.get
-    ticker:
-      groups:
-        - ticker.get
-        - ticker.post
-        - ticker.put
-    name:
-      groups:
-        - ticker.get
-        - ticker.post
-        - ticker.put
-    market:
+    active:
       groups:
         - ticker.get
         - ticker.post
@@ -23,17 +13,32 @@ App\Entity\Ticker:
         - ticker.get
         - ticker.post
         - ticker.put
-    active:
+    market:
       groups:
         - ticker.get
         - ticker.post
         - ticker.put
-    url:
+    name:
+      groups:
+        - ticker.get
+        - ticker.post
+        - ticker.put
+    sector:
+      groups:
+        - ticker.get
+        - ticker.post
+        - ticker.put
+    ticker:
       groups:
         - ticker.get
         - ticker.post
         - ticker.put
     type:
+      groups:
+        - ticker.get
+        - ticker.post
+        - ticker.put
+    url:
       groups:
         - ticker.get
         - ticker.post

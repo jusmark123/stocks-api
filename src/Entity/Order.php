@@ -17,7 +17,8 @@ use Gedmo\Mapping\Annotation as Gedmo;
  * @ORM\Table(
  * 		name="`order`",
  * 		uniqueConstraints={
- * 			@ORM\UniqueConstraint(name="order_un_guid", columns={"guid"})
+ * 			@ORM\UniqueConstraint(name="order_un_guid", columns={"guid"}),
+ *          @ORM\UniqueConstraint(name="order_un_broker_order_id_brokerage", columns={"broker_order_id", "brokerage_id"})
  * 		},
  * 		indexes={
  * 			@ORM\Index(name="order_ix_account_id", columns={"account_id"}),
@@ -32,19 +33,44 @@ use Gedmo\Mapping\Annotation as Gedmo;
 class Order extends AbstractGuidEntity
 {
     /**
+     * @var float
+     * @ORM\Column(name="amount_usd", type="float")
+     */
+    private $amountUsd;
+
+    /**
      * @var string
      * @ORM\Column(name="broker_order_id", type="string", nullable=false)
      */
     private $brokerOrderId;
 
     /**
-     * @var Brokerage
-     * @ORM\ManyToOne(targetEntity="Brokerage", inversedBy="orders", fetch="LAZY")
-     * @ORM\JoinColumns({
-     * 		@ORM\JoinColumn(name="brokerage_id", referencedColumnName="id", nullable=false)
-     * })
+     * @var float
+     *
+     * @ORM\Column(name="fees", type="float", nullable=false, options={"default"=0.00})
      */
-    private $brokerage;
+    private $fees;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="qty", type="integer", nullable=false, options={"default"=0})
+     */
+    private $filledQty;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="side", type="string", nullable=false)
+     */
+    private $side;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="symbol", type="string", length=10, nullable=false)
+     */
+    private $symbol;
 
     /**
      * @var Account
@@ -57,37 +83,22 @@ class Order extends AbstractGuidEntity
     private $account;
 
     /**
-     * @var Position
-     * @ORM\ManyToOne(targetEntity="Position", inversedBy="orders", fetch="LAZY")
+     * @var Brokerage
+     * @ORM\ManyToOne(targetEntity="Brokerage", inversedBy="orders", fetch="LAZY")
      * @ORM\JoinColumns({
-     * 		@ORM\JoinColumn(name="position_id", referencedColumnName="id", nullable=true)
+     * 		@ORM\JoinColumn(name="brokerage_id", referencedColumnName="id", nullable=false)
      * })
      */
-    private $position;
+    private $brokerage;
 
     /**
-     * @var Source
-     * @ORM\ManyToOne(targetEntity="Source", inversedBy="orders", fetch="LAZY")
+     * @var OrderStatusType
+     * @ORM\ManyToOne(targetEntity="OrderStatusType")
      * @ORM\JoinColumns({
-     * 		@ORM\JoinColumn(name="source_id", referencedColumnName="id", nullable=false)
+     * 		@ORM\JoinColumn(name="order_status_type_id", referencedColumnName="id")
      * })
      */
-    private $source;
-
-    /**
-     * @var User|null
-     * @ORM\ManyToOne(targetEntity="User", inversedBy="orders", fetch="LAZY")
-     * @ORM\JoinColumns({
-     * 		@ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
-     * })
-     */
-    private $user;
-
-    /**
-     * @var float
-     * @ORM\Column(name="amount_usd", type="float")
-     */
-    private $amountUsd;
+    private $orderStatusType;
 
     /**
      * @var OrderType
@@ -99,41 +110,32 @@ class Order extends AbstractGuidEntity
     private $orderType;
 
     /**
-     * @var int
-     *
-     * @ORM\Column(name="qty", type="integer", nullable=false, options={"default"=0})
-     */
-    private $filledQty;
-
-    /**
-     * @var float
-     *
-     * @ORM\Column(name="avg_cost", type="float", nullable=false, options={"default"=0.00})
-     */
-    private $avgCost;
-
-    /**
-     * @var float
-     *
-     * @ORM\Column(name="fees", type="float", nullable=false, options={"default"=0.00})
-     */
-    private $fees;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="side", type="string", length=5, nullable=false)
-     */
-    private $side;
-
-    /**
-     * @var OrderStatusType
-     * @ORM\ManyToOne(targetEntity="OrderStatusType")
+     * @var Position|null
+     * @ORM\ManyToOne(targetEntity="Position", inversedBy="orders", fetch="LAZY", cascade={"persist", "remove"})
      * @ORM\JoinColumns({
-     * 		@ORM\JoinColumn(name="order_status_type_id", referencedColumnName="id")
+     * 		@ORM\JoinColumn(name="position_id", referencedColumnName="id", nullable=true)
      * })
      */
-    private $orderStatusType;
+    private $position;
+
+    /**
+     * @var Source
+     * @ORM\ManyToOne(targetEntity="Source", inversedBy="orders", fetch="LAZY", cascade={"remove"})
+     *
+     * @ORM\JoinColumns({
+     * 		@ORM\JoinColumn(name="source_id", referencedColumnName="id", nullable=false)
+     * })
+     */
+    private $source;
+
+    /**
+     * @var User|null
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="orders", fetch="LAZY", cascade={"remove"})
+     * @ORM\JoinColumns({
+     * 		@ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
+     * })
+     */
+    private $user;
 
     /**
      * @return int
@@ -156,27 +158,7 @@ class Order extends AbstractGuidEntity
     }
 
     /**
-     * @return float|null
-     */
-    public function getAvgCost(): float
-    {
-        return $this->avgCost;
-    }
-
-    /**
-     * @param float $avgCost
-     *
-     * @return $this
-     */
-    public function setAvgCost(float $avgCost = 0.00): Order
-    {
-        $this->avgCost = $avgCost;
-
-        return $this;
-    }
-
-    /**
-     * @return float|null
+     * @return float
      */
     public function getFees(): float
     {
@@ -188,7 +170,7 @@ class Order extends AbstractGuidEntity
      *
      * @return Order
      */
-    public function setFees(float $fees = 0.00): Order
+    public function setFees(float $fees): Order
     {
         $this->fees = $fees;
 
@@ -246,21 +228,41 @@ class Order extends AbstractGuidEntity
     }
 
     /**
-     * @return Position
+     * @return Position|null
      */
-    public function getPosition(): Position
+    public function getPosition(): ?Position
     {
         return $this->position;
     }
 
     /**
-     * @param Position $position
+     * @param Position|null $position
+     *
+     * @return $this
+     */
+    public function setPosition(?Position $position): Order
+    {
+        $this->position = $position;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSymbol(): string
+    {
+        return $this->symbol;
+    }
+
+    /**
+     * @param string $symbol
      *
      * @return Order
      */
-    public function setPosition(Position $position): Order
+    public function setSymbol(string $symbol): Order
     {
-        $this->position = $position;
+        $this->symbol = $symbol;
 
         return $this;
     }
@@ -330,7 +332,7 @@ class Order extends AbstractGuidEntity
      */
     public function getOrderType(): OrderType
     {
-        return $this->orderType = $orderType;
+        return $this->orderType;
     }
 
     /**

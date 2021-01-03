@@ -9,17 +9,21 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Client\BrokerageClient;
-use App\DTO\Brokerage\Interfaces\AccountInfoInterface;
-use App\DTO\Brokerage\Interfaces\OrderInfoInterface;
+use App\DTO\Brokerage\AccountInfoInterface;
 use App\Entity\Account;
-use App\Entity\Manager\AccountEntityManager;
-use App\Helper\ValidationHelper;
-use App\Service\Brokerage\BrokerageServiceAwareTrait;
+use App\Service\Brokerage\BrokerageServiceProvider;
+use App\Service\Entity\AccountEntityService;
 use Psr\Log\LoggerInterface;
 
+/**
+ * Class AccountService.
+ */
 class AccountService extends AbstractService
 {
-    use BrokerageServiceAwareTrait;
+    /**
+     * @var AccountEntityService
+     */
+    private $accountEntityService;
 
     /**
      * @var BrokerageClient
@@ -27,25 +31,28 @@ class AccountService extends AbstractService
     private $brokerageClient;
 
     /**
+     * @var BrokerageServiceProvider
+     */
+    private $brokerageServiceProvider;
+
+    /**
      * AccountService constructor.
      *
-     * @param AccountEntityManager $entityManager
-     * @param BrokerageClient      $brokerageClient
-     * @param iterable             $brokerageServices
-     * @param LoggerInterface      $logger
-     * @param ValidationHelper     $validator
+     * @param AccountEntityService     $accountEntityService
+     * @param BrokerageClient          $brokerageClient
+     * @param BrokerageServiceProvider $brokerageServiceProvider
+     * @param LoggerInterface          $logger
      */
     public function __construct(
-        AccountEntityManager $entityManager,
+        AccountEntityService $accountEntityService,
         BrokerageClient $brokerageClient,
-        iterable $brokerageServices,
-        LoggerInterface $logger,
-        ValidationHelper $validator
+        BrokerageServiceProvider $brokerageServiceProvider,
+        LoggerInterface $logger
     ) {
-        $this->entityManager = $entityManager;
+        $this->accountEntityService = $accountEntityService;
         $this->brokerageClient = $brokerageClient;
-        $this->brokerageServices = $brokerageServices;
-        parent::__construct($entityManager, $validator, $logger);
+        $this->brokerageServiceProvider = $brokerageServiceProvider;
+        parent::__construct($logger);
     }
 
     /**
@@ -55,38 +62,8 @@ class AccountService extends AbstractService
      */
     public function getAccountInfo(Account $account): AccountInfoInterface
     {
-        $brokerageService = $this->getBrokerageService($account->getBrokerage());
+        $brokerageService = $this->brokerageServiceProvider->getBrokerageService($account->getBrokerage());
 
         return $brokerageService->getAccountInfo($account);
-    }
-
-    /**
-     * @param Account    $account
-     * @param array|null $filters
-     *
-     * @return array
-     */
-    public function getOrderHistory(Account $account, array $filters = []): array
-    {
-        $brokerageService = $this->getBrokerageService($account->getBrokerage());
-
-        return $brokerageService->getOrderHistory($account, $filters);
-    }
-
-    /**
-     * @param Account $account
-     * @param array   $orderInfoMessage
-     *
-     * @return OrderInfoInterface|null
-     */
-    public function createOrderInfoFromMessage(Account $account, array $orderInfoMessage): ?OrderInfoInterface
-    {
-        $brokerageService = $this->getBrokerageService($account->getBrokerage());
-
-        $orderInfo = $brokerageService->createOrderInfoFromMessage($orderInfoMessage);
-
-        $this->validator->validate($orderInfo);
-
-        return $orderInfo;
     }
 }

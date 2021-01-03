@@ -10,27 +10,31 @@ namespace App\DataProvider\Account;
 
 use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use App\DTO\Brokerage\Interfaces\AccountInfoInterface;
+use App\DTO\Brokerage\AccountInfoInterface;
 use App\Entity\Account;
 use App\Entity\Manager\AccountEntityManager;
-use App\Service\AccountService;
+use App\Service\Entity\AccountEntityService;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
+/**
+ * Class AccountInfoItemDataProvider.
+ */
 class AccountInfoItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
 {
     const RESOURCE_CLASS = Account::class;
     const OPERATION_NAME = 'get_account_info';
 
     /**
-     * @var AccountService
+     * @var AccountEntityService
      */
     private $accountService;
 
     /**
-     * @var AccountEntityManager
+     * @var EntityManagerInterface
      */
-    private $accountEntityManager;
+    private $entityManager;
 
     /**
      * @var LoggerInterface
@@ -38,22 +42,26 @@ class AccountInfoItemDataProvider implements ItemDataProviderInterface, Restrict
     private $logger;
 
     /**
-     * AccountDataProvider Constructoru.
+     * AccountInfoItemDataProvider constructor.
+     *
+     * @param AccountEntityService $accountService
+     * @param AccountEntityManager $entityManager
+     * @param LoggerInterface      $logger
      */
     public function __construct(
-            AccountService $accountService,
-            AccountEntityManager $accountEntityManager,
-            LoggerInterface $logger)
+        AccountEntityService $accountService,
+        EntityManagerInterface $entityManager,
+        LoggerInterface $logger)
     {
         $this->accountService = $accountService;
-        $this->accountEntityManager = $accountEntityManager;
+        $this->entityManager = $entityManager;
         $this->logger = $logger;
     }
 
     /**
-     * @param string $resourceClass
-     * @param string $operationName
-     * @param array  $context
+     * @param string      $resourceClass
+     * @param string|null $operationName
+     * @param array       $context
      *
      * @return bool
      */
@@ -65,14 +73,14 @@ class AccountInfoItemDataProvider implements ItemDataProviderInterface, Restrict
     /**
      * @param string $resourceClass
      * @param  $id
-     * @param string $operationName
-     * @param array  $context
+     * @param string|null $operationName
+     * @param array       $context
      *
      * @return AccountInfoInterface
      */
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): AccountInfoInterface
     {
-        $account = $this->getAccount($id->toString());
+        $account = $this->getAccount($id);
 
         $accountInfo = $this->accountService->getAccountInfo($account);
 
@@ -86,7 +94,7 @@ class AccountInfoItemDataProvider implements ItemDataProviderInterface, Restrict
      */
     private function getAccount(string $id): Account
     {
-        $account = $this->accountEntityManager->findOneBy(['guid' => $id]);
+        $account = $this->entityManager->getRepository(Account::class)->findOneBy(['guid' => $id]);
 
         if (!$account instanceof Account) {
             throw new NotFoundHttpException(AccountEntityManager::ACCOUNT_NOT_FOUND);

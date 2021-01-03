@@ -3,6 +3,7 @@ resources:
     attributes:
       normalization_context:
         groups: [ 'brokerage.get' ]
+      order: {modifiedAt: DESC, id: DESC}
 
     collectionOperations:
       get:

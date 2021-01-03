@@ -1,0 +1,23 @@
+App\DTO\SyncOrdersRequest:
+  attributes:
+    guid:
+      groups:
+        - sync_orders_request.post
+    account:
+      groups:
+        - sync_orders_request.post
+    parameters:
+      groups:
+        - sync_orders_request.post
+    job:
+      groups:
+        - sync_orders_request.post
+    brokerageOrderIds:
+      groups:
+        - sync_orders_request.post
+    limit:
+      groups:
+        - sync_orders_request.post
+    source:
+      groups:
+        - sync_orders_request.post

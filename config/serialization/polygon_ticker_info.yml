@@ -1,0 +1,32 @@
+App\DTO\Brokerage\Polygon\PolygonTickerInfo:
+  attributes:
+    active:
+      groups:
+        - polygon_ticker_info.yml
+    ticker:
+      groups:
+        - polygon_ticker_info.yml
+    name:
+      groups:
+        - polygon_ticker_info.yml
+    market:
+      groups:
+        - polygon_ticker_info.yml
+    locale:
+      groups:
+        - polygon_ticker_info.yml
+    type:
+      groups:
+        - polygon_ticker_info.yml
+    currency:
+      groups:
+        - polygon_ticker_info.yml
+    primaryExch:
+      groups:
+        - polygon_ticker_info.yml
+    exchange:
+      groups:
+        - polygon_ticker_info.yml
+    url:
+      groups:
+        - polygon_ticker_info.yml

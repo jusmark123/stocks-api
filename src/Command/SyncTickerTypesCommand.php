@@ -8,8 +8,8 @@ declare(strict_types=1);
 
 namespace App\Command;
 
-use App\Entity\Manager\TickerEntityManager;
-use App\Service\Brokerage\PolygonService;
+use App\Entity\Manager\TickerTypeEntityManager;
+use App\Service\TickerService;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
@@ -28,25 +28,24 @@ class SyncTickerTypesCommand extends Command implements LoggerAwareInterface
     const NAME = 'stocks-api:api:sync-ticker-types';
 
     /**
-     * @var PolygonService
+     * @var TickerService
      */
-    private $polygonService;
+    private $tickerService;
 
     /**
-     * @var TickerEntityManager
+     * @var TickerTypeEntityManager
      */
-    private $tickerManager;
+    private $entityManager;
 
     public function __construct(
+        TickerTypeEntityManager $entityManager,
         LoggerInterface $logger,
-        PolygonService $polygonService,
-        TickerEntityManager $tickerEntityManager
+        TickerService $tickerService
     ) {
-        $this->polygonService = $polygonService;
-        $this->tickerManager = $tickerEntityManager;
-
-        $this->setLogger($logger);
         parent::__construct(self::NAME);
+        $this->entityManager = $entityManager;
+        $this->logger = $logger;
+        $this->tickerService = $tickerService;
     }
 
     protected function configure()
@@ -65,7 +64,10 @@ class SyncTickerTypesCommand extends Command implements LoggerAwareInterface
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         try {
-            $this->polygonService->syncTickerTypes();
+            $output->writeln('Syncing TickerTypes....');
+            $this->tickerService->syncTickerTypes();
+            $count = \count($this->entityManager->findAll());
+            $output->writeln(sprintf('Synced %d TickerTypes to database', $count));
         } catch (\Exception $e) {
             $this->logger->error($e->getMessage(), [
                'code' => $e->getCode(),

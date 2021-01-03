@@ -15,6 +15,11 @@ use App\Entity\Job;
  */
 class JobFactory extends AbstractFactory
 {
+    /**
+     * @param TagAwareCacheInterface $jobCache
+     *
+     * @return Job
+     */
     public static function create(): Job
     {
         return new Job();

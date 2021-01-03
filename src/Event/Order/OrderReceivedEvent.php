@@ -8,12 +8,20 @@ declare(strict_types=1);
 
 namespace App\Event\Order;
 
-use App\DTO\Interfaces\OrderRequestInterface;
+use App\DTO\Brokerage\OrderRequestInterface;
 use App\Event\AbstractEvent;
 
+/**
+ * Class OrderReceivedEvent.
+ */
 class OrderReceivedEvent extends AbstractEvent
 {
-    const EVENT_NAME = 'order.recieved';
+    const EVENT_NAME = 'order.receive';
+
+    /**
+     * @var array
+     */
+    private $orderRequestMessage;
 
     /**
      * @var OrderRequestInterface
@@ -25,8 +33,9 @@ class OrderReceivedEvent extends AbstractEvent
      *
      * @param OrderRequestInterface $orderRequest
      */
-    public function __construct(OrderRequestInterface $orderRequest)
+    public function __construct(array $orderRequestMessage, OrderRequestInterface $orderRequest)
     {
+        $this->orderRequestMessage = $orderRequestMessage;
         $this->orderRequest = $orderRequest;
     }
 
@@ -36,5 +45,13 @@ class OrderReceivedEvent extends AbstractEvent
     public function getOrderRequest(): OrderRequestInterface
     {
         return $this->orderRequest;
+    }
+
+    /**
+     * @return array
+     */
+    public function getOrderRequestMessage(): array
+    {
+        return $this->orderRequestMessage;
     }
 }

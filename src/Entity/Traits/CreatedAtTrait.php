@@ -26,7 +26,7 @@ trait CreatedAtTrait
     /**
      * Sets createdAt.
      *
-     * @param DateTime $createdAt
+     * @param \DateTime $createdAt
      *
      * @return $this
      */

@@ -8,14 +8,13 @@ declare(strict_types=1);
 
 namespace App\Tests\Behat;
 
-use Behatch\Context\JsonContext;
 use Behatch\HttpCall\HttpCallResult;
 use Behatch\Json\Json;
 
 /**
  * Class ExtendedJsonContext.
  */
-class ExtendedJsonContext extends JsonContext
+class ExtendedJsonContext
 {
     /**
      * @Then the JSON node :node should not equal the JSON node :reference

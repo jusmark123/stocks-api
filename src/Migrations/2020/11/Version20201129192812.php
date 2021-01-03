@@ -9,8 +9,6 @@ declare(strict_types=1);
 namespace DoctrineMigrations;
 
 use App\Constants\Entity\AccountStatusTypeConstants;
-use App\Constants\Entity\OrderStatusTypeConstants;
-use App\Constants\Entity\OrderTypeConstants;
 use App\Constants\Entity\SourceTypeConstants;
 use App\Constants\Entity\UserTypeConstants;
 use Doctrine\DBAL\Schema\Schema;
@@ -59,8 +57,6 @@ final class Version20201129192812 extends AbstractMigration implements Container
     {
         return [
             'account_status_type' => AccountStatusTypeConstants::getTypes(),
-            'order_status_type' => OrderStatusTypeConstants::getTypes(),
-            'order_type' => OrderTypeConstants::getTypes(),
             'source_type' => SourceTypeConstants::getTypes(),
             'user_type' => UserTypeConstants::getTypes(),
         ];

@@ -10,15 +10,19 @@ namespace App\Client;
 
 use App\Entity\Account;
 use App\Entity\Brokerage;
+use App\Exception\HttpMessageException;
 use Http\Client\HttpClient;
 use Http\Message\RequestFactory;
 use Http\Message\UriFactory;
-use Http\Promise\Promise;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
+use React\Promise\ExtendedPromiseInterface;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
+/**
+ * Class BrokerageClient.
+ */
 class BrokerageClient extends AbstractClient implements BrokerageClientInterface
 {
     /**
@@ -50,6 +54,16 @@ class BrokerageClient extends AbstractClient implements BrokerageClientInterface
             $logger,
             $requestFactory,
             $uriFactory);
+    }
+
+    /**
+     * @param Brokerage $brokerage
+     *
+     * @return bool
+     */
+    public function supports(Brokerage $brokerage): bool
+    {
+        return true;
     }
 
     /**
@@ -117,9 +131,9 @@ class BrokerageClient extends AbstractClient implements BrokerageClientInterface
      *
      * @throws \Psr\Http\Client\ClientExceptionInterface
      *
-     * @return ResponseInterface|null
+     * @return ResponseInterface
      */
-    public function sendRequest(RequestInterface $request)
+    public function sendRequest(RequestInterface $request): ResponseInterface
     {
         $response = $this->client->sendRequest($request);
 
@@ -129,11 +143,10 @@ class BrokerageClient extends AbstractClient implements BrokerageClientInterface
     /**
      * @param RequestInterface $request
      *
-     * @return Promise
+     * @return ExtendedPromiseInterface
      */
-    public function asyncRequest(RequestInterface $request)
+    public function sendAsyncRequest(RequestInterface $request): ExtendedPromiseInterface
     {
-        return $this->client->asyncRequest($request);
     }
 
     /**
@@ -162,6 +175,8 @@ class BrokerageClient extends AbstractClient implements BrokerageClientInterface
     /**
      * @param ResponseInterface $response
      *
+     * @throws \HttpResponseException
+     *
      * @return ResponseInterface
      */
     private function validateResponse(ResponseInterface $response): ?ResponseInterface
@@ -179,9 +194,9 @@ class BrokerageClient extends AbstractClient implements BrokerageClientInterface
                     'headers' => $response->getHeaders(),
                     'body' => (string) $response->getBody(),
                 ],
-            ],
+            ]
         );
 
-        throw new \Exception(BrokerageClient::class, $response->getStatusCode());
+        throw new HttpMessageException($response->getReasonPhrase(), $response->getStatusCode());
     }
 }

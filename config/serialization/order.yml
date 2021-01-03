@@ -3,31 +3,7 @@ App\Entity\Order:
     guid:
       groups:
         - order.get
-    brokerOrderId:
-      groups:
-        - order.get
-        - order.post
-        - order.put
-    brokerage:
-      groups:
-        - order.get
-        - order.post
-        - order.put
     account:
-      groups:
-        - order.get
-        - order.post
-        - order.put
-    position:
-      groups:
-        - order.get
-        - order.post
-        - order.put
-    source:
-      groups:
-        - order.get
-        - order.post
-    user:
       groups:
         - order.get
         - order.post
@@ -37,12 +13,52 @@ App\Entity\Order:
         - order.get
         - order.post
         - order.put
+    brokerOrderId:
+      groups:
+        - order.get
+        - order.post
+        - order.put
+    brokerage:
+      groups:
+        - order.get
+        - order.post
+    fees:
+      groups:
+        - order.get
+        - order.post
+    filledQty:
+      groups:
+        - order.get
+        - order.post
+    orderStatusType:
+      groups:
+        - order.get
+        - order.post
+        - order.put
     orderType:
       groups:
         - order.get
         - order.post
         - order.put
-    orderStatusType:
+    position:
+      groups:
+        - order.get
+        - order.post
+        - order.put
+    side:
+      groups:
+        - order.get
+        - order.post
+        - order.put
+    source:
+      groups:
+        - order.get
+        - order.post
+    symbol:
+      groups:
+        - order.get
+        - order.post
+    user:
       groups:
         - order.get
         - order.post

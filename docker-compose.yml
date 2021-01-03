@@ -1,4 +1,4 @@
-version: '2.1'
+version: '3'
 
 services:
   stocks-api-php:
@@ -8,12 +8,12 @@ services:
       args:
         - JWT_PASSPHRASE=${JWT_PASSPHRASE}
     container_name: ${DOCKER_RUNNING_IMAGE_NAME}
-    ports:
-        - ${PHP_FPM_IMAGE_PORT}9001
     volumes:
         - .:/opt/app-root/src
         - ./logs/symfony:/opt/app-root/src/var/log
         - ./docker/php-fpm/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf
+    ports:
+      - ${PHP_FPM_IMAGE_PORT}9000
     links:
       - stocks-api-database
     env_file:
@@ -43,7 +43,7 @@ services:
       MYSQL_PASSWORD: ${DATABASE_PASSWORD}
 
   stocks-api-rabbitmq:
-    image: library/rabbitmq:3.8.3
+    image: library/rabbitmq:latest
     container_name: ${DOCKER_RUNNING_IMAGE_NAME}-rabbitmq
     volumes:
       - ./docker/rabbitmq:/etc/rabbitmq
@@ -56,33 +56,27 @@ services:
       timeout: 5s
       retries: 3
 
-  stocks-api-mailhog:
-    image: mailhog/mailhog
-    container_name: ${DOCKER_RUNNING_IMAGE_NAME}-mailhog
-    ports:
-      - 1025
-      - 8025
+#  stocks-api-mailhog:
+#    image: mailhog/mailhog
+#    container_name: ${DOCKER_RUNNING_IMAGE_NAME}-mailhog
+#    ports:
+#      - 1025
+#      - 8025
 
-  stocks-api-satis:
-    image: ypereirareis/docker-satis:${IMAGE_VERSION:-5.4}
-    build: ./docker/satis
-    container_name: ${DOCKER_RUNNING_IMAGE_NAME}-satis
-    hostname: satis
+  stocks-api-redis:
+    image: redis
+    container_name: ${DOCKER_RUNNING_IMAGE_NAME}-redis
     ports:
-      - ${SATIS_PORT}80
-      - ${SATIS_SSL_PORT}443
-    networks:
-      - webproxy
-    volumes:
-      - "/var/tmp/composer:/var/www/.composer"
-      - "~/.ssh/id_rsa:/var/tmp/id"
-      - "./docker/satis/config:/satisfy/config"
+      - 6379:6379
+
+  stocks-api-redis-commander:
+    image: rediscommander/redis-commander
+    ports:
+      - 8081:8081
     environment:
-      PRIVATE_REPO_DOMAIN_LIST: bitbucket.org gitlab.com github.com github.com/JwalkerLib/
-      CRONTAB_FREQUENCY: "*/5 * * * *"
-      VIRTUAL_HOST: ${VHOST}
+      REDIS_HOST: 'stocks-api-redis'
 
-networks:
-  webproxy:
-    external:
-      name: ${PROXY_NETWORK}
+#networks:
+#  webproxy:
+#    external:
+#      name: ${PROXY_NETWORK}

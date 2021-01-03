@@ -8,9 +8,15 @@ declare(strict_types=1);
 
 namespace App\Event\Order;
 
+use App\Entity\Order;
+use App\Event\AbstractEvent;
+
+/**
+ * Class OrderProcessedEvent.
+ */
 class OrderProcessedEvent extends AbstractEvent
 {
-    const EVENT_NAME = 'order.processed';
+    const EVENT_NAME = 'order.process';
 
     /**
      * @var Order

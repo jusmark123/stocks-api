@@ -5,6 +5,7 @@ resources:
         groups: [ 'order.get' ]
       denormalization_context:
         groups: [ 'order.post' ]
+      order: {modifiedAt: DESC, id: DESC}
 
     collectionOperations:
       get:
