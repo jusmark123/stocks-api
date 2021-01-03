@@ -12,7 +12,7 @@ use App\Entity\Interfaces\EntityGuidInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Trait EntityGuidTrait.
+ * Traits EntityGuidTrait.
  */
 trait EntityGuidTrait
 {
@@ -30,7 +30,7 @@ trait EntityGuidTrait
      */
     public function __construct()
     {
-        $this->setGuid(\Ramsey\Uuid\Uuid::uuid4());
+        $this->setGuid(\Ramsey\Uuid\Uuid::uuid1());
     }
 
     /**

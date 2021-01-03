@@ -23,7 +23,7 @@ trait ModifiedAtTrait
     /**
      * Sets modifiedAt.
      *
-     * @param DateTime $modifiedAt
+     * @param \DateTime $modifiedAt
      *
      * @return $this
      */

@@ -12,7 +12,7 @@ use Behat\Behat\Hook\Scope\ScenarioScope;
 use Behatch\Context\RestContext;
 
 /**
- * Trait RestContextTrait.
+ * Traits RestContextTrait.
  */
 trait RestContextTrait
 {
@@ -22,6 +22,8 @@ trait RestContextTrait
     protected $restContext;
 
     /**
+     * @BeforeScenario
+     *
      * @param ScenarioScope $scope
      */
     public function setRestContext(ScenarioScope $scope)

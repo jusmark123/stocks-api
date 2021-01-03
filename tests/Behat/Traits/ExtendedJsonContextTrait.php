@@ -12,7 +12,7 @@ use App\Tests\Behat\ExtendedJsonContext;
 use Behat\Behat\Hook\Scope\ScenarioScope;
 
 /**
- * Trait ExtendedJsonContextTrait.
+ * Traits ExtendedJsonContextTrait.
  */
 trait ExtendedJsonContextTrait
 {
@@ -22,8 +22,6 @@ trait ExtendedJsonContextTrait
     protected $extendedJsonContext;
 
     /**
-     * ExtendedJsonContextTrait constructor.
-     *
      * @param ScenarioScope $scope
      */
     public function setExtendedJsonContext(ScenarioScope $scope)

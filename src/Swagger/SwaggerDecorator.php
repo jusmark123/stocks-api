@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace App\Swagger;
 
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\SerializerAwareInterface;
 use Symfony\Component\Serializer\SerializerAwareTrait;
@@ -19,7 +20,7 @@ final class SwaggerDecorator implements NormalizerInterface, SerializerAwareInte
 
     private $decorated;
 
-    public function __construct(NormalizerInterface $decorated)
+    public function __construct(NormalizerInterface $decorated, LoggerInterface $logger)
     {
         $this->decorated = $decorated;
     }
@@ -32,6 +33,8 @@ final class SwaggerDecorator implements NormalizerInterface, SerializerAwareInte
         unset($docs['paths']['/api/stocks/v1/alpaca_account_infos/{id}']);
         unset($docs['paths']['/api/stocks/v1/alpaca_order_infos']);
         unset($docs['paths']['/api/stocks/v1/alpaca_order_infos/{id}']);
+        unset($docs['paths']['/api/stocks/v1/td_ameritrade_account_infos']);
+        unset($docs['paths']['/api/stocks/v1/td_ameritrade_account_infos/{id}']);
 
         return $docs;
     }

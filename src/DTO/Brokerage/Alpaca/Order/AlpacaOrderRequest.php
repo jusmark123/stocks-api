@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace App\DTO\Brokerage\Alpaca\Order;
 
-use App\DTO\Brokerage\Interfaces\OrderRequestInterface;
+use App\DTO\Brokerage\OrderRequestInterface;
 use App\Entity\Order;
 
 class AlpacaOrderRequest implements OrderRequestInterface

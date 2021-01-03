@@ -3,6 +3,7 @@ resources:
     atrributes:
       normalization_context:
         groups: ['alpaca_order_info.get']
+      order: {modifiedAt: DESC, id: DESC}
 
     itemOperations:
       get:
@@ -11,6 +12,4 @@ resources:
 
     properties:
       id:
-        identifier: false
-      clientOrderId:
         identifier: true

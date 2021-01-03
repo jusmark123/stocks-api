@@ -8,37 +8,12 @@ declare(strict_types=1);
 
 namespace App\Event\Job;
 
-use App\Event\AbstractFailedEvent;
-
 /**
  * Class JobReceivedFailedEvent.
  */
-class JobReceiveFailedEvent extends AbstractFailedEvent
+class JobReceiveFailedEvent extends AbstractJobFailedEvent
 {
-    const EVENT_NAME = 'job.failed';
+    use JobFailedEventTrait;
 
-    /**
-     * @var array
-     */
-    protected $message;
-
-    /**
-     * JobReceiveFailedEvent constructor.
-     *
-     * @param array      $message
-     * @param \Exception $exception
-     */
-    public function __construct(array $message, \Exception $exception)
-    {
-        $this->message = $message;
-        parent::__construct($exception);
-    }
-
-    /**
-     * @return array
-     */
-    public function getMessage(): array
-    {
-        return $this->message;
-    }
+    const EVENT_NAME = 'job.receive';
 }

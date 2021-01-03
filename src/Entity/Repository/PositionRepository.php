@@ -10,6 +10,9 @@ namespace App\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 
+/**
+ * Class PositionRepository.
+ */
 class PositionRepository extends EntityRepository
 {
 }

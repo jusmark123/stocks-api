@@ -1,0 +1,8 @@
+App\DTO\CancelOrderRequest:
+  attributes:
+    guid:
+      groups:
+        - job.get
+    job:
+      groups:
+        - job.get

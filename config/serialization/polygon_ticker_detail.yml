@@ -1,0 +1,83 @@
+App\DTO\Brokerage\Polygon\PolygonTickerDetail:
+  attributes:
+    active:
+      groups:
+        - polygon_ticker_info.yml
+    bloomberg:
+      groups:
+        - polygon_ticker_info.yml
+    ceo:
+      groups:
+        - polygon_ticker_info.yml
+    cik:
+      groups:
+        - polygon_ticker_info.yml
+    country:
+      groups:
+        - polygon_ticker_info.yml
+    currency:
+      groups:
+        - polygon_ticker_info.yml
+    description:
+      groups:
+        - polygon_ticker_info.yml
+    employees:
+      groups:
+        - polygon_ticker_info.yml
+    exchange:
+      groups:
+        - polygon_ticker_info.yml
+    exchangeSymbol:
+      groups:
+        - polygon_ticker_info.yml
+    figi:
+      groups:
+        - polygon_ticker_info.yml
+    hqAddress:
+      groups:
+        - polygon_ticker_info.yml
+    hqState:
+      groups:
+        - polygon_ticker_info.yml
+    hqCountry:
+      groups:
+        - polygon_ticker_info.yml
+    industry:
+      groups:
+        - polygon_ticker_info.yml
+    listDate:
+      groups:
+        - polygon_ticker_info.yml
+    logo:
+      groups:
+        - polygon_ticker_info.yml
+    market:
+      groups:
+        - polygon_ticker_info.yml
+    marketCap:
+      groups:
+        - polygon_ticker_info.yml
+    name:
+      groups:
+        - polygon_ticker_info.yml
+    sector:
+      groups:
+        - polygon_ticker_info.yml
+    sic:
+      groups:
+        - polygon_ticker_info.yml
+    symbol:
+      groups:
+        - polygon_ticker_info.yml
+    tag:
+      groups:
+        - polygon_ticker_info.yml
+    type:
+      groups:
+        - polygon_ticker_info.yml
+    updated:
+      groups:
+        - polygon_ticker_info.yml
+    url:
+      groups:
+        - polygon_ticker_info.yml

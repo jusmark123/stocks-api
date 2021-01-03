@@ -8,84 +8,68 @@ declare(strict_types=1);
 
 namespace App\Service\Entity;
 
-use App\Entity\Factory\TickerFactory;
-use App\Entity\Manager\TickerEntityManager;
-use App\Entity\Manager\TickerTypeEntityManager;
+use App\Entity\Brokerage;
 use App\Entity\Ticker;
-use App\Entity\TickerType;
 use App\Helper\ValidationHelper;
-use App\Service\AbstractService;
+use App\Service\DefaultTypeService;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 
-class TickerEntityService extends AbstractService
+/**
+ * Class TickerEntityService.
+ */
+class TickerEntityService extends AbstractEntityService
 {
-    /**
-     * @var TickerTypeEntityManager
-     */
-    private $tickerTypeManager;
+    private $tickerTypeService;
 
     public function __construct(
-        TickerEntityManager $entityManager,
-        TickerTypeEntityManager $tickerTypeManager,
-        ValidationHelper $validator,
-        LoggerInterface $logger
-    )
-    {
-        $this->tickerTypeManager = $tickerTypeManager;
-        parent::__construct($entityManager, $validator, $logger);
+        DefaultTypeService $defaultTypeService,
+        EntityManagerInterface $entityManager,
+        LoggerInterface $logger,
+        TickerTypeEntityService $tickerTypeService,
+        ValidationHelper $validator
+    ) {
+        $this->tickerTypeService = $tickerTypeService;
+        parent::__construct($defaultTypeService, $entityManager, $logger, $validator);
     }
 
     /**
-     * @param array      $tickerMessage
-     * @param TickerType $tickerType
+     * @return TickerTypeEntityService
+     */
+    public function getTickerTypeService(): TickerTypeEntityService
+    {
+        return $this->tickerTypeService;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTickerTypes()
+    {
+        return $this->tickerTypeService->getTickerTypes();
+    }
+
+    /**
+     * @param Brokerage $brokerage
      *
      * @return Ticker|object|null
      */
-    public function createTickerFromMessage(array $tickerMessage)
+    public function getTickers(Brokerage $brokerage)
     {
-        $new = false;
-        if (!$this->entityManager->getEntityManager()->isOpen()) {
-            $this->entityManager = $this->entityManager->getEntityManager()->create(
-                $this->entityManager->getEntityManager()->getConnection(),
-                $this->entityManager->getEntityManager()->getConfiguration()
-            );
-        }
+        return $this->entityManager
+            ->getRepository(Ticker::class)
+            ->findOneBy(['brokerages' => [$brokerage]]);
+    }
 
-        $ticker = $this->getEntityManager()
-            ->getEntityRepository()
-            ->findOneBy(['name' => $tickerMessage['name']]);
-
-        if (!$ticker instanceof Ticker) {
-            $new = true;
-            $ticker = TickerFactory::create();
-        }
-
-        $tickerType = $this->tickerTypeManager
-            ->getEntityManager()
-            ->getRepository(TickerType::class)
-            ->findOneBy(['code' => $tickerMessage['type']]);
-
-        $tickerMessage['type'] = $tickerType;
-
-        foreach ($tickerMessage as $key => $value) {
-            $method = 'set' . ucwords($key);
-            if (method_exists($ticker, $method)) {
-                $ticker->{$method}($value);
-            }
-        }
-
-        $ticker
-            ->setCreatedBy('system_user')
-            ->setModifiedBy('system_user');
-
-        $this->validator->validate($ticker);
-
-        if ($new) {
-            $this->save($ticker);
-        } else {
-            $this->entityManager->flush();
-        }
-
-        return $ticker;
+    /**
+     * @param string $symbol
+     *
+     * @return Ticker|object|null
+     */
+    public function getTicker(string $symbol)
+    {
+        return $this->entityManager
+            ->getRepository(Ticker::class)
+            ->findOneBy(['symbol' => $symbol]);
     }
 }
