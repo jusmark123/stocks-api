@@ -74,6 +74,9 @@
     "lcobucci/clock": {
         "version": "2.0.0"
     },
+    "nikic/php-parser": {
+        "version": "v4.10.4"
+    },
     "nyholm/psr7": {
         "version": "1.0",
         "recipe": {
@@ -166,6 +169,15 @@
     },
     "symfony/dom-crawler": {
         "version": "v5.1.9"
+    },
+    "symfony/maker-bundle": {
+        "version": "1.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "1.0",
+            "ref": "fadbfe33303a76e25cb63401050439aa9b1a9c7f"
+        }
     },
     "symfony/orm-pack": {
         "version": "v1.0.8"

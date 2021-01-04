@@ -132,7 +132,7 @@ class PolygonService extends AbstractBrokerageService
         $tickerTypes = json_decode((string) $response->getBody(), true);
 
         foreach ($tickerTypes['results'] as $types) {
-            foreach($types as $code => $type) {
+            foreach ($types as $code => $type) {
                 $entity = $this->tickerTypeService->getEntityManager()->getEntityRepository()->findOneBy(['code' => $code]);
 
                 if ($entity instanceof TickerType) {
@@ -156,25 +156,25 @@ class PolygonService extends AbstractBrokerageService
     {
         $tickerTypes = $this->tickerTypeService->getEntityManager()->findAll();
 
-        if(empty($tickerTypes)) {
+        if (empty($tickerTypes)) {
             $this->syncTickerTypes();
         }
 
         $this->logger->info('Fetching tickers...');
         $tickerTypes[] = null;
 
-        foreach($tickerTypes as $tickerType) {
+        foreach ($tickerTypes as $tickerType) {
             $params = [
                 'sort' => 'ticker',
                 'market' => 'stocks',
             ];
 
-            if(null !== $tickerType) {
+            if (null !== $tickerType) {
                 $params['type'] = strtolower($tickerType->getCode());
             }
 
             $uri = $this->getUri(PolygonContstants::TICKER_ENDPOINT);
-            $uri .= '&' . http_build_query($params);
+            $uri .= '&'.http_build_query($params);
 
             $request = $this->brokerageClient->createRequest(
                 $uri,
@@ -183,10 +183,10 @@ class PolygonService extends AbstractBrokerageService
             );
 
             $response = $this->brokerageClient->sendRequest($request);
-            $response = json_decode((string)$response->getBody(), true);
-            $pages = (int) ceil((int)$response['count'] / (int)$response['perPage']) + 1;
+            $response = json_decode((string) $response->getBody(), true);
+            $pages = (int) ceil((int) $response['count'] / (int) $response['perPage']) + 1;
 
-            while ((int)$response['page'] < $pages) {
+            while ((int) $response['page'] < $pages) {
                 $tickers = $response['tickers'];
                 foreach ($tickers as $ticker) {
                     $ticker['type'] = null === $tickerType ? $tickerType : $tickerType->getId();
@@ -199,14 +199,14 @@ class PolygonService extends AbstractBrokerageService
                 }
                 $params['page'] = $response['page'] + 1;
                 $uri = $this->getUri(PolygonContstants::TICKER_ENDPOINT);
-                $uri .= '&' . http_build_query($params);
+                $uri .= '&'.http_build_query($params);
                 $request = $this->brokerageClient->createRequest(
                     $uri,
                     'GET',
                     PolygonContstants::REQUEST_HEADERS
                 );
                 $response = $this->brokerageClient->sendRequest($request);
-                $response = json_decode((string)$response->getBody(), true);
+                $response = json_decode((string) $response->getBody(), true);
             }
         }
         $this->logger->info('Finished fetching tickers');

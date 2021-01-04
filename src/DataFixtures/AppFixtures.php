@@ -47,9 +47,32 @@ class AppFixtures extends Fixture
             ->setUsername(UserConstants::SYSTEM_USER_USERNAME)
             ->setEmail(UserConstants::SYSTEM_USER_EMAIL)
             ->setDescription(UserConstants::SYSTEM_USER_DESCRIPTION)
-            ->setUserType($userType);
+            ->setUserType($userType)
+            ->setRoles(['ROLE_USER']);
 
         $manager->persist($systemUser);
+
+        // User for Bucho
+        $userType = $manager->getRepository(UserType::class)->find(UserTypeConstants::ACCOUNT_USER);
+        $bucho = UserFactory::create()
+            ->setGuid(Uuid::uuid1())
+            ->setUsername('bucho')
+            ->setEmail('mjhinkson@gmail.com')
+            ->setPassword('$argon2id$v=19$m=65536,t=4,p=1$p+SQMWymhPgjYOKyqXG8Jw$J8BLPxwv0JtIFGL7Aa153tHPK2t9KkaIVrvAfLLvh9Q')
+            ->setUserType($userType)
+            ->setRoles(['ROLE_USER']);
+
+        $manager->persist($bucho);
+
+        $justin = UserFactory::create()
+            ->setGuid(Uuid::uuid1())
+            ->setUsername('justin')
+            ->setEmail('jusmark123@yahoo.com')
+            ->setPassword('$argon2id$v=19$m=65536,t=4,p=1$vb2mzT+5QrH7Smwhpz/kiQ$iEYgruhmO7Bq/ftMzgqrJltopsnsJ1D725T8HtCt4kw')
+            ->setUserType($userType)
+            ->setRoles(['ROLE_USER']);
+
+        $manager->persist($justin);
 
         // Source
         $sourceType = $manager->getRepository(SourceType::class)->find(SourceTypeConstants::SYSTEM);

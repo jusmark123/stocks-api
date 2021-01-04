@@ -2,7 +2,11 @@ version: '2.1'
 
 services:
   stocks-api-php:
-    build: ./docker/php-fpm
+    build: 
+      context: ./docker/php-fpm
+      dockerfile: Dockerfile
+      args:
+        - JWT_PASSPHRASE=${JWT_PASSPHRASE}
     container_name: ${DOCKER_RUNNING_IMAGE_NAME}
     ports:
         - ${PHP_FPM_IMAGE_PORT}9001
@@ -47,10 +51,10 @@ services:
       - 5672:5672
       - 15672:15672
     healthcheck:
-      test:
-        - CMD
-        - rabbitmqctl
-        - status
+      test: ["CMD-SHELL", "rabbitmqctl status"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   stocks-api-mailhog:
     image: mailhog/mailhog

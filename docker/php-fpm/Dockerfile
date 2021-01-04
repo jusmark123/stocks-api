@@ -23,7 +23,6 @@ RUN apk add --update --no-cache \
     php7-pdo_mysql \
     php7-mysqli \
     php7-xml \
-#    php7-zlib \
     php7-phar \
     php7-tokenizer \
     php7-session \
@@ -37,7 +36,9 @@ RUN apk add --update --no-cache \
     curl \
     openrc \
     sudo \
-    supervisor
+    supervisor \
+    openssl \
+    acl
 RUN echo "$(curl -sS https://composer.github.io/installer.sig) -" > composer-setup.php.sig \
         && curl -sS https://getcomposer.org/installer | tee composer-setup.php | sha384sum -c composer-setup.php.sig \
         && php composer-setup.php && rm composer-setup.php* \
@@ -59,6 +60,15 @@ COPY supervisord.conf /etc/supervisor/conf.d/
 COPY symfony.pool.conf /etc/php7/php-fpm.d/
 
 RUN supervisord -c /etc/supervisor/conf.d/supervisord.conf
+
+RUN if [[ -d /opt/app-root/src/config/jwt ]] ; then rm -R /opt/app-root/src/config/jwt ; fi
+RUN mkdir -p /opt/app-root/src/config/jwt
+ARG JWT_PASSPHRASE
+ENV JWT_PASSPHRASE "$JWT_PASSPHRASE"
+RUN echo $JWT_PASSPHRASE | openssl genpkey -out /opt/app-root/src/config/jwt/private.pem -pass stdin -aes256 -algorithm rsa -pkeyopt rsa_keygen_bits:4096
+RUN echo $JWT_PASSPHRASE | openssl pkey -in /opt/app-root/src/config/jwt/private.pem -passin stdin -out /opt/app-root/src/config/jwt/public.pem -pubout
+RUN setfacl -R -m u:nobody:rX -m u:"$(whoami)":rwX /opt/app-root/src/config/jwt
+RUN setfacl -dR -m u:nobody:rX -m u:"$(whoami)":rwX /opt/app-root/src/config/jwt
 
 CMD ["php-fpm7", "-F"]
 

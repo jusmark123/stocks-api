@@ -13,7 +13,6 @@ use App\Event\Ticker\TickerPublishFailedEvent;
 use App\MessageClient\ClientListener\Channel;
 use App\MessageClient\Protocol\Packet;
 use App\Service\Entity\TickerEntityService;
-use App\Service\Entity\TickerTypeEntityService;
 use Psr\Log\LoggerInterface;
 use React\EventLoop\LoopInterface;
 use React\Promise as P;
@@ -39,9 +38,9 @@ class TickerReceiverListener extends AbstractCommandListener
      * TickerReceiverListener constructor.
      *
      * @param EventDispatcherInterface $dispatcher
-     * @param LoggerInterface $logger
-     * @param LoopInterface $loop
-     * @param TickerEntityService $tickerService
+     * @param LoggerInterface          $logger
+     * @param LoopInterface            $loop
+     * @param TickerEntityService      $tickerService
      */
     public function __construct(
         EventDispatcherInterface $dispatcher,
