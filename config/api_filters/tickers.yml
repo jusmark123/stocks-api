@@ -10,7 +10,7 @@ services:
     parent: 'stocks_api.api_platform.orm.or_search_filter'
     arguments:
       $properties:
-        name: istart
-        ticker: istart
+        name: ipartial
+        ticker: ipartial
       $propertySearchName: search
     tags: [ 'api_platform.filter' ]
