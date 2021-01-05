@@ -12,7 +12,7 @@ use Behat\Behat\Hook\Scope\ScenarioScope;
 use Behat\MinkExtension\Context\MinkContext;
 
 /**
- * Trait MinkContextTrait.
+ * Traits MinkContextTrait.
  */
 trait MinkContextTrait
 {
@@ -22,6 +22,8 @@ trait MinkContextTrait
     protected $minkContext;
 
     /**
+     * @BeforeScenario
+     *
      * @param ScenarioScope $scope
      */
     public function setMinkContext(ScenarioScope $scope)

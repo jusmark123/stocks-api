@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace App\Tests\Behat;
 
 use App\Tests\Behat\Traits\DatabaseContextTrait;
+use App\Tests\Behat\Traits\JsonContextTrait;
 use App\Tests\Behat\Traits\MinkContextTrait;
 use App\Tests\Behat\Traits\RestContextTrait;
 use Behat\Gherkin\Node\PyStringNode;
@@ -18,11 +19,18 @@ use Doctrine\Persistence\ObjectRepository;
 class ExtendedRestContext extends AbstractContext
 {
     use DatabaseContextTrait;
+    use JsonContextTrait;
     use MinkContextTrait;
     use RestContextTrait;
 
+    /**
+     * @var array
+     */
     protected $storedData = [];
 
+    /**
+     * @var HttpCallResult|null
+     */
     protected $result;
 
     /**
@@ -321,6 +329,9 @@ class ExtendedRestContext extends AbstractContext
      */
     public function allRequestsHaveHeaders()
     {
+        if (null === $this->getRestContext() || null === $this->getMinkContext()) {
+            throw new \AssertionError('You must import the contexts "Behatch\Context\RestContext" and "Behat\MinkExtension\Context\MinkContext" to run this statement');
+        }
         $this->getRestContext()->iAddHeaderEqualTo('Content-Type', 'application/json');
         $this->getRestContext()->iAddHeaderEqualTo('Accept', 'application/json');
     }

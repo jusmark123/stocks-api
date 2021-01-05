@@ -9,8 +9,8 @@ declare(strict_types=1);
 namespace App\EventSubscriber;
 
 use App\Event\LoggerEvent;
-use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Class LoggerEventSubscriber.
@@ -40,7 +40,7 @@ class LoggerEventSubscriber extends AbstractEventSubscriber
     }
 
     /**
-     * @return \string[][][]
+     * @return array
      */
     public static function getSubscribedEvents()
     {

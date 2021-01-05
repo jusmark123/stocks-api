@@ -8,12 +8,14 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Client\BrokerageClient;
-use App\DTO\Brokerage\Interfaces\OrderInfoInterface;
-use App\Entity\Manager\OrderEntityManager;
+use App\DTO\Brokerage\OrderInfoInterface;
+use App\DTO\SyncOrdersRequest;
+use App\Entity\Account;
+use App\Entity\Job;
 use App\Entity\Order;
 use App\Helper\ValidationHelper;
-use App\Service\Brokerage\BrokerageServiceAwareTrait;
+use App\Service\Brokerage\BrokerageServiceProvider;
+use App\Service\Entity\OrderEntityService;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -21,48 +23,103 @@ use Psr\Log\LoggerInterface;
  */
 class OrderService extends AbstractService
 {
-    use BrokerageServiceAwareTrait;
+    /**
+     * @var BrokerageServiceProvider
+     */
+    private $brokerageServiceProvider;
 
     /**
-     * @var BrokerageClient
+     * @var DefaultTypeService
      */
-    private $brokerageClient;
+    private $defaultTypeService;
+
+    /**
+     * @var OrderEntityService
+     */
+    private $orderEntityService;
+
+    /**
+     * @var ValidationHelper
+     */
+    private $validator;
 
     /**
      * OrderService constructor.
      *
-     * @param BrokerageClient    $brokerageClient
-     * @param iterable           $brokerageServices
-     * @param LoggerInterface    $logger
-     * @param OrderEntityManager $entityManager
-     * @param ValidationHelper   $validator
+     * @param BrokerageServiceProvider $brokerServiceProvider
+     * @param DefaultTypeService       $defaultTypeService
+     * @param LoggerInterface          $logger
+     * @param OrderEntityService       $orderEntityService
+     * @param ValidationHelper         $validator
      */
     public function __construct(
-        BrokerageClient $brokerageClient,
-        iterable $brokerageServices,
+        BrokerageServiceProvider $brokerServiceProvider,
+        DefaultTypeService $defaultTypeService,
         LoggerInterface $logger,
-        OrderEntityManager $entityManager,
+        OrderEntityService $orderEntityService,
         ValidationHelper $validator
     ) {
-        $this->brokerageClient = $brokerageClient;
-        $this->brokerageServices = $brokerageServices;
-        parent::__construct($entityManager, $validator, $logger);
+        $this->brokerageServiceProvider = $brokerServiceProvider;
+        $this->defaultTypeService = $defaultTypeService;
+        $this->orderEntityService = $orderEntityService;
+        $this->validator = $validator;
+        parent::__construct($logger);
     }
 
     /**
-     * @param OrderInfoInterface $orderInfo
+     * @param SyncOrdersRequest $request
+     * @param Job|null          $job
      *
-     * @return Order
+     * @throws \Exception
+     *
+     * @return Job|null
      */
-    public function createOrderFromOrderInfo(OrderInfoInterface $orderInfo)
+    public function fetchOrderHistory(SyncOrdersRequest $request, Job $job): ?Job
     {
-        $account = $orderInfo->getAccount();
+        try {
+            $brokerageService = $this->brokerageServiceProvider
+                ->getBrokerageService($request->getAccount()->getBrokerage());
 
-        $brokerageService = $this->getBrokerageService($account->getBrokerage());
+            return $brokerageService->fetchOrderHistory($request, $job);
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
 
-        $order = $brokerageService->createOrderFromOrderInfo($orderInfo);
+    public function getBrokerageUniqueOrderKey(Account $account)
+    {
+        $brokerageService = $this->brokerageServiceProvider->getBrokerageService($account->getBrokerage());
 
-        $this->save($order);
+        $constantsClass = $brokerageService->getConstantsClass();
+
+        return $constantsClass::ORDER_INFO_UNIQUE_KEY;
+    }
+
+    /**
+     * @param array $orderInfoMessage
+     * @param Job   $job
+     *
+     * @return OrderInfoInterface|null
+     */
+    public function syncOrderHistory(array $orderInfoMessage, Job $job): ?Order
+    {
+        $account = $job->getAccount();
+        $source = $job->getSource();
+
+        $brokerageService = $this->brokerageServiceProvider->getBrokerageService($account->getBrokerage());
+
+        $orderInfo = $brokerageService
+            ->createOrderInfoFromMessage($orderInfoMessage)
+            ->setAccount($account)
+            ->setSource($source);
+
+        if (null === $orderInfo->getUser()) {
+            $orderInfo->setUser($this->defaultTypeService->getDefaultUser());
+        }
+
+        $order = $brokerageService->createOrderFromOrderInfo($orderInfo, $job);
+
+        $this->orderEntityService->save($order);
 
         return $order;
     }

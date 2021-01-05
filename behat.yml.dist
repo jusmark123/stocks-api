@@ -4,23 +4,25 @@ default:
             filters:
                 tags: "~@wip"
             contexts:
-                - App\Tests\Behat\DatabaseContext
                 - App\Tests\Behat\ExtendedRestContext
-                - App\Tests\Behat\ExtendedJsonContext
+                - App\Tests\Behat\DatabaseContext
                 - App\Tests\Behat\FixtureContext
-                - Behat\MinkExtension\Context\MinkContext
                 - Behatch\Context\RestContext
+                - Behatch\Context\JsonContext
+                - Behat\MinkExtension\Context\MinkContext
 
     extensions:
         FriendsOfBehat\SymfonyExtension:
-            bootstrap: features/bootstrap/bootstrap.php
+            bootstrap: tests/bootstrap.php
             kernel:
                 class: App\Kernel
                 environment: "test"
-                debug: false
+                debug: true
+
         Behat\MinkExtension:
             base_url: "http://localhost:8080/api/stocks/v1"
             sessions:
                 default:
                     symfony: ~
+
         Behatch\Extension: ~

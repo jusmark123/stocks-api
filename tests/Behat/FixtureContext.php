@@ -8,11 +8,19 @@ declare(strict_types=1);
 
 namespace App\Tests\Behat;
 
+use App\Constants\Transport\JobConstants;
+use App\Entity\Account;
 use App\Entity\AccountStatusType;
 use App\Entity\Brokerage;
 use App\Entity\Factory\AccountFactory;
 use App\Entity\Factory\BrokerageFactory;
+use App\Entity\Factory\JobFactory;
+use App\Entity\Factory\JobItemFactory;
+use App\Entity\Factory\SourceFactory;
 use App\Entity\Factory\UserFactory;
+use App\Entity\Job;
+use App\Entity\Source;
+use App\Entity\SourceType;
 use App\Entity\User;
 use App\Entity\UserType;
 use App\Helper\ValidationHelper;
@@ -51,9 +59,10 @@ class FixtureContext extends BaseFixtureContext
         $entity = AccountFactory::create()
             ->setGuid($this->getGuid($data['guid'] ?? null))
             ->setName($data['name'])
+            ->setDescription($data['description'] ?? null)
             ->setBrokerage($this->findOneBy(Brokerage::class, 'name', $data['brokerage']))
             ->setAccountStatusType(($this->findOneBy(AccountStatusType::class, 'name', $data['accountStatusType'])))
-            ->setApiEndpointUrl($data['apiEndpoint'])
+            ->setApiEndpointUrl($data['apiEndpointUrl'])
             ->setApiKey($data['apiKey'])
             ->setApiSecret($data['apiSecret'])
             ->setCreatedBy($data['createdBy'] ?? 'fixture')
@@ -82,6 +91,78 @@ class FixtureContext extends BaseFixtureContext
             ->setCreatedBy($data['createdBy'] ?? 'fixture')
             ->setModifiedBy($data['modifiedBy'] ?? 'fixture');
 
+        $this->validator->validate($entity);
+        $this->persist($entity);
+        $this->setReference($entity->getGuid()->toString(), $entity);
+    }
+
+    /**
+     * @Given I have a job with the following values:
+     *
+     * @param TableNode $table
+     */
+    public function iHaveAJobWithTheFollowingValues(Tablenode $table)
+    {
+        $data = $table->getRowsHash();
+        $account = $this->findOneBy(Account::class, 'guid', $data['account']);
+        $source = $this->findOneBy(Source::class, 'guid', $data['source']);
+        $user = $this->findOneBy(User::class, 'guid', $data['user']);
+        $entity = JobFactory::create()
+            ->setGuid($this->getGuid($data['guid'] ?? null))
+            ->setName($data['name'])
+            ->setDescription($data['description'] ?? $data['name'].' description')
+            ->setStatus($data['status'] ?? JobConstants::JOB_CREATED)
+            ->setAccount($account)
+            ->setSource($source)
+            ->setUser($user)
+            ->setCreatedBy($data['createdBy'] ?? 'fixture')
+            ->setModifiedBy($data['modifiedBy'] ?? 'fixture');
+        $this->validator->validate($entity);
+        $this->persist($entity);
+        $this->setReference($entity->getGuid()->toString(), $entity);
+    }
+
+    /**
+     * @Given I have a jobItem with the following values:
+     *
+     * @param TableNode $table
+     */
+    public function iHaveAJobItemWithTheFollowingValues(Tablenode $table)
+    {
+        $data = $table->getRowsHash();
+        $job = $this->findOneBy(Job::class, 'guid', $data['job']);
+        $entity = JobItemFactory::create()
+            ->setGuid($this->getGuid($data['guid']) ?? null)
+            ->setData($data['data'])
+            ->setStatus($data['status'] ?? JobConstants::JOB_CREATED)
+            ->setJob($job)
+            ->setErrorMessage($data['errorMessage'] ?? null)
+            ->setErrorTrace($data['errorTrace'] ?? null)
+            ->setCreatedBy($data['createdBy'] ?? 'fixture')
+            ->setModifiedBy($data['modifiedBy'] ?? 'fixture');
+        $this->validator->validate($entity);
+        $this->persist($entity);
+        $this->setReference($entity->getGuid()->toString(), $entity);
+    }
+
+    /**
+     * @Given I have a source with the following values:
+     *
+     * @param TableNode $table
+     */
+    public function iHaveASourceWithTheFollowingValues(Tablenode $table)
+    {
+        $data = $table->getRowsHash();
+        $sourceType = $this->findOneBy(SourceType::class, 'name', $data['sourceType']);
+        $entity = SourceFactory::create()
+            ->setGuid($this->getGuid($data['guid']) ?? null)
+            ->setName($data['name'])
+            ->setDescription($data['description'] ?? $data['name'].' description')
+            ->sourceType($sourceType)
+            ->setCreatedBy($data['createdBy'] ?? 'fixture')
+            ->setModifiedBy($data['modifiedBy'] ?? 'fixture')
+            ->setCreatedBy($data['createdBy'] ?? 'fixture')
+            ->setModifiedBy($data['modifiedBy'] ?? 'fixture');
         $this->validator->validate($entity);
         $this->persist($entity);
         $this->setReference($entity->getGuid()->toString(), $entity);

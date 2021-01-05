@@ -12,7 +12,7 @@ use App\Entity\Job;
 use App\Event\Job\JobProcessFailedEvent;
 use App\Event\Job\JobPublishFailedEvent;
 use App\Event\Job\JobReceiveFailedEvent;
-use App\EventSubscriber\Job\JobFailedEventSubscriber;
+use App\EventSubscriber\JobFailedEventSubscriber;
 use Doctrine\ORM\EntityManagerInterface;
 use Phake;
 use PHPUnit\Framework\TestCase;
@@ -105,7 +105,7 @@ class JobFailedEventSubscriberTest extends TestCase
     }
 
     /**
-     * @covers \App\EventSubscriber\Job\JobFailedEventSubscriber::jobReceiveFailed()
+     * @covers \App\EventSubscriber\JobFailedEventSubscriber::jobReceiveFailed()
      */
     public function testJobRecieveFailedEvent()
     {
@@ -121,7 +121,7 @@ class JobFailedEventSubscriberTest extends TestCase
     }
 
     /**
-     * @covers \App\EventSubscriber\Job\JobFailedEventSubscriber::jobProcessFailed()
+     * @covers \App\EventSubscriber\JobFailedEventSubscriber::jobProcessFailed()
      */
     public function testJobProcessFailed()
     {

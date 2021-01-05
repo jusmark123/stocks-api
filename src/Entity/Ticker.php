@@ -8,7 +8,10 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\DTO\Brokerage\TickerInterface;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\PersistentCollection;
 use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
@@ -31,23 +34,25 @@ use Gedmo\Mapping\Annotation as Gedmo;
 class Ticker extends AbstractGuidEntity
 {
     /**
-     * @var string
+     * @var bool
      *
-     * @ORM\Column(name="ticker", type="string", length=10, nullable=false)
+     * @ORM\Column(name="active", type="boolean", nullable=false)
      */
-    private $ticker;
-
-    /**
-     * @var string
-     */
-    private $updated;
+    private $active;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="name", type="string", length=200, nullable=false)
+     * @ORM\Column(name="currency", type="string", length=5, nullable=false)
      */
-    private $name;
+    private $currency;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="exchange", type="string", length=100, nullable=true)
+     */
+    private $exchange;
 
     /**
      * @var string
@@ -58,29 +63,29 @@ class Ticker extends AbstractGuidEntity
 
     /**
      * @var string
+     *
+     * @ORM\Column(name="name", type="string", length=255, nullable=true)
      */
-    private $locale;
+    private $name;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="sector", type="string", length=100, nullable=true)
+     */
+    private $sector;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="currency", type="string", length=5, nullable=false)
+     * @ORM\Column(name="ticker", type="string", length=10, nullable=false)
      */
-    private $currency;
+    private $ticker;
 
     /**
-     * @var bool
-     *
-     * @ORM\Column(name="active", type="boolean", nullable=false)
+     *  @var TickerInterface|null
      */
-    private $active;
-
-    /**
-     * @var string;
-     *
-     * @ORM\Column(name="url", type="string", length=255, nullable=false)
-     */
-    private $url;
+    private $tickerInfo;
 
     /**
      * @var TickerType|null
@@ -90,24 +95,43 @@ class Ticker extends AbstractGuidEntity
      *      @ORM\JoinColumn(name="ticker_type_id", referencedColumnName="id", nullable=true)
      * })
      */
-    private $type;
+    private $tickerType;
 
     /**
-     * @return string
+     * @var ArrayCollection|Brokerage[]|PersistentCollection
+     *
+     * @ORM\ManyToMany(targetEntity="Brokerage", inversedBy="tickers", cascade={"persist","remove"})
+     * @ORM\JoinTable(name="brokerage_ticker")
      */
-    public function getTicker(): string
+    private $brokerages;
+
+    /**
+     * Ticker constructor.
+     *
+     * @throws \Exception
+     */
+    public function __construct()
     {
-        return $this->ticker;
+        parent::__construct();
+        $this->brokerages = new ArrayCollection();
     }
 
     /**
-     * @param string $ticker
+     * @return bool
+     */
+    public function isActive(): bool
+    {
+        return $this->active;
+    }
+
+    /**
+     * @param bool $active
      *
      * @return Ticker
      */
-    public function setTicker(string $ticker): Ticker
+    public function setActive(bool $active): Ticker
     {
-        $this->ticker = $ticker;
+        $this->active = $active;
 
         return $this;
     }
@@ -115,19 +139,39 @@ class Ticker extends AbstractGuidEntity
     /**
      * @return string
      */
-    public function getName(): string
+    public function getCurrency(): string
     {
-        return $this->name;
+        return $this->currency;
     }
 
     /**
-     * @param string $name
+     * @param string $currency
      *
      * @return Ticker
      */
-    public function setName(string $name): Ticker
+    public function setCurrency(string $currency): Ticker
     {
-        $this->name = $name;
+        $this->currency = $currency;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getExchange(): ?string
+    {
+        return $this->exchange;
+    }
+
+    /**
+     * @param string|null $exchange
+     *
+     * @return Ticker
+     */
+    public function setExchange(?string $exchange = null): Ticker
+    {
+        $this->exchange = $exchange;
 
         return $this;
     }
@@ -155,39 +199,39 @@ class Ticker extends AbstractGuidEntity
     /**
      * @return string
      */
-    public function getCurrency(): string
+    public function getName(): string
     {
-        return $this->currency;
+        return $this->name;
     }
 
     /**
-     * @param string $currency
+     * @param string $name
      *
      * @return Ticker
      */
-    public function setCurrency(string $currency): Ticker
+    public function setName(string $name): Ticker
     {
-        $this->currency = $currency;
+        $this->name = $name;
 
         return $this;
     }
 
     /**
-     * @return bool
+     * @return string|null
      */
-    public function isActive(): bool
+    public function getSector(): ?string
     {
-        return $this->active;
+        return $this->sector;
     }
 
     /**
-     * @param bool $active
+     * @param string|null $sector
      *
      * @return Ticker
      */
-    public function setActive(bool $active): Ticker
+    public function setSector(?string $sector): Ticker
     {
-        $this->active = $active;
+        $this->sector = $sector;
 
         return $this;
     }
@@ -195,19 +239,39 @@ class Ticker extends AbstractGuidEntity
     /**
      * @return string
      */
-    public function getUrl(): string
+    public function getTicker(): string
     {
-        return $this->url;
+        return $this->ticker;
     }
 
     /**
-     * @param string $url
+     * @param string $ticker
      *
      * @return Ticker
      */
-    public function setUrl(string $url): Ticker
+    public function setTicker(string $ticker): Ticker
     {
-        $this->url = $url;
+        $this->ticker = $ticker;
+
+        return $this;
+    }
+
+    /**
+     * @return TickerInterface|null
+     */
+    public function getTickerInfo(): ?TickerInterface
+    {
+        return $this->tickerInfo;
+    }
+
+    /**
+     * @param TickerInterface|null $tickerInfo
+     *
+     * @return Ticker
+     */
+    public function setTickerInfo(?TickerInterface $tickerInfo): Ticker
+    {
+        $this->tickerInfo = $tickerInfo;
 
         return $this;
     }
@@ -215,40 +279,52 @@ class Ticker extends AbstractGuidEntity
     /**
      * @return TickerType|null
      */
-    public function getType(): ?TickerType
+    public function getTickerType(): ?TickerType
     {
-        return $this->type;
+        return $this->tickerType;
     }
 
     /**
-     * @param TickerType|null $type
-     *
-     * @return $this
-     */
-    public function setType(TickerType $type = null): Ticker
-    {
-        $this->type = $type;
-
-        return $this;
-    }
-
-    /**
-     * @param string $updated
+     * @param TickerType|null $tickerType
      *
      * @return Ticker
      */
-    public function setUpdated(string $updated): Ticker
+    public function setTickerType(?TickerType $tickerType): Ticker
     {
-        $this->setModifiedAt(new \DateTime($updated));
+        $this->tickerType = $tickerType;
 
         return $this;
     }
 
     /**
-     * @return \DateTime
+     * @param Brokerage $brokerage
+     *
+     * @return $this
      */
-    public function getUpdated(): \DateTime
+    public function addBrokerage(Brokerage $brokerage): Ticker
     {
-        return $this->getModifiedAt();
+        $this->brokerages->add($brokerage);
+
+        return $this;
+    }
+
+    /**
+     * @return Brokerage[]|ArrayCollection|PersistentCollection
+     */
+    public function getBrokerages()
+    {
+        return $this->brokerages;
+    }
+
+    /**
+     * @param Brokerage[]|ArrayCollection|PersistentCollection $brokerages
+     *
+     * @return Ticker
+     */
+    public function setBrokerages($brokerages)
+    {
+        $this->brokerages = $brokerages;
+
+        return $this;
     }
 }

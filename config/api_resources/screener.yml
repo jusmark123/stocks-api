@@ -5,6 +5,7 @@ resources:
         groups: [ 'screener.get' ]
       denormalization_context:
         groups: [ 'screener.post' ]
+      order: {modifiedAt: DESC, id: DESC}
 
     collectionOperations:
       get:

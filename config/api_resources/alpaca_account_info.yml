@@ -1,14 +1,14 @@
 resources:
   App\DTO\Brokerage\Alpaca\AlpacaAccountInfo:
     atrributes:
+      denormalization_context:
+        groups: [ 'alpaca_account_info.get' ]
       normalization_context:
-        groups: ['alpaca_alpaca_account_info.get']
+        groups: [ 'alpaca_account_info.get' ]
+      order: {modifiedAt: DESC, id: DESC}
 
-    itemOperations: 
-      get:
-        method: GET
-        controller: App\Controller\DummyController
-        
+    itemOperations: ~
+
     collectionOperations: ~
     
     properties:

@@ -1,0 +1,23 @@
+App\DTO\SyncTickersRequest:
+  attributes:
+    guid:
+      groups:
+        - sync_tickers_request.post
+    account:
+      groups:
+        - sync_tickers_request.post
+    parameters:
+      groups:
+        - sync_tickers_request.post
+    job:
+      groups:
+        - sync_tickers_request.post
+    brokerageOrderIds:
+      groups:
+        - sync_tickers_request.post
+    limit:
+      groups:
+        - sync_tickers_request.post
+    source:
+      groups:
+        - sync_tickers_request.post

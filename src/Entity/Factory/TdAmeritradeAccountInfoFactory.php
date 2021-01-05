@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace App\Entity\Factory;
 
-use App\DTO\TdAmeritrade\TdAmeritradeAccountInfo;
+use App\DTO\Brokerage\TdAmeritrade\TdAmeritradeAccountInfo;
 
 class TdAmeritradeAccountInfoFactory extends AbstractFactory
 {

@@ -30,6 +30,6 @@ class ServiceAccountService extends AbstractService
         ValidationHelper $validator
     ) {
         $this->entityManager = $entityManager;
-        parent::__construct($entityManager, $validator, $logger);
+        parent::__construct($logger);
     }
 }

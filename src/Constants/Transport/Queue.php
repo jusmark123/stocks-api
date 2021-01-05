@@ -15,8 +15,14 @@ final class Queue
     const SYSTEM_PUBLISHER_HEADER_NAME = 'PUBLISHER';
     const SYSTEM_PUBLISHER_NAME = 'api.stocks-api';
 
-    const JOB_PERSISTENT_ROUTING_KEY = 'stocks-api.job';
     const TICKERS_PERSISTENT_ROUTING_KEY = 'stocks-api.ticker';
-
+    const JOB_REQUEST_PERSISTENT_ROUTING_KEY = 'stocks-api.job.request';
     const ORDER_INFO_PERSISTENT_ROUTING_KEY = 'stocks-api.order.info';
+
+    const TOPIC_EXCHANGE = 'amq.topic';
+    const FANOUT_EXCHANGE = 'amq.fanout';
+
+    const REQUEST_HEADERS = [
+        self::SYSTEM_PUBLISHER_HEADER_NAME => self::SYSTEM_PUBLISHER_NAME,
+    ];
 }

@@ -94,9 +94,10 @@ services:
 
     ####### Commands ##########
 
+    ####### Predis ########
 
-
-    ####### Controller ########
+    Predis\Client: '@snc_redis.default'
+    Predis\ClientInterface: '@Predis\Client'
 
     # controllers are imported separately to make sure services can be injected
     # as action arguments even if you don't extend any base controller class
@@ -116,143 +117,40 @@ services:
         tags:
             - { name: doctrine.orm.entity_listener, lazy: true }
 
-    ###### Entity Managers #######
+    ###### Entity Managers ######
 
     App\Entity\Manager\:
         resource: '../src/Entity/Manager/*'
 
-    App\Entity\Factory\:
-        resource: '../src/Entity/Factory/*'
-
+    ###### Event Subscribers #####
 
     App\EventSubscriber\:
         resource: '../src/EventSubscriber/*'
         tags:
             - { name: kernel.event_subscriber }
 
-    App\Service\AccountService:
-        arguments:
-            $brokerageServices: !tagged stocks_api.brokerage_services_provider
-
-    App\Service\OrderService:
-        arguments:
-            $brokerageServices: !tagged stocks_api.brokerage_services_provider
+    ###### Data Provider #######
 
     App\DataProvider\:
         resource: '../src/DataProvider/*'
 
-    App\DataProvider\Account\AccountSyncOrdersDataProvider:
+    ###### Services ######
+
+    App\Service\Brokerage\BrokerageServiceProvider:
         arguments:
-            $entityManager: '@doctrine.orm.entity_manager'
+            $brokerageServices: !tagged stocks_api.brokerage_services_provider
 
-    GuzzleHttp\ClientInterface:
-        alias: guzzle.client
+    App\Service\PaginatorService:
+        autowire: true
 
-    guzzle.client:
-        class: GuzzleHttp\Client
+    ###### Paginator Factory ##########
+
+    App\Paginator\PaginatorFactory:
+        autowire: true
+
+    ###### Swagger Decorator ######
 
     App\Swagger\SwaggerDecorator:
         decorates: 'api_platform.swagger.normalizer.api_gateway'
         arguments: [ '@App\Swagger\SwaggerDecorator.inner' ]
         autoconfigure: false
-
-    ###### Message Client ##########
-    React\EventLoop\LoopInterface:
-        public: true
-        factory: 'React\EventLoop\Factory::create'
-
-    App\MessageClient\Protocol\CredentialHandlerDefault:
-        arguments:
-            $anonymous: '%broadcast.amqp.anonymous'
-        properties:
-            anonymousPassword: guest
-            anonymousUsername: guest
-
-    App\MessageClient\Protocol\CredentialHandler:
-        alias: App\MessageClient\Protocol\CredentialHandlerDefault
-
-    App\MessageClient\Protocol\FrameType\:
-        public: true
-        resource: '../src/MessageClient/Protocol/FrameType'
-        tags:
-            - app.protocol.frame-type
-
-    App\MessageClient\Protocol\MessageFactory:
-        public: true
-        arguments:
-            $frameTypes: !tagged app.protocol.frame-type
-            $namespace: '%broadcast.service.namespace%'
-            $name: '%broadcast.service.name%'
-            $version: '%broadcast.service.version%'
-
-    App\MessageClient\Command\:
-        resource: '../src/MessageClient/Command/*'
-        tags:
-            - console.command
-
-    App\MessageClient\Command\ConsumerRun:
-        arguments:
-            $listenerProvider: '@?App\MessageClient\ClientListener\ClientListenerProvider'
-        tags:
-            - console.command
-
-    App\MessageClient\BunnyAmqpSyncClientFactory:
-        public: true
-        arguments:
-            $options:
-                host: '%broadcast.amqp.rabbit-host%'
-                port: '%broadcast.amqp.rabbit-port%'
-                user: '%broadcast.amqp.rabbit-username%'
-                password: '%broadcast.amqp.rabbit-password%'
-                vhost: '%broadcast.amqp.rabbit-vhost%'
-
-    App\MessageClient\BunnyAmqpClientFactory:
-        public: true
-        arguments:
-            $options:
-                host: '%broadcast.amqp.rabbit-host%'
-                port: '%broadcast.amqp.rabbit-port%'
-                user: '%broadcast.amqp.rabbit-username%'
-                password: '%broadcast.amqp.rabbit-password%'
-                vhost: '%broadcast.amqp.rabbit-vhost%'
-
-    App\MessageClient\ClientFactory:
-        public: true
-        alias: App\MessageClient\BunnyAmqpClientFactory
-
-    App\MessageClient\ClientListener\BunnyListenerProvider:
-        arguments:
-            $amqpQueueNamePrefix: '%broadcast.amqp.topic-prefix%'
-            $exchangeName: '%broadcast.amqp.topic-exchange%'
-            $listeners: !tagged stocks-api.message-client.client-listener
-
-    Bunny\Async\Client:
-        public: true
-        alias: App\MessageClient\BunnyAsyncClient
-
-    App\MessageClient\BunnyAsyncClient:
-        arguments:
-            $options:
-                host: '%broadcast.amqp.rabbit-host%'
-                port: '%broadcast.amqp.rabbit-port%'
-                user: '%broadcast.amqp.rabbit-username%'
-                password: '%broadcast.amqp.rabbit-password%'
-                vhost: '%broadcast.amqp.rabbit-vhost%'
-                heartbeat: '%broadcast.amqp.rabbit-heartbeat%'
-
-    App\MessageClient\ClientListener\ClientListenerProvider:
-        public: true
-        alias: App\MessageClient\ClientListener\BunnyListenerProvider
-
-    App\MessageClient\ClientPublisher\BunnyClientPublisher:
-        arguments:
-            $exchangeName: '%broadcast.amqp.topic-exchange%'
-            $publisherName: '%project_namespace%.%project_name'
-
-    App\MessageClient\ClientPublisher\ClientPublisher:
-        public: true
-        alias: App\MessageClient\ClientPublisher\BunnyClientPublisher
-
-    App\MessageClient\SyncClientFactory:
-        public: true
-        alias: App\MessageClient\BunnyAmqpSyncClientFactory

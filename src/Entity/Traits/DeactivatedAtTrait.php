@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 trait DeactivatedAtTrait
 {
     /**
-     * @var \DateTime
+     * @var \DateTime|null
      * @ORM\Column(name="deactivated_at", type="datetime", nullable=true)
      */
     protected $deactivatedAt;
@@ -21,11 +21,11 @@ trait DeactivatedAtTrait
     /**
      * Sets deactivatedAt.
      *
-     * @param \DateTime $deactivatedAt
+     * @param \DateTime $deactivatedAt|null
      *
      * @return $this
      */
-    public function setDeactivatedAt(\DateTime $deactivatedAt = null)
+    public function setDeactivatedAt(?\DateTime $deactivatedAt = null)
     {
         $this->deactivatedAt = $deactivatedAt;
 

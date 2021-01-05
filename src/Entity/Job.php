@@ -8,7 +8,9 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\PersistentCollection;
 use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
@@ -32,6 +34,42 @@ use Gedmo\Mapping\Annotation as Gedmo;
 class Job extends AbstractGuidEntity
 {
     /**
+     * @var array|null
+     */
+    private $config;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="description", type="text", length=65535, nullable=true)
+     */
+    private $description;
+
+    /**
+     * @var float
+     */
+    private $percentComplete;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="error_message", type="text", length=65535, nullable=true)
+     */
+    private $errorMessage;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="error_trace", type="text", length=65535, nullable=true)
+     */
+    private $errorTrace;
+
+    /**
+     * @var int|string
+     */
+    private $jobItemCount;
+
+    /**
      * @var string|null
      *
      * @ORM\Column(name="name", type="string", length=100, nullable=false)
@@ -46,47 +84,19 @@ class Job extends AbstractGuidEntity
     private $status;
 
     /**
-     * @var string|null
-     *
-     * @ORM\Column(name="description", type="text", length=65535, nullable=true)
-     */
-    private $description;
-
-    /**
-     * @var mixed
-     *
-     * @ORM\Column(name="data", type="text", length=65535, nullable=false)
-     */
-    private $data;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="error_message", type="string", length=225, nullable=true)
-     */
-    private $errorMessage;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="error_trace", type="text", length=65535, nullable=true)
-     */
-    private $errorTrace;
-
-    /**
-     * @var Account
+     * @var Account|null
      * @ORM\ManyToOne(targetEntity="Account", inversedBy="jobs", fetch="LAZY")
      * @ORM\JoinColumns({
-     * 		@ORM\JoinColumn(name="account_id", referencedColumnName="id", nullable=false)
+     * 		@ORM\JoinColumn(name="account_id", referencedColumnName="id", nullable=true)
      * })
      */
     private $account;
 
     /**
-     * @var Source
+     * @var Source|null
      * @ORM\ManyToOne(targetEntity="Source", inversedBy="jobs", fetch="LAZY")
      * @ORM\JoinColumns({
-     * 		@ORM\JoinColumn(name="source_id", referencedColumnName="id", nullable=false)
+     * 		@ORM\JoinColumn(name="source_id", referencedColumnName="id", nullable=true)
      * })
      */
     private $source;
@@ -101,6 +111,13 @@ class Job extends AbstractGuidEntity
     private $user;
 
     /**
+     * @var ArrayCollection|JobItem[]|PersistentCollection
+     *
+     * @ORM\OneToMany(targetEntity="JobItem", mappedBy="job", fetch="LAZY", cascade={"persist","remove"})
+     */
+    private $jobItems;
+
+    /**
      * Job constructor.
      *
      * @throws \Exception
@@ -108,6 +125,28 @@ class Job extends AbstractGuidEntity
     public function __construct()
     {
         parent::__construct();
+        $this->config = [];
+        $this->jobItems = new ArrayCollection();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getConfig()
+    {
+        return $this->config;
+    }
+
+    /**
+     * @param mixed $config
+     *
+     * @return Job
+     */
+    public function setConfig($config = []): Job
+    {
+        $this->config = $config;
+
+        return $this;
     }
 
     /**
@@ -139,33 +178,13 @@ class Job extends AbstractGuidEntity
     }
 
     /**
-     * @param string $description
+     * @param string|null $description
      *
      * @return Job
      */
     public function setDescription(string $description = null): Job
     {
         $this->description = $description;
-
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getData()
-    {
-        return unserialize($this->data);
-    }
-
-    /**
-     * @param mixed $data
-     *
-     * @return Job
-     */
-    public function setData($data): Job
-    {
-        $this->data = serialize($data);
 
         return $this;
     }
@@ -191,6 +210,34 @@ class Job extends AbstractGuidEntity
     }
 
     /**
+     * @return float
+     */
+    public function getPercentComplete(): float
+    {
+        return (float) $this->percentComplete ?? 0.00;
+    }
+
+    /**
+     * @param float $percentComplete
+     *
+     * @return Job
+     */
+    public function setPercentComplete(float $percentComplete = 0.00): Job
+    {
+        $this->percentComplete = $percentComplete;
+
+        return $this;
+    }
+
+    /**
+     * @return string|int
+     */
+    public function getJobItemCount()
+    {
+        return $this->jobItems->count();
+    }
+
+    /**
      * @return string
      */
     public function getErrorMessage(): ?string
@@ -203,7 +250,7 @@ class Job extends AbstractGuidEntity
      *
      * @return Job
      */
-    public function setErrorMessage(string $errorMessage): Job
+    public function setErrorMessage(?string $errorMessage = null): Job
     {
         $this->errorMessage = $errorMessage;
 
@@ -223,7 +270,7 @@ class Job extends AbstractGuidEntity
      *
      * @return Job
      */
-    public function setErrorTrace(string $errorTrace): Job
+    public function setErrorTrace(?string $errorTrace = null): Job
     {
         $this->errorTrace = $errorTrace;
 
@@ -231,19 +278,19 @@ class Job extends AbstractGuidEntity
     }
 
     /**
-     * @return Source
+     * @return Source|null
      */
-    public function getSource(): Source
+    public function getSource(): ?Source
     {
         return $this->source;
     }
 
     /**
-     * @param Source $source
+     * @param Source|null $source
      *
      * @return Job
      */
-    public function setSource(Source $source): Job
+    public function setSource(?Source $source = null): Job
     {
         $this->source = $source;
 
@@ -251,19 +298,19 @@ class Job extends AbstractGuidEntity
     }
 
     /**
-     * @return Account $account
+     * @return Account|null
      */
-    public function getAccount(): Account
+    public function getAccount(): ?Account
     {
         return $this->account;
     }
 
     /**
-     * @param Account $account
+     * @param Account|null $account
      *
-     * @return Job
+     * @return $this
      */
-    public function setAccount(Account $account): Job
+    public function setAccount(?Account $account = null): Job
     {
         $this->account = $account;
 
@@ -286,6 +333,66 @@ class Job extends AbstractGuidEntity
     public function setUser(User $user): Job
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * @param JobItem $jobItem
+     *
+     * @return $this
+     */
+    public function addJobItem(JobItem $jobItem): Job
+    {
+        $this->jobItems->add($jobItem);
+
+        return $this;
+    }
+
+    /**
+     * @param JobItem $jobItem
+     *
+     * @return $this
+     */
+    public function removeJobItem(JobItem $jobItem): Job
+    {
+        $this->jobItems->removeElement($jobItem);
+
+        return $this;
+    }
+
+    /**
+     * @return JobItem[]|ArrayCollection|PersistentCollection
+     */
+    public function getJobItems()
+    {
+        return $this->jobItems;
+    }
+
+    /**
+     * @param string $guid
+     *
+     * @return JobItem|null
+     */
+    public function getJobItem(string $guid): JobItem
+    {
+        return $this->jobItems->filter(function ($jobItem) use ($guid) {
+            if ($jobItem->getGuid()->toString() === $guid) {
+                return true;
+            }
+
+            return false;
+        })->first();
+    }
+
+    /**
+     * @param JobItem[]|ArrayCollection|PersistentCollection $jobItems
+     *
+     * @return Job
+     */
+    public function setJobItems($jobItems): Job
+    {
+        $this->jobItems = $jobItems;
 
         return $this;
     }
