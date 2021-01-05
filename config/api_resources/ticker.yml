@@ -1,7 +1,6 @@
 resources:
   App\Entity\Ticker:
     attributes:
-      security: 'is_granted("ROLE_USER")'
       filters:
         - ticker.search_filter
         - ticker.or_search_filter
