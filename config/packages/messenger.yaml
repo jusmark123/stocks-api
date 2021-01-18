@@ -1,64 +1,47 @@
 framework:
-  messenger:
-    buses:
-      messenger.bus.default:
-        default_middleware: true
-        middleware:
-          - 'App\Message\Job\Middleware\JobMiddleware'
-          - 'App\Message\Job\Middleware\JobItemMiddleware'
-    failure_transport: failed
-    transports:
-      failed: 'doctrine://default?queue_name=failed'
-      async:
-        dsn:  "%env(MESSENGER_TRANSPORT_DSN)%jobs"
-        options:
-          queues:
-            jobs_processing: ~
-          exchange:
-            name: amq.fanout
-            type: fanout
-      source:
-        dsn: "%env(MESSENGER_TRANSPORT_DSN)%info"
-        options:
-          queues:
-            source_messages:
-              binding_keys:
-                - source.command.*
-                - source.*.command
-            source_updates:
-              binding_keys:
-                - source.*.info
-                - source.*.status
-            source_errors:
-              binding_keys:
-                - source.*.error
-            source_orders:
-              binding_keys:
-                - source.*.order
-          exchange:
-            name: amq.topic
-            type: topic
-      app:
-        dsn: "%env(MESSENGER_TRANSPORT_DSN)%updates"
-        options:
-          queues:
-            notify:
-              binding_keys:
-                - notifiy.info.*
-                - notifiy.error.*
-                - notifiy.command.*
-                - job.*.info
-            web:
-              binding_keys:
-                - web.*.info
-                - job.*.info
-          exchange:
-            name: amq.topic
-            type: topic
-    routing:
-      App\Message\Job\JobStatusMessage: app
-      App\Message\Job\JobItemStatusMessage: app
-      'App\Message\SyncOrderHistoryMessage': async
-      'App\Message\SyncOrdersRequestMessage': async
-      'App\Message\SyncTickersRequestMessage': async
-      'App\Message\SyncTickerMessage': async
+    messenger:
+        buses:
+            messenger.bus.default:
+                default_middleware: true
+                middleware:
+                    - 'App\Message\Job\Middleware\JobMiddleware'
+                    - 'App\Message\Job\Middleware\JobItemMiddleware'
+        transports:
+            job:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%job.fifo'
+                options:
+                    access_key: '%env(AWS_ACCESS_KEY_ID)%'
+                    secret_key: '%env(AWS_SECRET_ACCESS_KEY)%'
+                    account: '%env(AWS_ACCOUNT)%'
+                    endpoint: '%env(SQS_QUEUE_ENDPOINT)%'
+                    region: '%env(AWS_REGION)%'
+            async:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%async.fifo'
+                options:
+                    access_key: '%env(AWS_ACCESS_KEY_ID)%'
+                    secret_key: '%env(AWS_SECRET_ACCESS_KEY)%'
+                    account: '%env(AWS_ACCOUNT)%'
+                    endpoint: '%env(SQS_QUEUE_ENDPOINT)%'
+                    region: '%env(AWS_REGION)%'
+            orders:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%orders.fifo'
+                options:
+                    access_key: '%env(AWS_ACCESS_KEY_ID)%'
+                    secret_key: '%env(AWS_SECRET_ACCESS_KEY)%'
+                    account: '%env(AWS_ACCOUNT)%'
+                    endpoint: '%env(SQS_QUEUE_ENDPOINT)%'
+                    region: '%env(AWS_REGION)%'
+            app:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%app'
+                options:
+                    access_key: '%env(AWS_ACCESS_KEY_ID)%'
+                    secret_key: '%env(AWS_SECRET_ACCESS_KEY)%'
+                    account: '%env(AWS_ACCOUNT)%'
+                    endpoint: '%env(SQS_QUEUE_ENDPOINT)%'
+                    region: '%env(AWS_REGION)%'
+        routing:
+            App\Message\ApplicationMessage: app
+            App\Message\SyncOrdersRequestMessage: job
+            App\Message\SyncOrderHistoryMessage: async
+            App\Message\SyncTickersRequestMessage: job
+            App\Message\SyncTickerMessage: async

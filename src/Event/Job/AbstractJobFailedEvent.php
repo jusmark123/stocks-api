@@ -11,7 +11,7 @@ namespace App\Event\Job;
 use App\Entity\Job;
 use App\Entity\JobItem;
 use App\Event\AbstractFailedEvent;
-use App\Message\JobRequestMessageInterface;
+use App\Message\Job\JobRequestMessageInterface;
 
 /**
  * Class AbstractJobFailedEvent.

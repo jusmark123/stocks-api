@@ -35,9 +35,6 @@ class AccountTest extends TestCase
 
     public function testGettersAndSetters()
     {
-        $this->assertSame($this->entity, $this->entity->setAccountNumber('string'));
-        $this->assertEquals('string', $this->entity->getAccountNumber());
-
         $this->assertSame($this->entity, $this->entity->setApiKey('string'));
         $this->assertSame('string', $this->entity->getApiKey());
 
@@ -48,17 +45,8 @@ class AccountTest extends TestCase
         $this->assertSame($this->entity, $this->entity->setBrokerage($brokerage));
         $this->assertEquals($brokerage, $this->entity->getBrokerage());
 
-        $this->assertSame($this->entity, $this->entity->setBuyingPower(2.00));
-        $this->assertEquals(2.00, $this->entity->getBuyingPower());
-
-        $this->assertSame($this->entity, $this->entity->setCurrency(2.00));
-        $this->assertEquals(2.00, $this->entity->getCurrency());
-
         $this->assertSame($this->entity, $this->entity->setDescription('string'));
         $this->assertEquals('string', $this->entity->getDescription());
-
-        $this->assertSame($this->entity, $this->entity->setEquity(2.00));
-        $this->assertEquals(2.00, $this->entity->getEquity());
 
         $this->assertSame($this->entity, $this->entity->setName('string'));
         $this->assertEquals('string', $this->entity->getName());

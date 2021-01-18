@@ -1,0 +1,30 @@
+App\DTO\Aws\Sns\SubscriptionRequest:
+  attributes:
+    attributes:
+      groups:
+        - subscription_request.get
+        - subscription_request.post
+    endpoint:
+      groups:
+        - subscription_request.get
+        - subscription_request.post
+    protocol:
+      groups:
+        - subscription_request.get
+        - subscription_request.post
+    returnSubscriptionArn:
+      groups:
+        - subscription_request.get
+        - subscription_request.post
+    topic:
+      groups:
+        - subscription_request.get
+        - subscription_request.post
+    message:
+      groups:
+        - subscription_request.get
+        - subscription_request.post
+    topicArn:
+      groups:
+        - subscription_request.get
+        - subscription_request.post

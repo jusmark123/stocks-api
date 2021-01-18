@@ -76,64 +76,55 @@ class Order extends AbstractGuidEntity
      * @var Account
      *
      * @ORM\ManyToOne(targetEntity="Account", inversedBy="orders")
-     * @ORM\JoinColumns({
-     * 		@ORM\JoinColumn(name="account_id", referencedColumnName="id", nullable=false)
-     * })
+     * @ORM\JoinColumn(name="account_id", referencedColumnName="id", nullable=false)
      */
     private $account;
 
     /**
      * @var Brokerage
+     *
      * @ORM\ManyToOne(targetEntity="Brokerage", inversedBy="orders", fetch="LAZY")
-     * @ORM\JoinColumns({
-     * 		@ORM\JoinColumn(name="brokerage_id", referencedColumnName="id", nullable=false)
-     * })
+     * @ORM\JoinColumn(name="brokerage_id", referencedColumnName="id", nullable=false)
      */
     private $brokerage;
 
     /**
      * @var OrderStatusType
+     *
      * @ORM\ManyToOne(targetEntity="OrderStatusType")
-     * @ORM\JoinColumns({
-     * 		@ORM\JoinColumn(name="order_status_type_id", referencedColumnName="id")
-     * })
+     * @ORM\JoinColumn(name="order_status_type_id", referencedColumnName="id")
      */
     private $orderStatusType;
 
     /**
      * @var OrderType
+     *
      * @ORM\ManyToOne(targetEntity="OrderType")
-     * @ORM\JoinColumns({
-     * 		@ORM\JoinColumn(name="order_type_id", referencedColumnName="id")
-     * })
+     * @ORM\JoinColumn(name="order_type_id", referencedColumnName="id")
      */
     private $orderType;
 
     /**
      * @var Position|null
+     *
      * @ORM\ManyToOne(targetEntity="Position", inversedBy="orders", fetch="LAZY", cascade={"persist", "remove"})
-     * @ORM\JoinColumns({
-     * 		@ORM\JoinColumn(name="position_id", referencedColumnName="id", nullable=true)
-     * })
+     * @ORM\JoinColumn(name="position_id", referencedColumnName="id", nullable=true)
      */
     private $position;
 
     /**
      * @var Source
-     * @ORM\ManyToOne(targetEntity="Source", inversedBy="orders", fetch="LAZY", cascade={"remove"})
      *
-     * @ORM\JoinColumns({
-     * 		@ORM\JoinColumn(name="source_id", referencedColumnName="id", nullable=false)
-     * })
+     * @ORM\ManyToOne(targetEntity="Source", inversedBy="orders", fetch="LAZY", cascade={"remove"})
+     * @ORM\JoinColumn(name="source_id", referencedColumnName="id", nullable=false)
      */
     private $source;
 
     /**
      * @var User|null
+     *
      * @ORM\ManyToOne(targetEntity="User", inversedBy="orders", fetch="LAZY", cascade={"remove"})
-     * @ORM\JoinColumns({
-     * 		@ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
-     * })
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
      */
     private $user;
 

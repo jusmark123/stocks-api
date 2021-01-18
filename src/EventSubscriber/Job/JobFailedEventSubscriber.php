@@ -50,8 +50,8 @@ class JobFailedEventSubscriber extends AbstractJobEventSubscriber
 
     public function initiate(JobInitiateFailedEvent $event)
     {
-        $this->updateJobStatus($event, JobConstants::JOB_FAILED);
         $this->setJobErrorData($event);
+        $this->updateJobStatus($event, JobConstants::JOB_FAILED);
     }
 
     /**
@@ -59,8 +59,8 @@ class JobFailedEventSubscriber extends AbstractJobEventSubscriber
      */
     public function receive(JobReceiveFailedEvent $event)
     {
-        $this->updateJobStatus($event, JobConstants::JOB_FAILED);
         $this->setJobErrorData($event);
+        $this->updateJobStatus($event, JobConstants::JOB_FAILED);
     }
 
     /**
@@ -68,8 +68,8 @@ class JobFailedEventSubscriber extends AbstractJobEventSubscriber
      */
     public function process(JobProcessFailedEvent $event)
     {
-        $this->updateJobStatus($event, JobConstants::JOB_FAILED);
         $this->setJobErrorData($event);
+        $this->updateJobStatus($event, JobConstants::JOB_FAILED);
     }
 
     /**
@@ -77,7 +77,7 @@ class JobFailedEventSubscriber extends AbstractJobEventSubscriber
      */
     public function publish(JobPublishFailedEvent $event)
     {
-        $this->updateJobStatus($event, JobConstants::JOB_FAILED);
         $this->setJobErrorData($event);
+        $this->updateJobStatus($event, JobConstants::JOB_FAILED);
     }
 }

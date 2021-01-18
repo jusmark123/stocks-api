@@ -1,0 +1,24 @@
+App\Entity\TopicSubscription:
+  attributes:
+    guid:
+      groups:
+        - topic_subscription.get
+    endpoint:
+      groups:
+        - topic_subscription.get
+        - topic_subscription.post
+    protocol:
+      groups:
+        - topic_subscription.get
+        - topic_subscription.post
+    confirmed:
+      groups:
+        - topic_subscription.get
+        - topic_subscription.post
+    subscriptionArn:
+      groups:
+        - topic_subscription.get
+        - topic_subscription.post
+    topic:
+      groups:
+        - topic_subscription.get

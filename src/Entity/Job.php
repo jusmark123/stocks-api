@@ -46,6 +46,13 @@ class Job extends AbstractGuidEntity
     private $description;
 
     /**
+     * @var string|null
+     *
+     * @ORM\Column(name="requestHash", type="string", length=255, nullable=true)
+     */
+    private $requestHash;
+
+    /**
      * @var float
      */
     private $percentComplete;
@@ -118,6 +125,48 @@ class Job extends AbstractGuidEntity
     private $jobItems;
 
     /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="received_at", type="datetime", nullable=true)
+     */
+    private $receivedAt;
+
+    /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="started_at", type="datetime", nullable=true)
+     */
+    private $startedAt;
+
+    /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="processed_at", type="datetime", nullable=true)
+     */
+    private $processedAt;
+
+    /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="failed_at", type="datetime", nullable=true)
+     */
+    private $failedAt;
+
+    /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="cancelled_at", type="datetime", nullable=true)
+     */
+    private $cancelledAt;
+
+    /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="completed_at", type="datetime", nullable=true)
+     */
+    private $completedAt;
+
+    /**
      * Job constructor.
      *
      * @throws \Exception
@@ -185,6 +234,26 @@ class Job extends AbstractGuidEntity
     public function setDescription(string $description = null): Job
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getRequestHash(): ?string
+    {
+        return $this->requestHash;
+    }
+
+    /**
+     * @param string|null $requestHash
+     *
+     * @return Job
+     */
+    public function setRequestHash(?string $requestHash): Job
+    {
+        $this->requestHash = $requestHash;
 
         return $this;
     }
@@ -333,6 +402,126 @@ class Job extends AbstractGuidEntity
     public function setUser(User $user): Job
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getReceivedAt(): ?\DateTime
+    {
+        return $this->receivedAt;
+    }
+
+    /**
+     * @param \DateTime|null $receivedAt
+     *
+     * @return Job
+     */
+    public function setReceivedAt(?\DateTime $receivedAt): Job
+    {
+        $this->receivedAt = $receivedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getStartedAt(): ?\DateTime
+    {
+        return $this->startedAt;
+    }
+
+    /**
+     * @param \DateTime|null $startedAt
+     *
+     * @return Job
+     */
+    public function setStartedAt(?\DateTime $startedAt): Job
+    {
+        $this->startedAt = $startedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getProcessedAt(): ?\DateTime
+    {
+        return $this->processedAt;
+    }
+
+    /**
+     * @param \DateTime|null $processedAt
+     *
+     * @return Job
+     */
+    public function setProcessedAt(?\DateTime $processedAt): Job
+    {
+        $this->processedAt = $processedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getFailedAt(): ?\DateTime
+    {
+        return $this->failedAt;
+    }
+
+    /**
+     * @param \DateTime|null $failedAt
+     *
+     * @return Job
+     */
+    public function setFailedAt(?\DateTime $failedAt): Job
+    {
+        $this->failedAt = $failedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getCancelledAt(): ?\DateTime
+    {
+        return $this->cancelledAt;
+    }
+
+    /**
+     * @param \DateTime|null $cancelledAt
+     *
+     * @return Job
+     */
+    public function setCancelledAt(?\DateTime $cancelledAt): Job
+    {
+        $this->cancelledAt = $cancelledAt;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getCompletedAt(): ?\DateTime
+    {
+        return $this->completedAt;
+    }
+
+    /**
+     * @param \DateTime|null $completedAt
+     *
+     * @return Job
+     */
+    public function setCompletedAt(?\DateTime $completedAt): Job
+    {
+        $this->completedAt = $completedAt;
 
         return $this;
     }

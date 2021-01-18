@@ -51,8 +51,8 @@ final class AlpacaConstants
     const ORDERS_DIRECTION_ENUM = ['asc', 'desc'];
 
     const ORDERS_FILTERS_DATATYPE = [
-        'nested' => FILTER_VALIDATE_BOOLEAN,
-        'limit' => FILTER_VALIDATE_INT,
+        'nested' => \FILTER_VALIDATE_BOOLEAN,
+        'limit' => \FILTER_VALIDATE_INT,
     ];
 
     // Enums

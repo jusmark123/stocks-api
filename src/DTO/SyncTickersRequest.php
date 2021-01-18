@@ -10,13 +10,13 @@ namespace App\DTO;
 
 use App\DTO\Traits\JobRequestTrait;
 use App\DTO\Traits\ParametersTrait;
-use App\Entity\AbstractGuidEntity;
 use App\Entity\Account;
 use App\Entity\Job;
 use App\Entity\Source;
 use App\Entity\Traits\EntityGuidTrait;
+use App\Message\Job\JobRequestInterface;
 
-class SyncTickersRequest extends AbstractGuidEntity
+class SyncTickersRequest implements JobRequestInterface
 {
     use EntityGuidTrait;
     use JobRequestTrait;
@@ -35,22 +35,21 @@ class SyncTickersRequest extends AbstractGuidEntity
     /**
      * SyncTickersRequest constructor.
      *
-     * @param Account  $account
-     * @param Source   $source
-     * @param array    $parameters
-     * @param int|null $limit
-     * @param Job|null $job
+     * @param Account    $account
+     * @param Source     $source
+     * @param array|null $parameters
+     * @param int|null   $limit
+     * @param Job|null   $job
      *
      * @throws \Exception
      */
     public function __construct(
         Account $account,
         Source $source,
-        array $parameters = [],
+        ?array $parameters = [],
         ?int $limit = null,
         ?Job $job = null
     ) {
-        parent::__construct();
         $this->job = $job;
         $this->account = $account;
         $this->source = $source;

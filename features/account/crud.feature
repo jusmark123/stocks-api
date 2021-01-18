@@ -1,18 +1,18 @@
 Feature:
   Account: Create/Read/Update/List
 
-  Scenario:
-    Given I purge the database
-
-  Scenario:
-    And I have an account with the following values:
-      | guid              | a883ff93-cc77-40e4-840a-9bbd9cd1fced |
-      | name              | Account                              |
-      | description       | Account 1 Description                |
-      | brokerage         | Alpaca Trader                        |
-      | accountStatusType | ACTIVE                               |
-      | apiKey            | sda45s64213SDA                       |
-      | apiSecret         | da-sdvlke1213sadsdasc2s13ad13asd     |
+  @loadBrokerageFixtures
+  Scenario: Load fixtures
+    And I have an "Alpaca" account with the following values:
+      | guid              | a883ff93-cc77-40e4-840a-9bbd9cd1fced     |
+      | name              | Account 1                                |
+      | description       | Account 1 Description                    |
+      | brokerage         | Alpaca Trader                            |
+      | accountStatusType | ACTIVE                                   |
+      | apiKey            | PKU2P6NISHZELU5ATWEQ                     |
+      | apiSecret         | yACk0pUFDlBQRBrbktzTe5iODUumrQACriY7TSK3 |
+      | apiEndpointUrl    | https://paper-api.alpaca.markets         |
+      | default           | true                                     |
 
   Scenario: I should be able to Create a new Account (POST)
 
@@ -20,13 +20,14 @@ Feature:
     When I send a "POST" request to "/accounts" with body:
     """
       {
-        "brokerage": "/api/stocks/v1/brokerages/6e78b7a6-2b06-4381-8773-5b29be39a26e",
+        "brokerage": "/api/stocks/v1/brokerages/9e13594c-0172-45b4-a9db-ed11db638601",
         "name": "Account 2",
         "description": "Account 2 Description",
-        "apiEndpointUrl": "https://apiendpoint.com",
-        "apiKey": "api-key-1223",
-        "apiSecret": "dsdakjld;sknsdas",
+        "apiEndpointUrl": "https://paper-api.alpaca.markets",
+        "apiKey": "PKU2P6NISHZELU5ATWEQ",
+        "apiSecret": "yACk0pUFDlBQRBrbktzTe5iODUumrQACriY7TSK3",
         "context": "account2",
+        "default": false,
         "accountStatusType": "/api/stocks/v1/account_status_types/1"
       }
     """
@@ -36,10 +37,12 @@ Feature:
     And the JSON node "guid" should exist
     And the JSON node "name" should be equal to "Account 2"
     And the JSON node "description" should be equal to "Account 2 Description"
-    And the JSON node "apiEndpointUrl" should be equal to "https://apiendpoint.com"
-    And the JSON node "apiKey" should be equal to "api-key-1223"
-    And the JSON node "apiSecret" should be equal to "dsdakjld;sknsdas"
-    And the JSON node "brokerage" should be equal to "/api/stocks/v1/brokerages/6e78b7a6-2b06-4381-8773-5b29be39a26e"
+    And the JSON node "apiEndpointUrl" should be equal to "https://paper-api.alpaca.markets"
+    And the JSON node "apiKey" should be equal to "PKU2P6NISHZELU5ATWEQ"
+    And the JSON node "apiSecret" should be equal to "yACk0pUFDlBQRBrbktzTe5iODUumrQACriY7TSK3"
+    And the JSON node "brokerage" should be equal to "/api/stocks/v1/brokerages/9e13594c-0172-45b4-a9db-ed11db638601"
+    And the JSON node "default" should be false
+    And the JSON node "accountInfo" should exist
 
   Scenario: I should be able to Read all accounts (GET)
     Given the request has default headers
@@ -59,7 +62,7 @@ Feature:
     And the response should be in JSON
     And the JSON nodes should be equal to:
       | name              | Account 1                                                      |
-      | brokerage         | /api/stocks/v1/brokerages/6e78b7a6-2b06-4381-8773-5b29be39a26e |
+      | brokerage         | /api/stocks/v1/brokerages/9e13594c-0172-45b4-a9db-ed11db638601 |
       | description       | Account 1 Description                                          |
       | accountStatusType | /api/stocks/v1/account_status_types/1                          |
 
@@ -77,7 +80,7 @@ Feature:
     And the response should be in JSON
     And the JSON nodes should be equal to:
       | name              | Account 1                                                      |
-      | brokerage         | /api/stocks/v1/brokerages/6e78b7a6-2b06-4381-8773-5b29be39a26e |
+      | brokerage         | /api/stocks/v1/brokerages/9e13594c-0172-45b4-a9db-ed11db638601 |
       | description       | Account 1 Description Updated                                  |
       | accountStatusType | /api/stocks/v1/account_status_types/1                          |
 

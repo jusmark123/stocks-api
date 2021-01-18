@@ -1,39 +1,31 @@
 Feature:
 
-  Scenario:
-    Given I purge the database
-
-  Scenario:
-    Given I have a brokerage with the following values:
-      | guid           | 6e78b7a6-2b06-4381-8773-5b29be39a26e |
-      | name           | Brokerage 1                          |
-      | description    | Brokerage 1                          |
-      | apiDocumentUrl | http://brokerage-1.com/              |
-      | context        | brokerage1                           |
-
-    And I have an account with the following values:
-      | guid              | a883ff93-cc77-40e4-840a-9bbd9cd1fced |
-      | name              | Account 1                            |
-      | description       | Account 1 Description                |
-      | brokerage         | Brokerage 1                          |
-      | accountStatusType | ACTIVE                               |
-      | apiEndpointUrl    | http://url.com                       |
-      | apiKey            | sda45s64213SDA                       |
-      | apiSecret         | da-sdvlke1213sadsdasc2s13ad13asd     |
-
+  @loadAllFixtures
+  Scenario: Load the fixtures
+    And I have an "Alpaca" account with the following values:
+      | guid              | a883ff93-cc77-40e4-840a-9bbd9cd1fced     |
+      | name              | Account 1                                |
+      | description       | Account 1 Description                    |
+      | brokerage         | Alpaca Trader                            |
+      | accountStatusType | ACTIVE                                   |
+      | apiKey            | PKU2P6NISHZELU5ATWEQ                     |
+      | apiSecret         | yACk0pUFDlBQRBrbktzTe5iODUumrQACriY7TSK3 |
+      | apiEndpointUrl    | https://paper-api.alpaca.markets         |
+      | default           | true                                     |
     And I have a source with the following values:
       | guid        | edcfb6cb-1138-42cf-a13b-2b0fae2e4189 |
       | name        | Source 1                             |
       | description | Source 1 Description                 |
       | sourceType  | Algorithm                            |
-
     And I have a user with the following values:
       | guid        | edcfb6cb-1138-42cf-a13b-2b0fae2e4189 |
-      | name        | user_1                               |
+      | firstName   | Test                                 |
+      | lastName    | User                                 |
+      | username    | User1                                |
       | email       | user_1@stocksapi.com                 |
       | description | user 1 description                   |
       | phone       | 813-545-3290                         |
-
+      | userType    | User                                 |
     Given I have a job with the following values:
       | guid        | 6e78b7a6-2b06-4381-8773-5b29be39a26e |
       | name        | job1                                 |
@@ -44,7 +36,7 @@ Feature:
       | status      | CREATED                              |
 
     Given I have a job with the following values:
-      | guid        | 6e78b7a6-2b06-4381-8773-5b29be39a26e |
+      | guid        | 57d1f77e-b8ac-4343-a414-229277c20798 |
       | name        | job2                                 |
       | description | job2 description                     |
       | account     | a883ff93-cc77-40e4-840a-9bbd9cd1fced |
@@ -77,14 +69,13 @@ Feature:
         {
           "name": "job3".
           "description": "job3 description",
-          "account": "/api/stocks/v1/accounts/a883ff93-cc77-40e4-840a-9bbd9cd1fced",
+          "account": "/api/stocks/v1/accounts/3347b24d-2984-449a-9bde-ccaa5f81946c",
           "source": "/api/stocks/v1/sources/edcfb6cb-1138-42cf-a13b-2b0fae2e4189",
           "user": "/api/stocks/v1/users/edcfb6cb-1138-42cf-a13b-2b0fae2e4189",
           "status": "CREATED"
         }
       """
-    Then print last JSON response
-    And the response status code should be 401
+    And the response status code should be 405
 
   Scenario: I should be able to Read all jobs (GET):
     Given the request has default headers
@@ -106,10 +97,10 @@ Feature:
       | description | job1 description                                             |
       | status      | CREATED                                                      |
       | account     | /api/stocks/v1/accounts/a883ff93-cc77-40e4-840a-9bbd9cd1fced |
-      | source      | /api/stocks/v1/sources/edcfb6cb-1138-42cf-a13b-2b0fae2e4189" |
+      | source      | /api/stocks/v1/sources/edcfb6cb-1138-42cf-a13b-2b0fae2e4189  |
       | user        | /api/stocks/v1/users/edcfb6cb-1138-42cf-a13b-2b0fae2e4189    |
 
-  Scenario: I should be able to Delete an account (DELETE)
+  Scenario: I should be able to Delete an job (DELETE)
     Given the request has default headers
     When I send a "DELETE" request to "/jobs/6e78b7a6-2b06-4381-8773-5b29be39a26e"
     Then the response status code should be 204

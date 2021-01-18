@@ -39,7 +39,6 @@ resources:
       delete:
         method: DELETE
 
-
     properties:
       id:
         identifier: false

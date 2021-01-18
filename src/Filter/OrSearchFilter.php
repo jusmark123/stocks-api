@@ -281,7 +281,7 @@ class OrSearchFilter extends SearchFilter
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getDescription(string $resourceClass): array
     {

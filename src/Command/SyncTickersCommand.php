@@ -22,20 +22,22 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * Class SyncTickersCommand.
  */
-class SyncTickersCommand extends Command implements LoggerAwareInterface
+class SyncTickersCommand extends AbstractCommand implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
     const NAME = 'stocks-api:api:sync-tickers';
+    const QUEUES = ['job', 'async', 'app'];
 
     /**
      * @var DefaultTypeService
@@ -118,13 +120,20 @@ class SyncTickersCommand extends Command implements LoggerAwareInterface
                 'f',
                 InputOption::VALUE_OPTIONAL,
                 'Array of parameters to add to brokerage api call. Must follow brokerage api specifications',
-                null
+                '{"market":"stocks","perpage":500,"sort":"ticker"}',
             )
             ->addOption(
                 'limit',
                 'l',
                 InputOption::VALUE_OPTIONAL,
                 'Limit number of processed tickers, mainly used for testing purposes'
+            )
+            ->addOption(
+                'consume',
+                'c',
+                InputOption::VALUE_OPTIONAL,
+                'Start consumers for message processing',
+                false
             );
     }
 
@@ -153,6 +162,10 @@ class SyncTickersCommand extends Command implements LoggerAwareInterface
                 sprintf('Sync tickers job initiated. View progress via the /api/stocks/v1/jobs/%s',
                     $job->getGuid()->toString())
             );
+
+            if ($input->getOption('consume')) {
+                $this->startConsumers($output);
+            }
         } catch (\Exception $e) {
             $this->logger->error($e->getMessage(), [
                 'code' => $e->getCode(),
@@ -236,7 +249,7 @@ class SyncTickersCommand extends Command implements LoggerAwareInterface
      *
      * @return array|null
      */
-    private function getParameters(?string $parameters)
+    private function getParameters(?string $parameters = null)
     {
         if (null === $parameters) {
             $parameters = [];
@@ -249,5 +262,21 @@ class SyncTickersCommand extends Command implements LoggerAwareInterface
         }
 
         return $parameters;
+    }
+
+    private function startConsumers(OutputInterface $output)
+    {
+        $command = $this->getApplication()->find('messenger:consume');
+        $input = new ArrayInput(['receivers' => self::QUEUES]);
+
+        return $command->run($input, new NullOutput());
+    }
+
+    private function stopConsumers(OutputInterface $output)
+    {
+        $command = $this->getApplication()->find('messenger:stop-workers');
+        $input = new ArrayInput([]);
+
+        return $command->run($input, $output);
     }
 }

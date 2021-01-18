@@ -34,6 +34,7 @@ use Predis\Client;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
 use Symfony\Component\Serializer\Mapping\Loader\YamlFileLoader;
 
@@ -323,7 +324,7 @@ class AlpacaBrokerageService extends AbstractBrokerageService
                 $after = $accountInfo->getCreatedAt();
             }
 
-            $params['after'] = date_format($after, DATE_ATOM);
+            $params['after'] = date_format($after, \DATE_ATOM);
         }
 
         do {
@@ -363,21 +364,24 @@ class AlpacaBrokerageService extends AbstractBrokerageService
                 return new \DateTime($v);
             }, array_column($orderHistory, 'created_at'));
 
-            $params['after'] = date_format(max($dates), DATE_ATOM);
+            $params['after'] = date_format(max($dates), \DATE_ATOM);
         } while (\count($orderHistory) === $params['limit']);
 
         return $job;
     }
 
     /**
-     * @param SyncTickersRequest $request
-     * @param Job                $job
+     * @param SyncTickersRequest  $request
+     * @param MessageBusInterface $messageBus
+     * @param Job                 $job
+     *
+     * @throws ClientExceptionInterface
      *
      * @return Job|null
      */
-    public function fetchTickers(SyncTickersRequest $request, Job $job): ?Job
+    public function fetchTickers(SyncTickersRequest $request, MessageBusInterface $messageBus, Job $job): ?Job
     {
-        // TODO: Implement fetchTickers() method.
+        $this->polygonService->fetchTickers($request, $messageBus, $job);
     }
 
     /**

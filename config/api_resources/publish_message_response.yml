@@ -1,0 +1,15 @@
+resources:
+  App\DTO\Aws\Sns\PublishMessageResponse:
+    attributes:
+      normalization_context:
+        groups: [ 'publish_message_response.get' ]
+      denormalization_context:
+        groups: [ 'publish_message_response.post' ]
+
+    properties:
+      id:
+        identifier: false
+      messageId:
+        identifier: true
+        swagger_context:
+          example: 'd6f68382-dd82-4324-b04c-89266d70ee2a'

@@ -1,0 +1,21 @@
+App\Entity\Topic:
+  attributes:
+    guid:
+      groups:
+        - topic.get
+    attributes:
+      groups:
+        - topic.post
+    topicArn:
+      groups:
+        - topic.get
+    name:
+      groups:
+        - topic.get
+        - topic.post
+    subscriptions:
+      groups:
+        - topic.get
+    tags:
+      groups:
+        - topic.post

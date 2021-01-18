@@ -9,7 +9,6 @@ declare(strict_types=1);
 namespace App\Message\Handler;
 
 use App\Entity\Job;
-use App\Message\Factory\SyncOrderHistoryMessageFactory;
 use App\Message\Job\Handler\AbstractJobMessageHandler;
 use App\Message\SyncOrdersRequestMessage;
 use App\Service\JobService;
@@ -61,7 +60,6 @@ class SyncOrdersRequestMessageHandler extends AbstractJobMessageHandler
      */
     public function __invoke(SyncOrdersRequestMessage $requestMessage): Job
     {
-        return $this->parseJobRequest($requestMessage, [$this->orderService, 'fetchOrderHistory'],
-            SyncOrderHistoryMessageFactory::class);
+        return $this->parseJobRequest($requestMessage, [$this->orderService, 'fetchOrderHistory']);
     }
 }

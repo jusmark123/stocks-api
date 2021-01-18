@@ -60,16 +60,15 @@ class BaseFixtureContext extends AbstractContext
 
     /**
      * @param string $class
-     * @param string $field
-     * @param string $value
+     * @param array  $criteria
      *
      * @return object|null
      */
-    public function findOneBy(string $class, string $field, string $value)
+    public function findOneBy(string $class, array $criteria)
     {
         $entityRepo = $this->entityManager->getRepository($class);
 
-        return $entityRepo->findOneBy([$field => $value]);
+        return $entityRepo->findOneBy($criteria);
     }
 
     /**

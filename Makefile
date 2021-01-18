@@ -1,3 +1,11 @@
+testEnvVars := APP_ENV=test \
+JWT_PRIVATE_KEY_PATH=tests/_fixtures/jwt/private.pem \
+JWT_PUBLIC_KEY_PATH=tests/_fixtures/jwt/public.pem \
+JWT_PASSPHRASE=$(shell cat tests/_fixtures/jwt/passphrase.txt)
+jwt-filepath=/opt/app-root/src/config/jwt/
+userId := $(shell id -u)
+groupId := $(shell id -g)
+
 .env:
 	cp .env.dist .env
 
@@ -13,11 +21,11 @@ PHONY: build-cache
 build-database: build-drop-database build-create-database build-migrate build-validate-database build-fixtures
 .PHONY: build-database
 
-build: .env build-dependencies build-database
+build: .env generate-keys build-dependencies build-database
 .PHONY: build
 
 build-dependencies:
-	XDEBUG_CONFIG="" php -d memory_limit=-1 `which composer` install --no-interaction --no-ansi --optimize-autoloader
+	XDEBUG_MODE=off  php -d memory_limit=-1 `which composer` install --no-interaction --no-ansi --optimize-autoloader
 .PHONY: build-dependencies
 
 build-drop-database:
@@ -29,7 +37,7 @@ build-create-database:
 .PHONY: build-create-database
 
 build-fixtures:
-	bin/console doctrine:fixture:load --no-interaction --append
+	bin/console doctrine:fixture:load --no-interaction
 .PHONY: build-fixtures
 
 build-migrate:
@@ -37,7 +45,7 @@ build-migrate:
 .PHONY: build-migrate
 
 build-migration:
-#	bin/console doctrine:cache:clear-metadata
+	bin/console doctrine:cache:clear-metadata
 	bin/console doctrine:migration:diff --formatted
 .PHONY: migration
 
@@ -49,7 +57,7 @@ clear-cache:
 	rm -rf var/cache/*
 	rm -rf /tmp/behat*
 	rm -rf build/
-#	bin/console cache:pool:clear cache.global_clearer --no-debug
+	bin/console cache:clear --no-debug
 .PHONY: clear-cache
 
 clear-dev-log:
@@ -85,9 +93,19 @@ clean-cs:
 
 fix-cs:
 	rm -f .php_cs.cache
-	php-cs-fixer fix tests --show-progress=estimating --verbose --config=.php_cs.dist --allow-risky=yes
-	php-cs-fixer fix src --show-progress=estimating --verbose --config=.php_cs.dist --allow-risky=yes
+	XDEBUG_MODE=off php-cs-fixer fix tests --show-progress=estimating --verbose --config=.php_cs.dist --allow-risky=yes
+	XDEBUG_MODE=off php-cs-fixer fix src --show-progress=estimating --verbose --config=.php_cs.dist --allow-risky=yes
 .PHONY: fix-cs
+
+generate-keys:
+	mkdir -p $(jwt-filepath)
+	php -r 'echo base64_encode(random_bytes(32)), PHP_EOLl;' > $(jwt-filepath)passphrase.txt
+	openssl genrsa -passout pass:$(cat $(jwt-filepath)passphrase.txt) -out $(jwt-filepath)private.pem 2048
+	openssl rsa -in $(jwt-filepath)private.pem -passin pass:$(cat $(jwt-filepath)passphrase.txt) -pubout -out $(jwt-filepath)public.pem
+	chmod 600 $(jwt-filepath)passphrase.txt
+	chmod 600 $(jwt-filepath)private.pem
+	chmod 600 $(jwt-filepath)public.pem
+.PHONY: generate-keys
 
 show-log:
 	tail -f var/log/dev.log
@@ -106,11 +124,17 @@ test: test-unit test-feature
 .PHONY: test
 
 test-feature:
-	php -d memory_limit=-1 vendor/bin/behat --format progress -vv --stop-on-failure
+	$(testEnvVars) \
+	. bin/behat_wrapper.sh
+#	php -d memory_limit=-1 vendor/bin/behat --format progress -vv --stop-on-failure
 .PHONY: test-feature
 
 test-unit:
-	./vendor/bin/simple-phpunit --coverage-html build/coverage --coverage-clover build/coverage/clover.xml
+	$(testEnvVars) \
+	./vendor/bin/simple-phpunit \
+	--coverage-html build/coverage \
+	--coverage-clover build/coverage/clover.xml \
+	--log-junit build/reports/phpunit/junit.xml
 .PHONY: unit-test
 
 start-consumers:

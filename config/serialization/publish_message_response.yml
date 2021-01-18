@@ -1,0 +1,8 @@
+App\DTO\Aws\Sns\PublishMessageResponse:
+  attributes:
+    messageId:
+      groups:
+        - publish_message_response.get
+    sequenceNumber:
+      groups:
+        - publish_message_response.get

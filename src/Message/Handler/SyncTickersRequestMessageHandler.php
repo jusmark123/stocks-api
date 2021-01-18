@@ -10,7 +10,6 @@ namespace App\Message\Handler;
 
 use App\Entity\Job;
 use App\Exception\JobCancelledException;
-use App\Message\Factory\SyncTickerMessageFactory;
 use App\Message\Job\Handler\AbstractJobMessageHandler;
 use App\Message\SyncTickersRequestMessage;
 use App\Service\Brokerage\PolygonBrokerageService;
@@ -64,7 +63,6 @@ class SyncTickersRequestMessageHandler extends AbstractJobMessageHandler
      */
     public function __invoke(SyncTickersRequestMessage $requestMessage): Job
     {
-        return $this->parseJobRequest($requestMessage, [$this->polygonService, 'fetchTickers'],
-            SyncTickerMessageFactory::class);
+        return $this->parseJobRequest($requestMessage, [$this->polygonService, 'fetchTickers']);
     }
 }

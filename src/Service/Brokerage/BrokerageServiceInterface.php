@@ -18,6 +18,7 @@ use App\Entity\Brokerage;
 use App\Entity\Job;
 use App\Entity\Order;
 use App\Entity\Ticker;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * Interface BrokerageServiceInterface.
@@ -62,12 +63,13 @@ interface BrokerageServiceInterface
     public function fetchOrderHistory(SyncOrdersRequest $request, Job $job): ?Job;
 
     /**
-     * @param SyncTickersRequest $request
-     * @param Job                $job
+     * @param SyncTickersRequest  $request
+     * @param MessageBusInterface $messageBus
+     * @param Job                 $job
      *
      * @return Job|null
      */
-    public function fetchTickers(SyncTickersRequest $request, Job $job): ?Job;
+    public function fetchTickers(SyncTickersRequest $request, MessageBusInterface $messageBus, Job $job): ?Job;
 
     /**
      * @param array $message

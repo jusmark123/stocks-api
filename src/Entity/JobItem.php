@@ -56,6 +56,41 @@ class JobItem extends AbstractGuidEntity
     private $errorTrace;
 
     /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="received_at", type="datetime", nullable=true)
+     */
+    private $receivedAt;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="started_at", type="datetime", nullable=true)
+     */
+    private $startedAt;
+
+    /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="processed_at", type="datetime", nullable=true)
+     */
+    private $processedAt = null;
+
+    /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="failed_at", type="datetime", nullable=true)
+     */
+    private $failedAt = null;
+
+    /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="cancelled_at", type="datetime", nullable=true)
+     */
+    private $cancelledAt = null;
+
+    /**
      * @var Job
      *
      * @ORM\ManyToOne(targetEntity="Job", inversedBy="jobItems", fetch="LAZY")
@@ -161,6 +196,106 @@ class JobItem extends AbstractGuidEntity
     public function setErrorTrace(?string $errorTrace = null): JobItem
     {
         $this->errorTrace = $errorTrace;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getReceivedAt(): \DateTime
+    {
+        return $this->receivedAt;
+    }
+
+    /**
+     * @param \DateTime $receivedAt
+     *
+     * @return JobItem
+     */
+    public function setReceivedAt(\DateTime $receivedAt): JobItem
+    {
+        $this->receivedAt = $receivedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getStartedAt(): \DateTime
+    {
+        return $this->startedAt;
+    }
+
+    /**
+     * @param \DateTime $startedAt
+     *
+     * @return JobItem
+     */
+    public function setStartedAt(\DateTime $startedAt): JobItem
+    {
+        $this->startedAt = $startedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getProcessedAt(): ?\DateTime
+    {
+        return $this->processedAt;
+    }
+
+    /**
+     * @param \DateTime|null $processedAt
+     *
+     * @return JobItem
+     */
+    public function setProcessedAt(?\DateTime $processedAt): JobItem
+    {
+        $this->processedAt = $processedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getFailedAt(): ?\DateTime
+    {
+        return $this->failedAt;
+    }
+
+    /**
+     * @param \DateTime|null $failedAt
+     *
+     * @return JobItem
+     */
+    public function setFailedAt(?\DateTime $failedAt): JobItem
+    {
+        $this->failedAt = $failedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getCancelledAt(): ?\DateTime
+    {
+        return $this->cancelledAt;
+    }
+
+    /**
+     * @param \DateTime|null $cancelledAt
+     *
+     * @return JobItem
+     */
+    public function setCancelledAt(?\DateTime $cancelledAt): JobItem
+    {
+        $this->cancelledAt = $cancelledAt;
 
         return $this;
     }
