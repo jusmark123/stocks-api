@@ -1,227 +1,140 @@
 {
-    "behat/behat": {
-        "version": "v3.8.1"
+    "amphp/amp": {
+        "version": "v2.5.1"
     },
-    "behat/gherkin": {
-        "version": "v4.6.2"
+    "amphp/byte-stream": {
+        "version": "v1.8.0"
     },
-    "behat/mink": {
-        "version": "v1.8.1"
-    },
-    "behatch/contexts": {
-        "version": "3.3.0"
-    },
-    "bunny/bunny": {
-        "version": "v0.4.3"
-    },
-    "dunglas/doctrine-json-odm": {
-        "version": "0.1",
-        "recipe": {
-            "repo": "github.com/symfony/recipes-contrib",
-            "branch": "master",
-            "version": "0.1",
-            "ref": "c2ab78f625df0c89af5908d50a28602ff8c4919f"
-        }
-    },
-    "egulias/email-validator": {
-        "version": "2.1.24"
-    },
-    "evenement/evenement": {
-        "version": "v3.0.1"
-    },
-    "friends-of-behat/mink-browserkit-driver": {
+    "amphp/cache": {
         "version": "v1.4.0"
     },
-    "friends-of-behat/mink-extension": {
-        "version": "v2.4.0"
+    "amphp/dns": {
+        "version": "v0.9.15"
     },
-    "friends-of-behat/symfony-extension": {
+    "amphp/hpack": {
+        "version": "v3.1.0"
+    },
+    "amphp/http": {
+        "version": "v1.6.3"
+    },
+    "amphp/parser": {
+        "version": "v1.0.0"
+    },
+    "amphp/process": {
+        "version": "v1.1.0"
+    },
+    "amphp/serialization": {
+        "version": "v1.0.0"
+    },
+    "amphp/socket": {
+        "version": "v0.10.13"
+    },
+    "amphp/sync": {
+        "version": "v1.4.0"
+    },
+    "amphp/uri": {
+        "version": "v0.1.4"
+    },
+    "amphp/websocket-client": {
+        "version": "v0.2.4"
+    },
+    "amphp/windows-registry": {
+        "version": "v0.3.3"
+    },
+    "daverandom/libdns": {
+        "version": "v2.0.2"
+    },
+    "dg/bypass-finals": {
+        "version": "v1.3.0"
+    },
+    "gbprod/uuid-normalizer": {
+        "version": "v1.2.1"
+    },
+    "league/uri-interfaces": {
+        "version": "1.1.1"
+    },
+    "league/uri-parser": {
+        "version": "1.4.1"
+    },
+    "league/uri-schemes": {
+        "version": "1.2.1"
+    },
+    "polygon-io/api": {
+        "version": "1.0.0"
+    },
+    "predis/predis": {
+        "version": "v1.1.6"
+    },
+    "sensiolabs/security-checker": {
+        "version": "4.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "4.0",
+            "ref": "160c9b600564faa1224e8f387d49ef13ceb8b793"
+        },
+        "files": [
+            "config/packages/security_checker.yaml"
+        ]
+    },
+    "snc/redis-bundle": {
         "version": "2.0",
         "recipe": {
             "repo": "github.com/symfony/recipes-contrib",
             "branch": "master",
             "version": "2.0",
-            "ref": "3d21344765fd3440a85bdd27d4cada186ec628bd"
+            "ref": "85bbdb3d2db531e20874de29bab0587f93604fa8"
         },
         "files": [
-            "behat.yml.dist",
-            "config/services_test.yaml",
-            "features/demo.feature",
-            "tests/Behat/DemoContext.php"
+            "config/packages/snc_redis.yaml"
         ]
     },
-    "guzzlehttp/guzzle": {
-        "version": "6.5.5"
+    "symfony/amqp-messenger": {
+        "version": "v5.1.10"
     },
-    "guzzlehttp/promises": {
-        "version": "1.4.0"
+    "symfony/doctrine-messenger": {
+        "version": "v5.2.1"
     },
-    "guzzlehttp/psr7": {
-        "version": "1.7.0"
-    },
-    "justinrainbow/json-schema": {
-        "version": "5.2.10"
-    },
-    "laminas/laminas-code": {
-        "version": "4.0.0"
-    },
-    "laminas/laminas-eventmanager": {
-        "version": "3.3.0"
-    },
-    "laminas/laminas-zendframework-bridge": {
-        "version": "1.1.1"
-    },
-    "lcobucci/clock": {
-        "version": "2.0.0"
-    },
-    "nikic/php-parser": {
-        "version": "v4.10.4"
-    },
-    "nyholm/psr7": {
-        "version": "1.0",
+    "symfony/mailer": {
+        "version": "4.3",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "master",
-            "version": "1.0",
-            "ref": "7c0a9352a57376f04f5444e74565102c3a23d0c7"
+            "version": "4.3",
+            "ref": "15658c2a0176cda2e7dba66276a2030b52bd81b2"
         },
         "files": [
-            "config/packages/nyholm_psr7.yaml"
+            "config/packages/mailer.yaml"
         ]
     },
-    "php": {
-        "version": "7.3"
-    },
-    "php-http/client-common": {
-        "version": "2.3.0"
-    },
-    "php-http/discovery": {
-        "version": "1.13.0"
-    },
-    "php-http/guzzle6-adapter": {
-        "version": "v2.0.1"
-    },
-    "php-http/httplug": {
-        "version": "2.2.0"
-    },
-    "php-http/httplug-bundle": {
-        "version": "1.6",
-        "recipe": {
-            "repo": "github.com/symfony/recipes-contrib",
-            "branch": "master",
-            "version": "1.6",
-            "ref": "87b3d491d593d2c6e3b90bf0689ac69a188bfa5f"
-        },
-        "files": [
-            "config/packages/httplug.yaml"
-        ]
-    },
-    "php-http/logger-plugin": {
-        "version": "1.2.1"
-    },
-    "php-http/promise": {
-        "version": "1.1.0"
-    },
-    "php-http/stopwatch-plugin": {
-        "version": "1.4.0"
-    },
-    "psr/http-client": {
-        "version": "1.0.1"
-    },
-    "psr/http-factory": {
-        "version": "1.0.1"
-    },
-    "ralouphie/getallheaders": {
-        "version": "3.0.3"
-    },
-    "react/child-process": {
-        "version": "v0.6.1"
-    },
-    "react/event-loop": {
-        "version": "v1.1.1"
-    },
-    "react/promise": {
-        "version": "v2.8.0"
-    },
-    "react/stream": {
-        "version": "v1.1.1"
-    },
-    "swiftmailer/swiftmailer": {
-        "version": "v6.2.3"
-    },
-    "symfony/browser-kit": {
-        "version": "v5.2.0"
-    },
-    "symfony/css-selector": {
-        "version": "v5.1.9"
-    },
-    "symfony/debug-bundle": {
-        "version": "4.1",
+    "symfony/messenger": {
+        "version": "4.3",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "master",
-            "version": "4.1",
-            "ref": "f8863cbad2f2e58c4b65fa1eac892ab189971bea"
+            "version": "4.3",
+            "ref": "e9a414b113ceadbf4e52abe37bf8f1b443f06ccb"
         },
         "files": [
-            "config/packages/dev/debug.yaml"
+            "config/packages/messenger.yaml"
         ]
     },
-    "symfony/dom-crawler": {
-        "version": "v5.1.9"
+    "symfony/mime": {
+        "version": "v5.2.1"
     },
-    "symfony/maker-bundle": {
-        "version": "1.0",
+    "symfony/notifier": {
+        "version": "5.0",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "master",
-            "version": "1.0",
-            "ref": "fadbfe33303a76e25cb63401050439aa9b1a9c7f"
-        }
-    },
-    "symfony/orm-pack": {
-        "version": "v1.0.8"
-    },
-    "symfony/polyfill-intl-idn": {
-        "version": "v1.20.0"
-    },
-    "symfony/proxy-manager-bridge": {
-        "version": "v5.1.9"
-    },
-    "symfony/swiftmailer-bundle": {
-        "version": "2.5",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "master",
-            "version": "2.5",
-            "ref": "ae4d22af30bbd484506bc1817c5a3ef72c855b93"
+            "version": "5.0",
+            "ref": "c31585e252b32fe0e1f30b1f256af553f4a06eb9"
         },
         "files": [
-            "config/packages/dev/swiftmailer.yaml",
-            "config/packages/swiftmailer.yaml",
-            "config/packages/test/swiftmailer.yaml"
+            "config/packages/notifier.yaml"
         ]
     },
-    "symfony/translation": {
-        "version": "3.3",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "master",
-            "version": "3.3",
-            "ref": "2ad9d2545bce8ca1a863e50e92141f0b9d87ffcd"
-        },
-        "files": [
-            "config/packages/translation.yaml",
-            "translations/.gitignore"
-        ]
-    },
-    "tansoft/websocketclient": {
-        "version": "1.0.1"
-    },
-    "textalk/websocket": {
-        "version": "1.0.3"
-    },
-    "webimpress/safe-writer": {
-        "version": "2.1.0"
+    "symfony/redis-messenger": {
+        "version": "v5.2.1"
     }
 }
