@@ -118,7 +118,7 @@ class SyncTickersCommand extends Command implements LoggerAwareInterface
                 'f',
                 InputOption::VALUE_OPTIONAL,
                 'Array of parameters to add to brokerage api call. Must follow brokerage api specifications',
-                []
+                null
             )
             ->addOption(
                 'limit',
@@ -238,8 +238,14 @@ class SyncTickersCommand extends Command implements LoggerAwareInterface
      */
     private function getParameters(?string $parameters)
     {
-        if (null !== $parameters) {
+        if (null === $parameters) {
+            $parameters = [];
+        } else {
             $parameters = json_decode($parameters, true);
+        }
+
+        if (!\is_array($parameters)) {
+            $parameters = [$parameters];
         }
 
         return $parameters;

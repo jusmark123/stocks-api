@@ -59,6 +59,9 @@
     "league/uri-schemes": {
         "version": "1.2.1"
     },
+    "nikic/php-parser": {
+        "version": "v4.10.4"
+    },
     "polygon-io/api": {
         "version": "1.0.0"
     },
@@ -106,6 +109,15 @@
         "files": [
             "config/packages/mailer.yaml"
         ]
+    },
+    "symfony/maker-bundle": {
+        "version": "1.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "1.0",
+            "ref": "fadbfe33303a76e25cb63401050439aa9b1a9c7f"
+        }
     },
     "symfony/messenger": {
         "version": "4.3",
