@@ -115,7 +115,7 @@ services:
     App\Entity\Listener\:
         resource: '../src/Entity/Listener/*'
         tags:
-            - { name: doctrine.orm.entity_listener, lazy: true }
+          - { name: doctrine.orm.entity_listener, lazy: true }
 
     ###### Entity Managers ######
 
@@ -154,3 +154,10 @@ services:
         decorates: 'api_platform.swagger.normalizer.api_gateway'
         arguments: [ '@App\Swagger\SwaggerDecorator.inner' ]
         autoconfigure: false
+    
+    ###### Authentication Services ######
+    
+    stocks_api.token_success_handler:
+        class: \App\Auth\TokenSuccessHandler
+        autowire: true
+        autoconfigure: true

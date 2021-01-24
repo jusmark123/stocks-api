@@ -13,6 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\PersistentCollection;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * class User.
@@ -25,6 +26,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * 		}
  * )
  * @ORM\Entity(repositoryClass="App\Entity\Repository\UserRepository")
+ * @ORM\EntityListeners({"App\Entity\Listener\UserListener"})
  * @ORM\HasLifecycleCallbacks()
  * @Gedmo\SoftDeleteable(fieldName="deactivatedAt", timeAware=false)
  */
@@ -63,9 +65,21 @@ class User extends AbstractGuidEntity implements UserInterface
 
     /**
      * @var string|null
+     * @Groups({"user.put"})
+     */
+    private $plainPassword;
+
+    /**
+     * @var string|null
      * @ORM\Column(name="phone", type="string", length=10, nullable=true)
      */
     private $phone;
+
+    /**
+     * @var string|null
+     * @ORM\Column(name="avatar", type="string", length=255, nullable=true)
+     */
+    private $avatar;
 
     /**
      * @var string|null
@@ -340,6 +354,8 @@ class User extends AbstractGuidEntity implements UserInterface
 
     /**
      * @param ArrayCollection|Order[]|PersistentCollection $orders
+     *
+     * @return User
      */
     public function setOrders($orders): User
     {
@@ -364,6 +380,26 @@ class User extends AbstractGuidEntity implements UserInterface
     public function setJobs($jobs): User
     {
         $this->jobs = $jobs;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getAvatar(): ?string
+    {
+        return $this->avatar;
+    }
+
+    /**
+     * @param string $avatar
+     *
+     * @return User
+     */
+    public function setAvatar(string $avatar): User
+    {
+        $this->avatar = $avatar;
 
         return $this;
     }
@@ -418,13 +454,42 @@ class User extends AbstractGuidEntity implements UserInterface
     }
 
     /**
+     * Returns the plain-text password.
+     *
+     * This field is not in the database, and this information is not persisted.
+     * This field acts as an intermediary when users want to change their passwords.
+     * When a value is entered in this field, it will be encrypted and stored in
+     * the password field instead.
+     *
+     * @return string|null The plaintext password if any
+     */
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+    /**
+     * Sets the plain-text password.
+     *
+     * @param string $password
+     *
+     * @return User
+     */
+    public function setPlainPassword(string $password): User
+    {
+        $this->plainPassword = $password;
+
+        return $this;
+    }
+
+    /**
      * Returns the salt that was originally used to encode the password.
      *
      * This can return null if the password was not encoded using a salt.
      *
      * @return string|null The salt
      */
-    public function getSalt()
+    public function getSalt(): ?string
     {
         return null;
     }
@@ -438,5 +503,35 @@ class User extends AbstractGuidEntity implements UserInterface
     public function eraseCredentials()
     {
         // TODO: Implement eraseCredentials() method.
+    }
+
+    /**
+     * Return the user object as an array.
+     *
+     * @return array
+     */
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->getGuid()->toString(),
+            'username' => $this->getUsername(),
+            'email' => $this->getEmail(),
+            'firstName' => $this->getFirstName(),
+            'lastName' => $this->getLastName(),
+            'phone' => $this->getPhone(),
+            'description' => $this->getDescription(),
+            'roles' => $this->getRoles(),
+            'avatar' => $this->getAvatar(),
+        ];
+    }
+
+    /**
+     * Serialize the user object.
+     *
+     * @return array
+     */
+    public function __serialize(): array
+    {
+        return $this->toArray();
     }
 }

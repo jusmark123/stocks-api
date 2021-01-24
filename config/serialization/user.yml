@@ -9,6 +9,11 @@ App\Entity\User:
         - user.get
         - user.post
         - user.put
+    avatar:
+      groups:
+        - user.get
+        - user.post
+        - user.put
     firstName:
       groups:
         - user.get
@@ -60,3 +65,8 @@ App\Entity\User:
     deactivatedBy:
       groups:
         - user.get
+    plainPassword:
+      groups:
+        - user.get
+        - user.put
+        - user.post

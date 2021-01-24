@@ -9,8 +9,6 @@ declare(strict_types=1);
 namespace App\Message\Handler;
 
 use App\Entity\Job;
-use App\Entity\JobItem;
-use App\Entity\Position;
 use App\Exception\JobCancelledException;
 use App\Message\Factory\SyncTickerMessageFactory;
 use App\Message\Job\Handler\AbstractJobMessageHandler;

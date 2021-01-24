@@ -4,22 +4,27 @@ resources:
       normalization_context:
         groups: [ 'user.get' ]
       denormalization_context:
-        groups: [ 'user.post' ]
+        groups: [ 'user.post', 'user.put' ]
       order: {modifiedAt: DESC, id: DESC}
 
     collectionOperations:
         get:
           method: GET
+          security: 'is_granted("ROLE_ADMIN")'
         post:
           method: POST
+          security: 'is_granted("ROLE_ADMIN")'
 
     itemOperations:
       get:
         method: GET
+        security: 'is_granted("ROLE_ADMIN") or object === user'
       put:
         method: PUT
+        security: 'is_granted("ROLE_ADMIN") or object === user'
       delete:
         method: DELETE
+        security: 'is_granted("ROLE_ADMIN") or object === user'
 
     properties:
       id:
