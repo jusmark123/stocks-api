@@ -26,7 +26,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * 		}
  * )
  * @ORM\Entity(repositoryClass="App\Entity\Repository\UserRepository")
- * @ORM\EntityListeners({"App\Entity\Listener\UserListener"})
  * @ORM\HasLifecycleCallbacks()
  * @Gedmo\SoftDeleteable(fieldName="deactivatedAt", timeAware=false)
  */

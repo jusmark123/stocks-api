@@ -126,6 +126,7 @@ services:
 
     App\EventSubscriber\:
         resource: '../src/EventSubscriber/*'
+        autowire: true
         tags:
             - { name: kernel.event_subscriber }
 
