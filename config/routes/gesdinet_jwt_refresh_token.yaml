@@ -1,4 +1,4 @@
 # config/gesdinet_jwt_refresh_token.yaml
 gesdinet_jwt_refresh_token:
-  path:       /api/token/refresh
+  path:       /api/stocks/v1/token-refresh
   controller: gesdinet.jwtrefreshtoken::refresh
