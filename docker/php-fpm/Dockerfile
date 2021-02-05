@@ -13,7 +13,7 @@ RUN apk add --update --no-cache coreutils curl git gcc make openrc \
     php7-fpm php7-apcu php7-pecl-amqp php7-ctype php7-curl php7-dom php7-gd php7-iconv php7-imagick \
     php7-json php7-intl php7-pecl-mcrypt php7-fileinfo php7-mbstring php7-opcache php7-openssl \
     php7-pdo php7-pdo_mysql php7-mysqli php7-xml php7-zlib php7-phar php7-tokenizer php7-pear php7-dev\
-    php7-session php7-simplexml php7-pecl-xdebug php7-zip php7-xmlwriter php7-gmp rabbitmq-c \
+    php7-session php7-simplexml php7-pecl-xdebug php7-zip php7-xmlwriter php7-gmp php7-sodium rabbitmq-c \
     rabbitmq-c-dev sudo supervisor
 
 RUN composer global require friendsofphp/php-cs-fixer

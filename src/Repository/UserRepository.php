@@ -14,8 +14,10 @@ use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
+use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 /**
  * @method User|null find($id, $lockMode = null, $lockVersion = null)
@@ -23,7 +25,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * @method User[]    findAll()
  * @method User[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
+class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface, UserProviderInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
@@ -52,32 +54,61 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->_em->flush();
     }
 
-    // /**
-    //  * @return Admin[] Returns an array of Admin objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * Loads the user for the given username.
+     *
+     * This method must throw UsernameNotFoundException if the user is not
+     * found.
+     *
+     * @param string $username
+     *
+     * @return UserInterface
+     */
+    public function loadUserByUsername(string $username): UserInterface
     {
-        return $this->createQueryBuilder('a')
-            ->andWhere('a.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('a.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+        $user = $this->findOneBy(['username' => $username]);
 
-    /*
-    public function findOneBySomeField($value): ?Admin
-    {
-        return $this->createQueryBuilder('a')
-            ->andWhere('a.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        if (null === $user || !$user instanceof UserInterface) {
+            throw new UsernameNotFoundException(
+                'Unable to locate a user with the provided username'
+            );
+        }
+
+        return $user;
     }
-    */
+
+    /**
+     * Refreshes the user.
+     *
+     * It is up to the implementation to decide if the user data should be
+     * totally reloaded (e.g. from the database), or if the UserInterface
+     * object can just be merged into some internal array of users / identity
+     * map.
+     *
+     * @param UserInterface $user
+     *
+     * @return UserInterface
+     */
+    public function refreshUser(UserInterface $user): UserInterface
+    {
+        if (!$this->supportsClass(\get_class($user))) {
+            throw new UnsupportedUserException(
+                'The user type provided is not supported'
+            );
+        }
+
+        return $this->loadUserByUsername($user->getUsername());
+    }
+
+    /**
+     * Whether this provider supports the given user class.
+     *
+     * @param string $class
+     *
+     * @return bool
+     */
+    public function supportsClass(string $class): bool
+    {
+        return User::class === $class;
+    }
 }

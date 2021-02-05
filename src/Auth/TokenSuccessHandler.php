@@ -27,6 +27,7 @@ class TokenSuccessHandler implements AuthenticationSuccessHandlerInterface
 
     protected $jwtManager;
     protected $dispatcher;
+    protected $token;
 
     /**
      * @param JWTTokenManagerInterface     $jwtManager
@@ -55,6 +56,8 @@ class TokenSuccessHandler implements AuthenticationSuccessHandlerInterface
      */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token): Response
     {
+        $this->token = $token;
+
         return $this->handleAuthenticationSuccess($token->getUser());
     }
 
@@ -81,6 +84,10 @@ class TokenSuccessHandler implements AuthenticationSuccessHandlerInterface
             'token' => $jwt,
             'user' => $userData,
         ];
+
+        if (!empty($expires)) {
+            $payload['expires'] = $expires;
+        }
 
         $event = new AuthenticationSuccessEvent($payload, $user, $response);
         $this->dispatcher->dispatch($event, Events::AUTHENTICATION_SUCCESS);

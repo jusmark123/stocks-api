@@ -76,7 +76,7 @@ class User extends AbstractGuidEntity implements UserInterface
 
     /**
      * @var string|null
-     * @ORM\Column(name="avatar", type="string", length=255, nullable=true)
+     * @ORM\Column(name="avatar", type="text", length=1677216, nullable=true)
      */
     private $avatar;
 
