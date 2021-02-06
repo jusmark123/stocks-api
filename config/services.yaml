@@ -158,13 +158,6 @@ services:
     
     ###### Authentication Services ######
 
-    stocks_api.token_created_event_listener:
-        class: \App\EventListeners\JWTCreatedListener
-        autowire: true
-        autoconfigure: true
-        tags:
-          - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_created, method: onJWTCreated }
-
     stocks_api.token_success_handler:
         class: \App\Auth\TokenSuccessHandler
         autowire: true

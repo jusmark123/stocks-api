@@ -13,11 +13,12 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
-use Lexik\Bundle\JWTAuthenticationBundle\Security\User\PayloadAwareUserProviderInterface;
+use Ramsey\Uuid\Guid\Guid;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 /**
  * @method User|null find($id, $lockMode = null, $lockVersion = null)
@@ -25,7 +26,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * @method User[]    findAll()
  * @method User[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface, PayloadAwareUserProviderInterface
+class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface, UserProviderInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
@@ -66,11 +67,37 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
      */
     public function loadUserByUsername(string $username): UserInterface
     {
+        if (Guid::isValid($username)) {
+            return $this->loadUserByGuid($username);
+        }
+
         $user = $this->findOneBy(['username' => $username]);
 
         if (null === $user || !$user instanceof UserInterface) {
             throw new UsernameNotFoundException(
                 'Unable to locate a user with the provided username'
+            );
+        }
+
+        return $user;
+    }
+
+    /**
+     * Loads the user for the given GUID.
+     *
+     * @param string $guid
+     *
+     * @throws UsernameNotFoundException
+     *
+     * @return UserInterface
+     */
+    public function loadUserByGuid(string $guid): UserInterface
+    {
+        $user = $this->findOneBy(['guid' => $guid]);
+
+        if (null === $user || !$user instanceof UserInterface) {
+            throw new UsernameNotFoundException(
+                'Unable to locate a user with the provided GUID'
             );
         }
 
@@ -110,50 +137,5 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     public function supportsClass(string $class): bool
     {
         return User::class === $class;
-    }
-
-    /**
-     * Load a user by its username, including the JWT token payload.
-     *
-     * @param string $username
-     * @param array  $payload
-     *
-     * @throws UsernameNotFoundException if the user is not found
-     *
-     * @return UserInterface
-     */
-    public function loadUserByUsernameAndPayload($username, array $payload): UserInterface
-    {
-        try {
-            return $this->loadUserByUsername($username);
-        } catch (UsernameNotFoundException $e) {
-            if (\array_key_exists('email', $payload)) {
-                return $this->loadUserByEmail($payload['email']);
-            }
-        }
-
-        throw new UsernameNotFoundException($e->getMessage());
-    }
-
-    /**
-     * Load a user by its email address.
-     *
-     * @param string $email
-     *
-     * @throws UsernameNotFoundException if the user is not found
-     *
-     * @return UserInterface
-     */
-    public function loadUserByEmail(string $email): UserInterface
-    {
-        $user = $this->findOneBy(['email' => $email]);
-
-        if (null === $user || !$user instanceof UserInterface) {
-            throw new UsernameNotFoundException(
-                'Unable to locate a user with the provided username'
-            );
-        }
-
-        return $user;
     }
 }
