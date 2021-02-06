@@ -43,8 +43,10 @@ RUN apk add --update --no-cache --virtual .php-build-deps \
     sockets
 
 RUN composer global require friendsofphp/php-cs-fixer
+RUN curl -sS https://get.symfony.com/cli/installer | bash
 
-ENV PATH "$PATH:/root/.composer/vendor/bin"
+ENV PATH "$PATH:/root/.symfony/bin:$PATH"
+ENV PATH "$PATH:/root/.composer/vendor/bin:$PATH"
 
 RUN mkdir /var/run/openrc
 RUN touch /var/run/openrc/softlevel

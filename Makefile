@@ -15,6 +15,7 @@ local: .env
 .PHONY:local
 
 build-cache:
+	rm -rf var/cache/*
 	bin/console cache:warmup --no-debug --no-interaction
 PHONY: build-cache
 
