@@ -70,7 +70,7 @@ class User extends AbstractGuidEntity implements UserInterface
 
     /**
      * @var string|null
-     * @ORM\Column(name="phone", type="string", length=10, nullable=true)
+     * @ORM\Column(name="phone", type="string", length=20, nullable=true)
      */
     private $phone;
 
