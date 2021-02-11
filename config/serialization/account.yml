@@ -35,11 +35,12 @@ App\Entity\Account:
         - account.get
         - account.post
         - account.put
+    configuration:
+      groups:
+        - account.get
     context:
       groups:
         - account.get
-        - account.post
-        - account.put
     default:
       groups:
         - account.get

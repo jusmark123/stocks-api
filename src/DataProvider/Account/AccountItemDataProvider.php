@@ -10,6 +10,7 @@ namespace App\DataProvider\Account;
 
 use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
+use ApiPlatform\Core\Exception\ItemNotFoundException;
 use App\Entity\Account;
 use App\Entity\Manager\AccountEntityManager;
 use App\Service\Brokerage\BrokerageServiceProvider;
@@ -70,9 +71,18 @@ class AccountItemDataProvider implements ItemDataProviderInterface, RestrictedDa
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?object
     {
         $account = $this->accountEntityManager->findOneBy(['guid' => $id]);
+
+        if (!$account instanceof Account) {
+            throw new ItemNotFoundException('Account not found.');
+        }
+
         $brokerageService = $this->brokerageServiceProvider->getBrokerageService($account->getBrokerage());
         $accountInfo = $brokerageService->getAccountInfo($account);
-        $account->setAccountInfo($accountInfo);
+        $positions = $brokerageService->getPositions($account);
+        $configuration = $brokerageService->getAccountConfiguration($account);
+        $account->setAccountInfo($accountInfo)
+            ->setPositions($positions)
+            ->setConfiguration($configuration);
 
         return $account;
     }

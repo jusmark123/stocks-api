@@ -8,10 +8,12 @@ declare(strict_types=1);
 
 namespace App\DTO\Brokerage\Alpaca;
 
+use App\DTO\Brokerage\PositionInterface;
+
 /**
- * Class AlpacaPositionInfo.
+ * Class Position.
  */
-class AlpacaPositionInfo
+class Position implements PositionInterface
 {
     /**
      * @var string
@@ -86,7 +88,7 @@ class AlpacaPositionInfo
     /**
      * @var float
      */
-    private $unrealizeIntradayPl;
+    private $unrealizedIntradayPl;
 
     /**
      * @return string
@@ -99,9 +101,9 @@ class AlpacaPositionInfo
     /**
      * @param string $assetId
      *
-     * @return AlpacaPositionInfo
+     * @return Position
      */
-    public function setAssetId(string $assetId): AlpacaPositionInfo
+    public function setAssetId(string $assetId): Position
     {
         $this->assetId = $assetId;
 
@@ -119,9 +121,9 @@ class AlpacaPositionInfo
     /**
      * @param string $symbol
      *
-     * @return AlpacaPositionInfo
+     * @return Position
      */
-    public function setSymbol(string $symbol): AlpacaPositionInfo
+    public function setSymbol(string $symbol): Position
     {
         $this->symbol = $symbol;
 
@@ -139,9 +141,9 @@ class AlpacaPositionInfo
     /**
      * @param string $assetClass
      *
-     * @return AlpacaPositionInfo
+     * @return Position
      */
-    public function setAssetClass(string $assetClass): AlpacaPositionInfo
+    public function setAssetClass(string $assetClass): Position
     {
         $this->assetClass = $assetClass;
 
@@ -159,9 +161,9 @@ class AlpacaPositionInfo
     /**
      * @param float $avgEntryPrice
      *
-     * @return AlpacaPositionInfo
+     * @return Position
      */
-    public function setAvgEntryPrice(string $avgEntryPrice): AlpacaPositionInfo
+    public function setAvgEntryPrice(string $avgEntryPrice): Position
     {
         $this->avgEntryPrice = (float) $avgEntryPrice;
 
@@ -179,9 +181,9 @@ class AlpacaPositionInfo
     /**
      * @param float $changeToday
      *
-     * @return AlpacaPositionInfo
+     * @return Position
      */
-    public function setChangeToday(string $changeToday): AlpacaPositionInfo
+    public function setChangeToday(string $changeToday): Position
     {
         $this->changeToday = (float) $changeToday;
 
@@ -199,9 +201,9 @@ class AlpacaPositionInfo
     /**
      * @param float $costBasis
      *
-     * @return AlpacaPositionInfo
+     * @return Position
      */
-    public function setCostBasis(string $costBasis): AlpacaPositionInfo
+    public function setCostBasis(string $costBasis): Position
     {
         $this->costBasis = (float) $costBasis;
 
@@ -219,9 +221,9 @@ class AlpacaPositionInfo
     /**
      * @param float $currentPrice
      *
-     * @return AlpacaPositionInfo
+     * @return Position
      */
-    public function setCurrentPrice(string $currentPrice): AlpacaPositionInfo
+    public function setCurrentPrice(string $currentPrice): Position
     {
         $this->currentPrice = (float) $currentPrice;
 
@@ -239,9 +241,9 @@ class AlpacaPositionInfo
     /**
      * @param string $exchange
      *
-     * @return AlpacaPositionInfo
+     * @return Position
      */
-    public function setExchange(string $exchange): AlpacaPositionInfo
+    public function setExchange(string $exchange): Position
     {
         $this->exchange = $exchange;
 
@@ -259,9 +261,9 @@ class AlpacaPositionInfo
     /**
      * @param float $lastDayPrice
      *
-     * @return AlpacaPositionInfo
+     * @return Position
      */
-    public function setLastDayPrice(string $lastDayPrice): AlpacaPositionInfo
+    public function setLastDayPrice(string $lastDayPrice): Position
     {
         $this->lastDayPrice = (float) $lastDayPrice;
 
@@ -279,9 +281,9 @@ class AlpacaPositionInfo
     /**
      * @param float $marketValue
      *
-     * @return AlpacaPositionInfo
+     * @return Position
      */
-    public function setMarketValue(string $marketValue): AlpacaPositionInfo
+    public function setMarketValue(string $marketValue): Position
     {
         $this->marketValue = (float) $marketValue;
 
@@ -299,9 +301,9 @@ class AlpacaPositionInfo
     /**
      * @param int $qty
      *
-     * @return AlpacaPositionInfo
+     * @return Position
      */
-    public function setQty(string $qty): AlpacaPositionInfo
+    public function setQty(string $qty): Position
     {
         $this->qty = (int) $qty;
 
@@ -319,9 +321,9 @@ class AlpacaPositionInfo
     /**
      * @param string $side
      *
-     * @return AlpacaPositionInfo
+     * @return Position
      */
-    public function setSide(string $side): AlpacaPositionInfo
+    public function setSide(string $side): Position
     {
         $this->side = $side;
 
@@ -339,9 +341,9 @@ class AlpacaPositionInfo
     /**
      * @param float $unrealizedPl
      *
-     * @return AlpacaPositionInfo
+     * @return Position
      */
-    public function setUnrealizedPl(string $unrealizedPl): AlpacaPositionInfo
+    public function setUnrealizedPl(string $unrealizedPl): Position
     {
         $this->unrealizedPl = (float) $unrealizedPl;
 
@@ -359,9 +361,9 @@ class AlpacaPositionInfo
     /**
      * @param float $unrealizedPlpc
      *
-     * @return AlpacaPositionInfo
+     * @return Position
      */
-    public function setUnrealizedPlpc(string $unrealizedPlpc): AlpacaPositionInfo
+    public function setUnrealizedPlpc(string $unrealizedPlpc): Position
     {
         $this->unrealizedPlpc = (float) $unrealizedPlpc;
 
@@ -371,19 +373,19 @@ class AlpacaPositionInfo
     /**
      * @return float
      */
-    public function getUnrealizeIntradayPl(): float
+    public function getUnrealizedIntradayPl(): float
     {
-        return $this->unrealizeIntradayPl;
+        return $this->unrealizedIntradayPl;
     }
 
     /**
-     * @param float $unrealizeIntradayPl
+     * @param string $unrealizedIntradayPl
      *
-     * @return AlpacaPositionInfo
+     * @return Position
      */
-    public function setUnrealizeIntradayPl(string $unrealizeIntradayPl): AlpacaPositionInfo
+    public function setUnrealizedIntradayPl(string $unrealizedIntradayPl): Position
     {
-        $this->unrealizeIntradayPl = (float) $unrealizeIntradayPl;
+        $this->unrealizedIntradayPl = (float) $unrealizedIntradayPl;
 
         return $this;
     }

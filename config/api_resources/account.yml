@@ -30,10 +30,50 @@ resources:
               in: path
               required: true
 
+      get_account_positions:
+        method: GET
+        path: '/accounts/{id}/positions'
+        output: App\DTO\Brokerage\Alpaca\Position
+        defaults:
+          _api_subresource_context:
+            identifiers:
+              - [ id, App\Entity\Account, true ]
+        normalization_context:
+          groups: [ 'position.get' ]
+        swagger_context:
+          summary: Get open positions for account
+          tags: [ Account ]
+          parameters:
+            - name: id
+              in: path
+              required: true
+              type: string
+
     itemOperations:
       get:
         method: GET
 
+      account_get_position:
+        method: GET
+        path: /accounts/{id}/positions/{symbol}
+        defaults:
+          _api_subresource_context:
+            - [ id, App\Entity\Account, true ]
+            - [ symbol, App\Entity\Ticker, true ]
+        normalization_context:
+          groups: [ 'position.get' ]
+        swagger_context:
+          summary: Get open position for action
+          tags: [ Account ]
+          paramaters:
+            - name: id
+              in: path
+              required: true
+              type: string
+            - name: symbol
+              in: path
+              required: true
+              type: string
       put:
         method: PUT
       delete:

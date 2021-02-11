@@ -9,6 +9,8 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\DTO\Brokerage\AccountInfoInterface;
+use App\DTO\Brokerage\Alpaca\AccountConfiguration;
+use App\DTO\Brokerage\PositionInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\PersistentCollection;
@@ -78,6 +80,11 @@ class Account extends AbstractGuidEntity
     private $brokerage;
 
     /**
+     * @var AccountConfiguration
+     */
+    private $configuration;
+
+    /**
      * @var string|null
      *
      * @ORM\Column(name="description", type="text", length=65535, nullable=true)
@@ -122,9 +129,7 @@ class Account extends AbstractGuidEntity
     private $users;
 
     /**
-     * @var ArrayCollection|Position[]|PersistentCollection
-     *
-     * @ORM\OneToMany(targetEntity="Position", mappedBy="account", fetch="LAZY")
+     * @var PositionInterface[]
      */
     private $positions;
 
@@ -290,6 +295,26 @@ class Account extends AbstractGuidEntity
     }
 
     /**
+     * @return AccountConfiguration
+     */
+    public function getConfiguration(): AccountConfiguration
+    {
+        return $this->configuration;
+    }
+
+    /**
+     * @param AccountConfiguration $configuration
+     *
+     * @return Account
+     */
+    public function setConfiguration(AccountConfiguration $configuration): Account
+    {
+        $this->configuration = $configuration;
+
+        return $this;
+    }
+
+    /**
      * @return string $description
      */
     public function getDescription(): ?string
@@ -397,11 +422,11 @@ class Account extends AbstractGuidEntity
     }
 
     /**
-     * @param Position $position
+     * @param PositionInterface $position
      *
      * @return Account
      */
-    public function addPosition(Position $position): Account
+    public function addPosition(PositionInterface $position): Account
     {
         $this->positions->add($position);
 
@@ -409,7 +434,7 @@ class Account extends AbstractGuidEntity
     }
 
     /**
-     * @return ArrayCollection|Position[]|PersistentCollection
+     * @return PositionInterface[]
      */
     public function getPositions()
     {
@@ -417,7 +442,9 @@ class Account extends AbstractGuidEntity
     }
 
     /**
-     * @param ArrayCollection|Position[]|PersistentCollection $positions
+     * @param PositionInterface[] $positions
+     *
+     * @return Account
      */
     public function setPositions(array $positions): Account
     {
@@ -427,9 +454,11 @@ class Account extends AbstractGuidEntity
     }
 
     /**
+     * @param PositionInterface $position
+     *
      * @return Account
      */
-    public function removePosition(Position $position): Account
+    public function removePosition(PositionInterface $position): Account
     {
         $this->positions->removeElement($position);
 

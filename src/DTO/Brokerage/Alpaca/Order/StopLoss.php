@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace App\DTO\Brokerage\Alpaca\Order;
 
-class AlpacaStopLoss
+class StopLoss
 {
     /**
      * @var string
@@ -31,9 +31,9 @@ class AlpacaStopLoss
     /**
      * @param float $stopPrice
      *
-     * @return AlpacaStopLoss
+     * @return StopLoss
      */
-    public function setStopPrice(float $stopPrice): AlpacaStopLoss
+    public function setStopPrice(float $stopPrice): StopLoss
     {
         $this->stopPrice = $stopPrice;
 

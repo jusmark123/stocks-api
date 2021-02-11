@@ -11,7 +11,7 @@ namespace App\DTO\Brokerage\Alpaca;
 use App\Constants\Brokerage\AlpacaConstants;
 use App\DTO\Brokerage\TickerInterface;
 
-class AlpacaTickerInfo implements TickerInterface
+class TickerInfo implements TickerInterface
 {
     /**
      * @var string
@@ -64,9 +64,9 @@ class AlpacaTickerInfo implements TickerInterface
     /**
      * @param string $class
      *
-     * @return AlpacaTickerInfo
+     * @return TickerInfo
      */
-    public function setClass(string $class): AlpacaTickerInfo
+    public function setClass(string $class): TickerInfo
     {
         $this->class = $class;
 
@@ -84,9 +84,9 @@ class AlpacaTickerInfo implements TickerInterface
     /**
      * @param string $symbol
      *
-     * @return AlpacaTickerInfo
+     * @return TickerInfo
      */
-    public function setSymbol(string $symbol): AlpacaTickerInfo
+    public function setSymbol(string $symbol): TickerInfo
     {
         $this->symbol = $symbol;
 
@@ -104,9 +104,9 @@ class AlpacaTickerInfo implements TickerInterface
     /**
      * @param bool $status
      *
-     * @return AlpacaTickerInfo
+     * @return TickerInfo
      */
-    public function setStatus(bool $status): AlpacaTickerInfo
+    public function setStatus(bool $status): TickerInfo
     {
         $this->status = $status;
 
@@ -124,9 +124,9 @@ class AlpacaTickerInfo implements TickerInterface
     /**
      * @param bool $tradable
      *
-     * @return AlpacaTickerInfo
+     * @return TickerInfo
      */
-    public function setTradable(bool $tradable): AlpacaTickerInfo
+    public function setTradable(bool $tradable): TickerInfo
     {
         $this->tradable = $tradable;
 
@@ -144,9 +144,9 @@ class AlpacaTickerInfo implements TickerInterface
     /**
      * @param bool $marginable
      *
-     * @return AlpacaTickerInfo
+     * @return TickerInfo
      */
-    public function setMarginable(bool $marginable): AlpacaTickerInfo
+    public function setMarginable(bool $marginable): TickerInfo
     {
         $this->marginable = $marginable;
 
@@ -164,9 +164,9 @@ class AlpacaTickerInfo implements TickerInterface
     /**
      * @param bool $shortable
      *
-     * @return AlpacaTickerInfo
+     * @return TickerInfo
      */
-    public function setShortable(bool $shortable): AlpacaTickerInfo
+    public function setShortable(bool $shortable): TickerInfo
     {
         $this->shortable = $shortable;
 
@@ -184,9 +184,9 @@ class AlpacaTickerInfo implements TickerInterface
     /**
      * @param bool $easyToBorrow
      *
-     * @return AlpacaTickerInfo
+     * @return TickerInfo
      */
-    public function setEasyToBorrow(bool $easyToBorrow): AlpacaTickerInfo
+    public function setEasyToBorrow(bool $easyToBorrow): TickerInfo
     {
         $this->easyToBorrow = $easyToBorrow;
 
@@ -204,7 +204,7 @@ class AlpacaTickerInfo implements TickerInterface
     /**
      * @param mixed $brokerage
      *
-     * @return AlpacaTickerInfo
+     * @return TickerInfo
      */
     public function setBrokerage($brokerage)
     {

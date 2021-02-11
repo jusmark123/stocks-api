@@ -1,14 +1,24 @@
 resources:
   App\Entity\Topic:
     attributes:
+#      filters:
+#        - topic.search_filter
+#        - topic.order_filter
       normalization_context:
         groups: [ 'topic.get' ]
       denormalization_context:
         groups: [ 'topic.post' ]
+      order: {name: DESC}
 
     collectionOperations:
       get:
         method: GET
+        swagger_context:
+          parameters:
+            - name: topicArn
+              in: query
+              type: string
+              required: false
       post:
         method: POST
 

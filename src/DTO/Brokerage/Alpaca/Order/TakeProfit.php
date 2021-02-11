@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace App\DTO\Brokerage\Alpaca\Order;
 
-class AlpacaTakeProfit
+class TakeProfit
 {
     /**
      * @var string
@@ -26,9 +26,9 @@ class AlpacaTakeProfit
     /**
      * @param float $limitPrice
      *
-     * @return AlpacaTakeProfit
+     * @return TakeProfit
      */
-    public function setLimitPrice(float $limitPrice): AlpacaTakeProfit
+    public function setLimitPrice(float $limitPrice): TakeProfit
     {
         $this->limitPrice = $limitPrice;
 

@@ -1,0 +1,14 @@
+App\DTO\Brokerage\Alpaca\AccountConfiguration:
+  attributes:
+    dtbpCheck:
+      groups:
+        - account.get
+    noShorting:
+      groups:
+        - account.get
+    suspendTrade:
+      groups:
+        - account.get
+    tradeConfirmationEmail:
+      groups:
+        - account.get

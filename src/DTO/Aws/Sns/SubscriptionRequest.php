@@ -94,19 +94,19 @@ class SubscriptionRequest extends AbstractGuidEntity
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getProtocol(): string
+    public function getProtocol(): ?string
     {
         return $this->protocol;
     }
 
     /**
-     * @param string $protocol
+     * @param string|null $protocol
      *
      * @return SubscriptionRequest
      */
-    public function setProtocol(string $protocol): SubscriptionRequest
+    public function setProtocol(?string $protocol = 'http'): SubscriptionRequest
     {
         $this->protocol = $protocol;
 
@@ -149,6 +149,7 @@ class SubscriptionRequest extends AbstractGuidEntity
     public function setTopic(?Topic $topic): SubscriptionRequest
     {
         $this->topic = $topic;
+        $this->topicArn = $topic->getTopicArn();
 
         return $this;
     }

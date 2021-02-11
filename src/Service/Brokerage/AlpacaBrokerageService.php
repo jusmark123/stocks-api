@@ -27,6 +27,8 @@ use App\Entity\Position;
 use App\Entity\Ticker;
 use App\Helper\SerializerHelper;
 use App\Helper\ValidationHelper;
+use App\Message\Factory\SyncOrderHistoryMessageFactory;
+use App\Message\Job\Stamp\JobItemStamp;
 use App\Service\DefaultTypeService;
 use App\Service\JobService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -34,6 +36,7 @@ use Predis\Client;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
+use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
 use Symfony\Component\Serializer\Mapping\Loader\YamlFileLoader;
@@ -236,6 +239,20 @@ class AlpacaBrokerageService extends AbstractBrokerageService
         return $this->polygonService->fetchTicker($symbol);
     }
 
+    public function getPositions(Account $account): ?array
+    {
+        $positions = [];
+        $request = $this->brokerageClient->createRequest(
+            $this->getUri(AlpacaConstants::POSITIONS_ENDPOINT, $account),
+            'GET',
+            $this->getRequestHeaders($account)
+        );
+
+        $response = $this->brokerageClient->sendRequest($request);
+
+        return json_decode((string) $response->getBody(), true);
+    }
+
     /**
      * @param string  $symbol
      * @param Account $account
@@ -284,7 +301,8 @@ class AlpacaBrokerageService extends AbstractBrokerageService
 
         $response = $this->brokerageClient->sendRequest($request);
 
-        $classMetaDataFactory = new ClassMetadataFactory(new YamlFileLoader(AlpacaConstants::ACCOUNT_INFO_SERIALIZATION_CONFIG));
+        $classMetaDataFactory = new ClassMetadataFactory(
+            new YamlFileLoader(AlpacaConstants::ACCOUNT_INFO_SERIALIZATION_CONFIG));
         $serializer = SerializerHelper::CamelCaseToSnakeCaseNormalizer($classMetaDataFactory);
 
         return $serializer->deserialize(
@@ -294,15 +312,41 @@ class AlpacaBrokerageService extends AbstractBrokerageService
         );
     }
 
+    public function getAccountConfiguration(Account $account)
+    {
+        $request = $this->brokerageClient->createRequest(
+            $this->getUri(AlpacaConstants::ACCOUNT_CONFIG_ENDPOINT, $account),
+            'GET',
+            $this->getRequestHeaders($account)
+        );
+
+        $response = $this->brokerageClient->sendRequest($request);
+
+        $classMetaDataFactory = new ClassMetadataFactory(
+            new YamlFileLoader(AlpacaConstants::ACCOUNT_CONFIGURATION__SERIALIZATION_CONFIG));
+        $serializer = SerializerHelper::CamelCaseToSnakeCaseNormalizer($classMetaDataFactory);
+
+        return $serializer->deserialize(
+            (string) $response->getBody(),
+            AlpacaConstants::ACCOUNT_CONFIGURATION_ENTITY_CLASS,
+            AlpacaConstants::REQUEST_RETURN_DATA_TYPE
+        );
+    }
+
+    public function getAccountHistory()
+    {
+    }
+
     /**
-     * @param SyncOrdersRequest $request
-     * @param Job               $job
+     * @param SyncOrdersRequest   $request
+     * @param MessageBusInterface $messageBus
+     * @param Job                 $job
      *
      * @throws ClientExceptionInterface
      *
      * @return Job|null
      */
-    public function fetchOrderHistory(SyncOrdersRequest $request, Job $job): Job
+    public function fetchOrderHistory(SyncOrdersRequest $request, MessageBusInterface $messageBus, Job $job): Job
     {
         $account = $request->getAccount();
         $params = $request->getParameters();
@@ -348,7 +392,18 @@ class AlpacaBrokerageService extends AbstractBrokerageService
                 $exists = $this->jobService->jobItemExists($job, $orderData[AlpacaConstants::ORDER_INFO_UNIQUE_KEY]);
 
                 if (!$exists) {
-                    $this->jobService->createJobItem($orderData, $job, $orderData['client_order_id']);
+                    $jobItem = $this->jobService->createJobItem($orderData, $job, $orderData['client_order_id']);
+
+                    $envelope = (new Envelope(SyncOrderHistoryMessageFactory::create(
+                        $job->getGuid()->toString(),
+                        $jobItem->getGuid()->toString(),
+                        $jobItem->getData()
+                    )))->with(new JobItemStamp(
+                            $job->getGuid()->toString(),
+                            $jobItem->getGuid()->toString())
+                    );
+
+                    $messageBus->dispatch($envelope);
                 }
 
                 if (null !== $limit && $job->getJobItems()->count() >= $limit) {

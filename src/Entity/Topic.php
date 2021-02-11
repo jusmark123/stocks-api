@@ -9,57 +9,46 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\DTO\Aws\Sns\Notification;
+use App\DTO\Aws\Sns\TopicAttributes;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\PersistentCollection;
-use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * Class Topic.
- *
- * @ORM\Table(
- *     name="topic",
- *     uniqueConstraints={
- *          @ORM\UniqueConstraint(name="topic_un_guid", columns={"guid"}),
- *     },
- *     indexes={
- *          @ORM\Index(name="topic_ix_topic_arn", columns={"topic_arn"}),
- *     },
- * )
- * @ORM\Entity()
- * @ORM\HasLifecycleCallbacks()
- * @Gedmo\SoftDeleteable(fieldName="deactivatedAt", timeAware=false)
  */
 class Topic extends AbstractGuidEntity
 {
     /**
-     * @var array
+     * @var TopicAttributes
      */
     private $attributes = [];
 
     /**
+     * @var bool
+     */
+    private $contentBasedDeduplication;
+
+    /**
      * @var string
-     *
-     * @ORM\Column(name="name", type="string", length=255, nullable=false)
      */
     private $name;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="topic_arn", type="string", length=255, nullable=false)
      */
     private $topicArn;
 
     /**
-     * @var ArrayCollection|TopicSubscription[]|PersistentCollection
-     *
-     * @ORM\OneToMany(targetEntity="TopicSubscription", mappedBy="topic", cascade={"persist", "remove"})
+     * @var string
+     */
+    private $type;
+
+    /**
+     * @var TopicSubscription[]
      */
     private $subscriptions;
 
     /**
-     * @var ArrayCollection|Notification[]
+     * @var Notification[]
      */
     private $notifications;
 
@@ -82,21 +71,41 @@ class Topic extends AbstractGuidEntity
     }
 
     /**
-     * @return array
+     * @return TopicAttributes
      */
-    public function getAttributes(): array
+    public function getAttributes()
     {
         return $this->attributes;
     }
 
     /**
-     * @param array $attributes
+     * @param TopicAttributes $attributes
      *
      * @return Topic
      */
-    public function setAttributes(array $attributes): Topic
+    public function setAttributes($attributes)
     {
         $this->attributes = $attributes;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isContentBasedDeduplication(): bool
+    {
+        return $this->contentBasedDeduplication;
+    }
+
+    /**
+     * @param bool $contentBasedDeduplication
+     *
+     * @return Topic
+     */
+    public function setContentBasedDeduplication(bool $contentBasedDeduplication): Topic
+    {
+        $this->contentBasedDeduplication = $contentBasedDeduplication;
 
         return $this;
     }
@@ -124,6 +133,26 @@ class Topic extends AbstractGuidEntity
     /**
      * @return string
      */
+    public function getType(): string
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param string $type
+     *
+     * @return Topic
+     */
+    public function setType(string $type): Topic
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
     public function getTopicArn(): string
     {
         return $this->topicArn;
@@ -142,7 +171,7 @@ class Topic extends AbstractGuidEntity
     }
 
     /**
-     * @return TopicSubscription[]|ArrayCollection|PersistentCollection
+     * @return TopicSubscription[]
      */
     public function getSubscriptions()
     {
@@ -150,7 +179,7 @@ class Topic extends AbstractGuidEntity
     }
 
     /**
-     * @param TopicSubscription[]|ArrayCollection|PersistentCollection $subscriptions
+     * @param TopicSubscription[] $subscriptions
      *
      * @return Topic
      */
@@ -162,7 +191,7 @@ class Topic extends AbstractGuidEntity
     }
 
     /**
-     * @return Notification[]|ArrayCollection
+     * @return Notification[]
      */
     public function getNotifications()
     {
@@ -170,7 +199,7 @@ class Topic extends AbstractGuidEntity
     }
 
     /**
-     * @param Notification[]|ArrayCollection $notifications
+     * @param Notification[] $notifications
      *
      * @return Topic
      */

@@ -1,110 +1,110 @@
-App\DTO\Brokerage\Alpaca\AlpacaAccountInfo:
+App\DTO\Brokerage\Alpaca\AccountInfo:
   attributes:
     id:
       groups:
         - account.get
-        - alpaca_account_info.get
+        - account_info.get
     accountBlocked:
       groups:
         - account.get
-        - alpaca_account_info.get
+        - account_info.get
     accountNumber:
       groups:
         - account.get
-        - alpaca_account_info.get
+        - account_info.get
     brokerage:
       groups:
         - account.get
-        - alpaca_account_info.get
+        - account_info.get
     buyingPower:
       groups:
         - account.get
-        - alpaca_account_info.get
+        - account_info.get
     cash:
       groups:
         - account.get
-        - alpaca_account_info.get
+        - account_info.get
     createdAt:
       groups:
         - account.get
-        - alpaca_account_info.get
+        - account_info.get
     currency:
       groups:
         - account.get
-        - alpaca_account_info.get
+        - account_info.get
     daytradingBuyingPower:
       groups:
         - account.get
-        - alpaca_account_info.get
+        - account_info.get
     daytradeCount:
       groups:
         - account.get
-        - alpaca_account_info.get
+        - account_info.get
     equity:
       groups:
         - account.get
-        - alpaca_account_info.get
+        - account_info.get
     initialMargin:
       groups:
         - account.get
-        - alpaca_account_info.get
+        - account_info.get
     lastEquity:
       groups:
         - account.get
-        - alpaca_account_info.get
+        - account_info.get
     lastMaintenanceMargin:
       groups:
         - account.get
-        - alpaca_account_info.get
+        - account_info.get
     longMarketValue:
       groups:
         - account.get
-        - alpaca_account_info.get
+        - account_info.get
     maintenanceMargin:
       groups:
         - account.get
-        - alpaca_account_info.get
+        - account_info.get
     multiplier:
       groups:
         - account.get
-        - alpaca_account_info.get
+        - account_info.get
     patternDayTrader:
       groups:
         - account.get
-        - alpaca_account_info.get
+        - account_info.get
     portfolioValue:
       groups:
         - account.get
-        - alpaca_account_info.get
+        - account_info.get
     regtBuyingPower:
       groups:
         - account.get
-        - alpaca_account_info.get
+        - account_info.get
     shortMarketValue:
       groups:
         - account.get
-        - alpaca_account_info.get
+        - account_info.get
     shortingEnabled:
       groups:
         - account.get
-        - alpaca_account_info.get
-    $sma:
+        - account_info.get
+    sma:
       groups:
         - account.get
-        - alpaca_account_info.get
+        - account_info.get
     status:
       groups:
         - account.get
-        - alpaca_account_info.get
+        - account_info.get
     tradeSuspendedByUser:
       groups:
         - account.get
-        - alpaca_account_info.get
+        - account_info.get
     tradingBlocked:
       groups:
         - account.get
-        - alpaca_account_info.get
+        - account_info.get
     transfersBlocked:
       groups:
         - account.get
-        - alpaca_account_info.get
+        - account_info.get

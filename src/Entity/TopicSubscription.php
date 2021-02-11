@@ -8,63 +8,64 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 
 /**
  * Class TopicSubscription.
- *
- * @ORM\Table(
- *   name="topic_subscription",
- *   uniqueConstraints={
- *     @ORM\UniqueConstraint(name="topic_subscription_un_guid", columns={"guid"}),
- *   },
- *   indexes={
- *     @ORM\Index(name="topic_subscription_ix_subscription_arn", columns={"subscription_arn"}),
- *   },
- * )
- *
- * @ORM\Entity()
- * @ORM\HasLifecycleCallbacks()
- * @Gedmo\SoftDeleteable(fieldName="deactivatedAt", timeAware=false)
  */
 class TopicSubscription extends AbstractGuidEntity
 {
     /**
+     * @var array
+     */
+    private $attributes;
+
+    /**
      * @var string|null
-     *
-     * @ORM\Column(name="endpoint", type="string", length=255, nullable=false)
      */
     private $endpoint = null;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="protocol", type="string", length=10, nullable=false)
      */
     private $protocol = 'http';
 
     /**
      * @var bool
-     *
-     * @ORM\Column(name="confirmed", type="boolean", nullable=false, options={"default"=false})
      */
     private $confirmed = false;
 
     /**
      * @var string|null
-     *
-     * @ORM\Column(name="subscription_arn", type="string", length=255, nullable=true)
      */
     private $subscriptionArn;
 
     /**
      * @var Topic
-     *
-     * @ORM\ManyToOne(targetEntity="Topic", inversedBy="subscriptions")
-     * @ORM\JoinColumn(name="topic_id", referencedColumnName="id", nullable=false)
      */
     private $topic;
+
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
+    /**
+     * @return UuidInterface
+     */
+    public function getGuid(): UuidInterface
+    {
+        if (null !== $this->subscriptionArn) {
+            $parts = explode(':', $this->subscriptionArn);
+
+            if (6 === \count($parts)) {
+                $this->guid = Uuid::fromString(end($parts));
+            }
+        }
+
+        return $this->guid;
+    }
 
     /**
      * @return string|null
@@ -75,7 +76,7 @@ class TopicSubscription extends AbstractGuidEntity
     }
 
     /**
-     * @param string $endpoint
+     * @param string|null $endpoint
      *
      * @return TopicSubscription
      */
@@ -162,6 +163,26 @@ class TopicSubscription extends AbstractGuidEntity
     public function setTopic(Topic $topic): TopicSubscription
     {
         $this->topic = $topic;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getAttributes(): array
+    {
+        return $this->attributes;
+    }
+
+    /**
+     * @param array $attributes
+     *
+     * @return TopicSubscription
+     */
+    public function setAttributes(array $attributes): TopicSubscription
+    {
+        $this->attributes = $attributes;
 
         return $this;
     }

@@ -6,7 +6,7 @@
 
 declare(strict_types=1);
 
-namespace App\Command;
+namespace App\Command\Ticker;
 
 use App\Entity\Manager\TickerTypeEntityManager;
 use App\Service\TickerService;

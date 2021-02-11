@@ -11,7 +11,7 @@ namespace App\DTO\Brokerage\Alpaca\Order;
 use App\DTO\Brokerage\OrderRequestInterface;
 use App\Entity\Order;
 
-class AlpacaOrderRequest implements OrderRequestInterface
+class OrderRequest implements OrderRequestInterface
 {
     /**
      * @var Order
@@ -79,12 +79,12 @@ class AlpacaOrderRequest implements OrderRequestInterface
     private $orderClass;
 
     /**
-     * @var AlpacaTakeProfit
+     * @var TakeProfit
      */
     private $takeProfit;
 
     /**
-     * @var AlpacaStopLoss
+     * @var StopLoss
      */
     private $stopLoss;
 
@@ -99,9 +99,9 @@ class AlpacaOrderRequest implements OrderRequestInterface
     /**
      * @param Order $order
      *
-     * @return AlpacaOrderRequest
+     * @return OrderRequest
      */
-    public function setOrder(Order $order): AlpacaOrderRequest
+    public function setOrder(Order $order): OrderRequest
     {
         $this->order = $order;
 
@@ -119,9 +119,9 @@ class AlpacaOrderRequest implements OrderRequestInterface
     /**
      * @param string $symbol
      *
-     * @return AlpacaOrderRequest
+     * @return OrderRequest
      */
-    public function setSymbol(string $symbol): AlpacaOrderRequest
+    public function setSymbol(string $symbol): OrderRequest
     {
         $this->symbol = $symbol;
 
@@ -139,9 +139,9 @@ class AlpacaOrderRequest implements OrderRequestInterface
     /**
      * @param int $qty
      *
-     * @return AlpacaOrderRequest
+     * @return OrderRequest
      */
-    public function setQty(int $qty): AlpacaOrderRequest
+    public function setQty(int $qty): OrderRequest
     {
         $this->qty = $qty;
 
@@ -159,9 +159,9 @@ class AlpacaOrderRequest implements OrderRequestInterface
     /**
      * @param string $side
      *
-     * @return AlpacaOrderRequest
+     * @return OrderRequest
      */
-    public function setSide(string $side): AlpacaOrderRequest
+    public function setSide(string $side): OrderRequest
     {
         $this->side = $side;
 
@@ -179,9 +179,9 @@ class AlpacaOrderRequest implements OrderRequestInterface
     /**
      * @param string $type
      *
-     * @return AlpacaOrderRequest
+     * @return OrderRequest
      */
-    public function setType(string $type): AlpacaOrderRequest
+    public function setType(string $type): OrderRequest
     {
         $this->type = $type;
 
@@ -199,9 +199,9 @@ class AlpacaOrderRequest implements OrderRequestInterface
     /**
      * @param string $timeInForce
      *
-     * @return AlpacaOrderRequest
+     * @return OrderRequest
      */
-    public function setTimeInForce(string $timeInForce): AlpacaOrderRequest
+    public function setTimeInForce(string $timeInForce): OrderRequest
     {
         $this->timeInForce = $timeInForce;
 
@@ -221,7 +221,7 @@ class AlpacaOrderRequest implements OrderRequestInterface
      *
      * @return $this
      */
-    public function setLimitPrice(float $limitPrice): AlpacaOrderRequest
+    public function setLimitPrice(float $limitPrice): OrderRequest
     {
         $this->limitPrice = $limitPrice;
 
@@ -241,7 +241,7 @@ class AlpacaOrderRequest implements OrderRequestInterface
      *
      * @return $this
      */
-    public function setStopPrice(float $stopPrice): AlpacaOrderRequest
+    public function setStopPrice(float $stopPrice): OrderRequest
     {
         $this->stopPrice = $stopPrice;
 
@@ -259,9 +259,9 @@ class AlpacaOrderRequest implements OrderRequestInterface
     /**
      * @param float $trailPrice
      *
-     * @return AlpacaOrderRequest
+     * @return OrderRequest
      */
-    public function setTrailPrice(float $trailPrice): AlpacaOrderRequest
+    public function setTrailPrice(float $trailPrice): OrderRequest
     {
         $this->trailPrice = $trailPrice;
 
@@ -279,9 +279,9 @@ class AlpacaOrderRequest implements OrderRequestInterface
     /**
      * @param float $trailPercent
      *
-     * @return AlpacaOrderRequest
+     * @return OrderRequest
      */
-    public function setTrailPercent(float $trailPercent): AlpacaOrderRequest
+    public function setTrailPercent(float $trailPercent): OrderRequest
     {
         $this->trailPercent = $trailPercent;
 
@@ -299,9 +299,9 @@ class AlpacaOrderRequest implements OrderRequestInterface
     /**
      * @param bool $extendedHours
      *
-     * @return AlpacaOrderRequest
+     * @return OrderRequest
      */
-    public function setExtendedHours(bool $extendedHours): AlpacaOrderRequest
+    public function setExtendedHours(bool $extendedHours): OrderRequest
     {
         $this->extendedHours = $extendedHours;
 
@@ -319,9 +319,9 @@ class AlpacaOrderRequest implements OrderRequestInterface
     /**
      * @param string $clientOrderId
      *
-     * @return AlpacaOrderRequest
+     * @return OrderRequest
      */
-    public function setClientOrderId(string $clientOrderId): AlpacaOrderRequest
+    public function setClientOrderId(string $clientOrderId): OrderRequest
     {
         $this->clientOrderId = $clientOrderId;
 
@@ -339,9 +339,9 @@ class AlpacaOrderRequest implements OrderRequestInterface
     /**
      * @param string $orderClass
      *
-     * @return AlpacaOrderRequest
+     * @return OrderRequest
      */
-    public function setOrderClass(string $orderClass): AlpacaOrderRequest
+    public function setOrderClass(string $orderClass): OrderRequest
     {
         $this->orderClass = $orderClass;
 
@@ -349,19 +349,19 @@ class AlpacaOrderRequest implements OrderRequestInterface
     }
 
     /**
-     * @return AlpacaTakeProfit
+     * @return TakeProfit
      */
-    public function getTakeProfit(): AlpacaTakeProfit
+    public function getTakeProfit(): TakeProfit
     {
         return $this->takeProfit;
     }
 
     /**
-     * @param AlpacaTakeProfit $takeProfit
+     * @param TakeProfit $takeProfit
      *
-     * @return AlpacaOrderRequest
+     * @return OrderRequest
      */
-    public function setTakeProfit(AlpacaTakeProfit $takeProfit): AlpacaOrderRequest
+    public function setTakeProfit(TakeProfit $takeProfit): OrderRequest
     {
         $this->takeProfit = $takeProfit;
 
@@ -369,19 +369,19 @@ class AlpacaOrderRequest implements OrderRequestInterface
     }
 
     /**
-     * @return AlpacaStopLoss
+     * @return StopLoss
      */
-    public function getStopLoss(): AlpacaStopLoss
+    public function getStopLoss(): StopLoss
     {
         return $this->stopLoss;
     }
 
     /**
-     * @param AlpacaStopLoss $stopLoss
+     * @param StopLoss $stopLoss
      *
-     * @return AlpacaOrderRequest
+     * @return OrderRequest
      */
-    public function setStopLoss(AlpacaStopLoss $stopLoss): AlpacaOrderRequest
+    public function setStopLoss(StopLoss $stopLoss): OrderRequest
     {
         $this->stopLoss = $stopLoss;
 

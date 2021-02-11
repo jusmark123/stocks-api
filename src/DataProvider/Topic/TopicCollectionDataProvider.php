@@ -13,13 +13,10 @@ use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Entity\Topic;
 use App\Service\TopicService;
 
-/**
- * Class GetTopicMessagesCollectionDataProvider.
- */
-class GetTopicMessagesCollectionDataProvider implements ContextAwareCollectionDataProviderInterface, RestrictedDataProviderInterface
+class TopicCollectionDataProvider implements ContextAwareCollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     const RESOURCE_CLASS = Topic::class;
-    const OPERATION_NAME = 'get_messages';
+    const OPERATION_NAME = 'get';
 
     /**
      * @var TopicService
@@ -53,10 +50,16 @@ class GetTopicMessagesCollectionDataProvider implements ContextAwareCollectionDa
      * @param string|null $operationName
      * @param array       $context
      *
-     * @return iterable|void
+     * @return array|iterable
      */
     public function getCollection(string $resourceClass, string $operationName = null, array $context = [])
     {
+        if (isset($context['filters']['topicArn'])) {
+            $topicArn = $context['filters']['topicArn'];
+
+            return [$this->topicService->getTopic($topicArn)];
+        }
+
         return $this->topicService->listTopics(true);
     }
 }

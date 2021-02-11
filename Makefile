@@ -58,7 +58,6 @@ clear-cache:
 	rm -rf var/cache/*
 	rm -rf /tmp/behat*
 	rm -rf build/
-	bin/console cache:clear --no-debug
 .PHONY: clear-cache
 
 clear-dev-log:

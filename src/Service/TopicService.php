@@ -10,6 +10,7 @@ namespace App\Service;
 
 use ApiPlatform\Core\Exception\InvalidArgumentException;
 use ApiPlatform\Core\Exception\ItemNotFoundException;
+use App\Constants\Brokerage\TdAmeritradeConstants;
 use App\DTO\Aws\Sns\Notification;
 use App\DTO\Aws\Sns\PublishMessageRequest;
 use App\DTO\Aws\Sns\PublishMessageResponse;
@@ -24,7 +25,10 @@ use App\Helper\SerializerHelper;
 use Aws\Sns\SnsClient;
 use Predis\Client;
 use Psr\Log\LoggerInterface;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
+use Symfony\Component\Serializer\Mapping\Loader\YamlFileLoader;
 
 /**
  * Class TopicService.
@@ -32,6 +36,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class TopicService
 {
     const MESSAGE_KEY = 'notifications:%s:%s';
+    const NAMESPACE = '77b0c9ee-69d7-11eb-9439-0242ac130002';
+    const SERIALIZATION = '/opt/app-root/src/config/serialization/td_ameritrade_order_info.yml';
 
     /**
      * @var SnsClient
@@ -115,14 +121,12 @@ class TopicService
     public function confirmSubscription(string $token, string $topicArn)
     {
         try {
-            $result = $this->client->confirmSubscription([
+            $this->client->confirmSubscription([
                 'Token' => $token,
                 'TopicArn' => $topicArn,
             ]);
 
-            $subscription = $this->getTopicSubscriptionFromSubscriptionArn($result->get('SubscriptionArn'));
-            $subscription->setConfirmed(true);
-            $this->subscriptionEntityManager->persist($subscription, true);
+            return $this->getTopic($topicArn, true);
         } catch (\Exception $e) {
             $this->logger->error($e->getMessage(), [
                 'message' => $e->getMessage(),
@@ -147,8 +151,8 @@ class TopicService
                 'Name' => $topic->getName(),
                 'Tags' => $topic->getTags(),
             ]);
-
             $topic->setTopicArn($result->get('TopicArn'));
+            $this->saveTopicToCache($topic);
         } catch (\Exception $e) {
             $this->logger->error($e->getMessage(), [
                 'message' => $e->getMessage(),
@@ -158,8 +162,6 @@ class TopicService
 
             throw $e;
         }
-
-        $this->topicEntityManager->persist($topic);
 
         return $topic;
     }
@@ -183,48 +185,147 @@ class TopicService
                 'line' => $e->getLine(),
             ]);
         }
-
-        $this->topicEntityManager->remove($topic);
     }
 
     /**
-     * @return TopicSubscriptionEntityManager
+     * @param bool $fetchSubscriptions
+     *
+     * @return array
      */
-    public function getSubscriptionEntityManager(): TopicSubscriptionEntityManager
+    public function listTopics($fetchSubscriptions = false)
     {
-        return $this->subscriptionEntityManager;
+        $nextToken = null;
+        $topics = [];
+        $params = [];
+
+        $topicIds = $this->cache->keys('topics:*');
+
+        if ($topicIds) {
+            foreach ($topicIds as $topicId) {
+                $topic = unserialize($this->cache->get($topicId));
+                if ($topic instanceof Topic) {
+                    $topics[] = $topic;
+                }
+            }
+        } else {
+            do {
+                $results = $this->client->listTopics($params);
+                $nextToken = $results->get('NextToken');
+                $params['NextToken'] = $nextToken;
+
+                foreach ($results->get('Topics') as $topic) {
+                    $topic = $this->getTopic($topic['TopicArn'], $fetchSubscriptions);
+                    $topics[] = $topic;
+                }
+            } while (null !== $nextToken);
+        }
+
+        return $topics;
     }
 
     /**
-     * @return TopicEntityManager
+     * @param Topic|null $topic
+     *
+     * @return array
      */
-    public function getTopicEntityManager(): TopicEntityManager
+    public function listSubscriptions(?Topic $topic = null)
     {
-        return $this->topicEntityManager;
+        $params = [];
+        $nextToken = null;
+        $subscriptions = [];
+
+        do {
+            if (null !== $topic) {
+                $params['TopicArn'] = $topic->getTopicArn();
+                $results = $this->client->listSubscriptionsByTopic($params);
+            } else {
+                $results = $this->client->listSubscriptions($params);
+            }
+            $nextToken = $results->get('NextToken');
+            $params['NextToken'] = $nextToken;
+
+            foreach ($results->get('Subscriptions') as $subscription) {
+                $subscriptionArn = $subscription['SubscriptionArn'];
+                $subscription = $this->getSubscription($subscriptionArn, $subscription, $topic);
+                $subscriptions[] = $subscription;
+            }
+        } while (null !== $nextToken);
+
+        return $subscriptions;
     }
 
     /**
      * @param string $topicArn
+     * @param bool   $fetchSubscriptions
      *
-     * @return Topic|null
+     * @return Topic
      */
-    public function getTopicFromTopicArn(string $topicArn): ?Topic
+    public function getTopic(string $topicArn, $fetchSubscriptions = false)
     {
-        return $this->topicEntityManager->findOneBy(['topicArn' => $topicArn]);
+        $topic = $this->getTopicFromCache($topicArn);
+
+        if (!$topic instanceof Topic) {
+            if (Uuid::isValid($topicArn)) {
+                $this->listTopics(true);
+                $topic = $this->getTopicFromCache($topicArn);
+            } else {
+                $results = $this->client->getTopicAttributes(['TopicArn' => $topicArn]);
+                $attributes = $results->get('Attributes');
+                $attributes = $this->normalizeAttributes($attributes);
+                $topic = TopicFactory::create()
+                    ->setName($attributes->getDisplayName())
+                    ->setTopicArn($topicArn)
+                    ->setType(\array_key_exists('FifoTopic', $attributes) ? 'fifo' : 'standard')
+                    ->setContentBasedDeduplication(\array_key_exists('ContentBasedDeduplication', $attributes))
+                    ->setAttributes($attributes);
+                $this->saveTopicToCache($topic);
+            }
+        }
+
+        if ($fetchSubscriptions) {
+            $subscriptions = $this->listSubscriptions($topic);
+            $topic->setSubscriptions($subscriptions);
+        }
+
+        return $topic;
     }
 
     /**
-     * @param string $subscriptionArn
+     * @param string     $subscriptionArn
+     * @param array|null $data
+     * @param Topic|null $topic
      *
-     * @return TopicSubscription|null
+     * @return TopicSubscription
      */
-    public function getTopicSubscriptionFromSubscriptionArn(string $subscriptionArn): ?TopicSubscription
+    public function getSubscription(string $subscriptionArn, array $data, ?Topic $topic = null): TopicSubscription
     {
-        return $this->subscriptionEntityManager->findOneBy(['subscriptionArn' => $subscriptionArn]);
+        $attributes = [];
+        if (6 === \count(explode(':', $subscriptionArn))) {
+            $result = $this->client->getSubscriptionAttributes(['SubscriptionArn' => $subscriptionArn]);
+            $attributes = $result->get('Attributes');
+        } else {
+            $subscriptionArn = null;
+        }
+
+        if (null === $topic) {
+            $topic = $this->getTopic($data['TopicArn']);
+        }
+
+        return TopicSubscriptionFactory::create($topic)
+            ->setEndpoint($data['Endpoint'])
+            ->setProtocol($data['Protocol'])
+            ->setSubscriptionArn($subscriptionArn)
+            ->setConfirmed(null !== $subscriptionArn)
+            ->setTopic($topic)
+            ->setAttributes($attributes);
     }
 
     /**
      * @param PublishMessageRequest $request
+     *
+     * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
+     *
+     * @return PublishMessageResponse
      */
     public function publish(PublishMessageRequest $request)
     {
@@ -255,7 +356,7 @@ class TopicService
     public function receive(Notification $message)
     {
         $messageType = $this->requestStack->getCurrentRequest()->headers->get('x-amz-sns-message-type');
-        $topic = $this->getTopicFromTopicArn($message->getTopicArn());
+        $topic = $this->getTopic($message->getTopicArn());
 
         if (!$topic instanceof Topic) {
             throw new ItemNotFoundException($this->topicEntityManager::TOPIC_NOT_FOUND);
@@ -292,7 +393,7 @@ class TopicService
                 if (null === $request->getTopicArn()) {
                     throw new InvalidArgumentException('One of Topic or TopicArn must be supplied in topic subscription request');
                 }
-                $topic = $this->getTopicFromTopicArn($request->getTopicArn());
+                $topic = $this->getTopic($request->getTopicArn());
                 if (!$topic instanceof Topic) {
                     throw new ItemNotFoundException($this->topicEntityManager::TOPIC_NOT_FOUND);
                 }
@@ -330,18 +431,21 @@ class TopicService
             ->setEndpoint($request->getEndpoint())
             ->setConfirmed(false)
             ->setSubscriptionArn($result->get('SubscriptionArn'));
-        $this->subscriptionEntityManager->persist($subscription, true);
 
         return $subscription;
     }
 
-    public function syncTopics(): void
+    /**
+     * @return array
+     */
+    public function syncTopics(): array
     {
+        $topics = [];
         $result = $this->client->listTopics();
 
         foreach ($result->get('Topics') as $topicArn) {
             $topicArn = $topicArn['TopicArn'];
-            $topic = $this->getTopicFromTopicArn($topicArn);
+            $topic = $this->getTopic($topicArn);
             if (!$topic instanceof Topic) {
                 $results = $this->client->getTopicAttributes(['TopicArn' => $topicArn]);
                 $topicAttributes = $results->get('Attributes');
@@ -353,32 +457,44 @@ class TopicService
 
                 $this->topicEntityManager->persist($topic);
             }
+            $topics[] = $topic;
         }
+
         $this->topicEntityManager->flush();
+
+        return $topics;
     }
 
-    public function syncSubscriptions(): void
+    /**
+     * @return array
+     */
+    public function syncSubscriptions(): array
     {
         $result = $this->client->listSubscriptions();
+        $subscriptions = $result->get('Subscriptions');
 
-        foreach ($result->get('Subscriptions') as $data) {
-            $subscriptionArn = $data['SubscriptionArn'];
-            $subscription = $this->getTopicSubscriptionFromSubscriptionArn($subscriptionArn);
+        if ($subscriptions) {
+            foreach ($subscriptions as $data) {
+                $subscriptionArn = $data['SubscriptionArn'];
+                $subscription = $this->getSubscription($subscriptionArn, $data);
 
-            if (!$subscription instanceof TopicSubscription) {
-                $topicArn = $data['TopicArn'];
-                $confirmed = 7 === \count(explode(':', $subscriptionArn));
-                $topic = $this->getTopicFromTopicArn($topicArn);
+                if (!$subscription instanceof TopicSubscription) {
+                    $topicArn = $data['TopicArn'];
+                    $confirmed = 7 === \count(explode(':', $subscriptionArn));
+                    $topic = $this->getTopic($topicArn);
+                    $subscription = TopicSubscriptionFactory::create($topic)
+                        ->setEndpoint($data['Endpoint'])
+                        ->setProtocol($data['Protocol'])
+                        ->setConfirmed($confirmed);
 
-                $subscription = TopicSubscriptionFactory::create($topic)
-                    ->setEndpoint($data['Endpoint'])
-                    ->setProtocol($data['Protocol'])
-                    ->setConfirmed($confirmed);
-
-                $this->subscriptionEntityManager->persist($subscription);
+                    $this->subscriptionEntityManager->persist($subscription);
+                }
             }
         }
+
         $this->subscriptionEntityManager->flush();
+
+        return $subscriptions;
     }
 
     /**
@@ -399,5 +515,55 @@ class TopicService
         }
 
         return $subscription;
+    }
+
+    /**
+     * @param array $attributes
+     *
+     * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
+     *
+     * @return mixed
+     */
+    private function normalizeAttributes(array $attributes)
+    {
+        $keys = array_keys($attributes);
+        $values = array_values($attributes);
+        $keys = array_map('lcfirst', $keys);
+        $attributes = array_combine($keys, $values);
+        $classMetaDataFactory = new ClassMetadataFactory(
+            new YamlFileLoader(TdAmeritradeConstants::ORDER_INFO_SERIALIZATION_CONFIG));
+        $normalizer = SerializerHelper::CamelCaseToSnakeCaseNormalizer($classMetaDataFactory);
+
+        return $normalizer->denormalize($attributes, 'App\DTO\Aws\Sns\TopicAttributes');
+    }
+
+    /**
+     * @param Topic $topic
+     */
+    private function saveTopicToCache(Topic $topic)
+    {
+        $identifier = Uuid::Uuid5(self::NAMESPACE, $topic->getTopicArn());
+        $topic->setGuid($identifier);
+        $this->cache->setex(sprintf('topics:%s', $identifier->toString()), 1800, serialize($topic));
+    }
+
+    /**
+     * @param string $identifier
+     *
+     * @return Topic|null
+     */
+    private function getTopicFromCache(string $identifier): ?Topic
+    {
+        if (\count(explode(':', $identifier)) > 6) {
+            $identifier = Uuid::Uuid5(self::NAMESPACE, $identifier)->toString();
+        }
+
+        $topic = $this->cache->get(sprintf('topics:%s', $identifier));
+
+        if (null !== $topic) {
+            $topic = unserialize($topic);
+        }
+
+        return $topic;
     }
 }

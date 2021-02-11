@@ -3,6 +3,14 @@ App\Entity\TopicSubscription:
     guid:
       groups:
         - topic_subscription.get
+    subscriptionArn:
+      groups:
+        - topic_subscription.get
+        - topic_subscription.post
+    attributes:
+      groups:
+        - topic_subscription.get
+        - topic_subscription.post
     endpoint:
       groups:
         - topic_subscription.get
@@ -12,10 +20,6 @@ App\Entity\TopicSubscription:
         - topic_subscription.get
         - topic_subscription.post
     confirmed:
-      groups:
-        - topic_subscription.get
-        - topic_subscription.post
-    subscriptionArn:
       groups:
         - topic_subscription.get
         - topic_subscription.post

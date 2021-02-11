@@ -1,5 +1,5 @@
 resources:
-  App\DTO\Brokerage\Alpaca\Order\AlpacaOrderInfo:
+  App\DTO\Brokerage\Alpaca\Order\OrderInfo:
     atrributes:
       normalization_context:
         groups: ['alpaca_order_info.get']

@@ -8,18 +8,15 @@ declare(strict_types=1);
 
 namespace App\DataProvider\Topic;
 
-use ApiPlatform\Core\DataProvider\ContextAwareCollectionDataProviderInterface;
+use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Entity\Topic;
 use App\Service\TopicService;
 
-/**
- * Class GetTopicMessagesCollectionDataProvider.
- */
-class GetTopicMessagesCollectionDataProvider implements ContextAwareCollectionDataProviderInterface, RestrictedDataProviderInterface
+class TopicItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
 {
     const RESOURCE_CLASS = Topic::class;
-    const OPERATION_NAME = 'get_messages';
+    const OPERATION_NAME = 'get';
 
     /**
      * @var TopicService
@@ -49,14 +46,15 @@ class GetTopicMessagesCollectionDataProvider implements ContextAwareCollectionDa
     }
 
     /**
-     * @param string      $resourceClass
-     * @param string|null $operationName
-     * @param array       $context
+     * @param string           $resourceClass
+     * @param array|int|string $id
+     * @param string|null      $operationName
+     * @param array            $context
      *
-     * @return iterable|void
+     * @return Topic|object|null
      */
-    public function getCollection(string $resourceClass, string $operationName = null, array $context = [])
+    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = [])
     {
-        return $this->topicService->listTopics(true);
+        return $this->topicService->getTopic($id, true);
     }
 }

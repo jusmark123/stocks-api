@@ -45,4 +45,5 @@ security:
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
       - { path: ^/api/stocks/v1/token-refresh, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+      - { path: ^/api/stocks/v1/topics/listen, roles: IS_AUTHENTICATED_ANONYMOUSLY }
       - { path: ^/api/stocks/v1/, roles: ROLE_USER }

@@ -10,25 +10,25 @@ namespace App\DataFixtures;
 
 use App\Constants\Brokerage\AlpacaConstants;
 use App\Entity\Brokerage;
-use App\Entity\TickerType;
+use App\Entity\Factory\OrderStatusTypeFactory;
 use App\Service\Brokerage\BrokerageServiceProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class TickerTypesFixture extends AbstractDataFixture
+class OrderStatusTypeFixture extends AbstractDataFixture
 {
-    /**
-     * @var BrokerageServiceProvider
-     */
-    private $brokerageServiceProvider;
-
     /**
      * @var EntityManagerInterface
      */
     private $entityManager;
 
     /**
-     * TickerTypesFixture constructor.
+     * @var BrokerageServiceProvider
+     */
+    private $brokerageServiceProvider;
+
+    /**
+     * OrderStatusTypeFixture constructor.
      *
      * @param BrokerageServiceProvider $brokerageServiceProvider
      * @param EntityManagerInterface   $entityManager
@@ -48,21 +48,32 @@ class TickerTypesFixture extends AbstractDataFixture
     {
         /** @var Brokerage $brokerage */
         $brokerage = $this->getReference(AlpacaConstants::BROKERAGE_NAME);
-        $brokerageService = $this->brokerageServiceProvider->getBrokerageService($brokerage);
-        $brokerageService->syncTickerTypes();
 
-        foreach ($this->entityManager->getRepository(TickerType::class)->findAll() as $item) {
-            $this->setReference('ticker_type_'.$item->getCode(), $item);
+        foreach (AlpacaConstants::ORDER_STATUSES as $key => $orderStatus) {
+            $item = OrderStatusTypeFactory::create()
+                ->setBrokerage($brokerage)
+                ->setName($key)
+                ->setDescription($orderStatus);
+            $this->entityManager->persist($item);
+            $this->setReference(sprintf('order_status_type_%s', $key), $item);
         }
+
+        $this->entityManager->flush();
     }
 
+    /**
+     * @return int
+     */
     public function getOrder()
     {
-        return 4;
+        return 3;
     }
 
+    /**
+     * @return array
+     */
     protected function getData(): array
     {
-        // TODO: Implement getData() method.
+        return [];
     }
 }

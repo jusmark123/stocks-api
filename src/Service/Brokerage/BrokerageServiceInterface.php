@@ -40,6 +40,13 @@ interface BrokerageServiceInterface
     public function getAccountInfo(Account $account): ?AccountInfoInterface;
 
     /**
+     * @param Account $account
+     *
+     * @return array|null
+     */
+    public function getPositions(Account $account): ?array;
+
+    /**
      * @param OrderInfoInterface $orderInfo
      * @param Job                $job
      *
@@ -55,12 +62,13 @@ interface BrokerageServiceInterface
     public function createOrderInfoFromMessage(array $message): ?OrderInfoInterface;
 
     /**
-     * @param SyncOrdersRequest $request
-     * @param Job|null          $job
+     * @param SyncOrdersRequest   $request
+     * @param MessageBusInterface $messageBus
+     * @param Job                 $job
      *
      * @return Job|null
      */
-    public function fetchOrderHistory(SyncOrdersRequest $request, Job $job): ?Job;
+    public function fetchOrderHistory(SyncOrdersRequest $request, MessageBusInterface $messageBus, Job $job): ?Job;
 
     /**
      * @param SyncTickersRequest  $request

@@ -6,9 +6,10 @@
 
 declare(strict_types=1);
 
-namespace App\Command;
+namespace App\Command\Ticker;
 
 use ApiPlatform\Core\Exception\ItemNotFoundException;
+use App\Command\AbstractCommand;
 use App\Constants\Transport\JobConstants;
 use App\DataPersister\SyncTickersDataPersister;
 use App\DTO\SyncTickersRequest;
