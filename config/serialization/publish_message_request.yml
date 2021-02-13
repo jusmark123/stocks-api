@@ -1,0 +1,29 @@
+App\DTO\Aws\Sns\PublishMessageRequest:
+  attributes:
+    message:
+      groups:
+        - publish_message_request.post
+    attributes:
+      groups:
+        - publish_message_request.post
+    deduplicationId:
+      groups:
+        - publish_message_request.post
+    groupId:
+      groups:
+        - publish_message_request.post
+    structure:
+      groups:
+        - publish_message_request.post
+    phoneNumber:
+      groups:
+        - publish_message_request.post
+    subject:
+      groups:
+        - publish_message_request.post
+    targetArn:
+      groups:
+        - publish_message_request.post
+    topic:
+      groups:
+        - publish_message_request.post

@@ -16,18 +16,18 @@ use App\Event\Job\JobCompleteEvent;
 use App\Event\Job\JobProcessedEvent;
 use App\Event\Job\JobProcessFailedEvent;
 use App\Event\Job\JobProcessingEvent;
+use App\Event\Job\JobReceivedEvent;
 use App\Event\Job\JobReceiveFailedEvent;
 use App\Event\JobItem\JobItemCancelledEvent;
 use App\Event\JobItem\JobItemProcessedEvent;
 use App\Event\JobItem\JobItemProcessFailedEvent;
 use App\Event\JobItem\JobItemProcessingEvent;
 use App\Event\JobItem\JobItemReceivedEvent;
-use App\Event\JobItem\JobItemReceiveFailedEvent;
 use App\Exception\JobCancelledException;
+use App\Exception\JobCompletedException;
 use App\Exception\MessageProcessedException;
 use App\Message\Job\JobMessageInterface;
 use App\Message\Job\JobRequestMessageInterface;
-use App\Message\Job\Stamp\JobItemStamp;
 use App\Service\JobService;
 use App\Service\UserService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -36,7 +36,6 @@ use Predis\Client;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 use Symfony\Component\Messenger\HandleTrait;
@@ -49,6 +48,13 @@ abstract class AbstractJobMessageHandler extends AbstractMessageHandler implemen
 {
     use HandleTrait;
     use LoggerAwareTrait;
+
+    protected const NO_PROCESS_STATUSES = [
+        JobConstants::JOB_INITIATED,
+        JobConstants::JOB_COMPLETE,
+        JobConstants::JOB_IN_PROGRESS,
+        JobConstants::JOB_FAILED,
+    ];
 
     /**
      * @var Client
@@ -106,9 +112,47 @@ abstract class AbstractJobMessageHandler extends AbstractMessageHandler implemen
         $this->userService = $userService;
     }
 
+    /**
+     * @param string $guid
+     * @param string $className
+     *
+     * @return object
+     */
+    protected function getEntity(string $guid, string $className)
+    {
+        $entity = $this->entityManager
+            ->getRepository($className)
+            ->findOneBy(['guid' => $guid]);
+
+        if (null === $entity) {
+            throw new ItemNotFoundException(sprintf('%s not found', $className));
+        }
+
+        return $entity;
+    }
+
+    /**
+     * @param $job
+     *
+     * @throws JobCompletedException
+     *
+     * @return bool
+     */
+    public function shouldProcessJob(Job $job): bool
+    {
+        if (null !== $job->getCompletedAt()) {
+            throw new JobCompletedException($job);
+        }
+
+        return null === $job->getReceivedAt() || (null !== $job->getStartedAt() && null !== $job->getFailedAt());
+    }
+
+    /**
+     * @throws JobCancelledException
+     */
     public function isJobCancelled()
     {
-        if (JobConstants::JOB_CANCELLED === $this->job->getStatus()) {
+        if (JobConstants::JOB_CANCELLED === $this->job->getStatus() || null !== $this->job->getCancelledAt()) {
             throw new JobCancelledException();
         }
     }
@@ -116,63 +160,32 @@ abstract class AbstractJobMessageHandler extends AbstractMessageHandler implemen
     /**
      * @param JobRequestMessageInterface $requestMessage
      * @param callable                   $callback
-     * @param                            $messageClass
      *
      * @return Job
      */
     public function parseJobRequest(
         JobRequestMessageInterface $requestMessage,
-        callable $callback,
-        $messageClass
+        callable $callback
     ): ?Job {
         try {
             $this->job = $this->entityManager
                 ->getRepository(Job::class)
                 ->findOneBy(['guid' => $requestMessage->getJobId()]);
 
-            $job = $this->entityManager
-                ->getRepository(Job::class)
-                ->findOneBy([
-                    'name' => $requestMessage->getJobName(),
-                    'account' => $this->job->getAccount(),
-                    'source' => $this->job->getSource(),
-                ]);
-
-            if ($job instanceof Job && $job->getGuid() !== $this->job->getGuid()) {
-                $this->job->setStatus(JobConstants::JOB_CANCELLED);
-            }
-
-            $this->isJobCancelled();
-
             if (!$this->job instanceof Job) {
                 throw new ItemNotFoundException('Job not found');
             }
 
-            if (JobConstants::JOB_PROCESSED !== $this->job->getStatus()) {
+            $this->jobService->dispatch(new JobReceivedEvent($this->job));
+
+            $this->isJobCancelled();
+
+            if (null === $this->job->getProcessedAt() || null === $this->job->getCompletedAt()) {
                 $this->jobService->dispatch(new JobProcessingEvent($this->job));
-                $this->job = $callback($requestMessage->getRequest(), $this->job);
+                $this->job = $callback($requestMessage->getRequest(), $this->messageBus, $this->job);
                 $this->jobService->dispatch(new JobProcessedEvent($this->job));
             }
-
-            $jobItems = $this->job->getJobItems();
-
-            foreach ($jobItems as $key => $jobItem) {
-                $envelope = (new Envelope($messageClass::create(
-                    $this->job->getGuid()->toString(),
-                    $jobItem->getGuid()->toString(),
-                    $jobItem->getData()
-                )))->with(new JobItemStamp($this->job->getGuid()->toString(), $jobItem->getGuid()->toString()));
-
-                $this->getMessageBus()->dispatch($envelope);
-                $this->setLastJobItem($jobItem, $jobItems);
-
-                $this->isJobCancelled();
-            }
         } catch (JobCancelledException $e) {
-            if (isset($jobItems) && isset($jobItem)) {
-                $this->setLastJobItem($jobItem, $jobItems, true);
-            }
-
             return $this->job;
         } catch (ItemNotFoundException $e) {
             $this->jobService->dispatch(new JobReceiveFailedEvent($e, $this->job));
@@ -206,17 +219,18 @@ abstract class AbstractJobMessageHandler extends AbstractMessageHandler implemen
             $this->jobService->dispatch(new JobItemReceivedEvent($jobItem));
             $entityParser($jobItem, $this->job);
 
-            $this->jobService->dispatch(new JobItemProcessingEvent($jobItem));
-            $callback($message->getMessage(), $this->job);
-            $this->jobService->dispatch(new JobItemProcessedEvent($jobItem));
+            if (null === $jobItem->getProcessedAt()) {
+                $this->jobService->dispatch(new JobItemProcessingEvent($jobItem));
+                $callback($message->getMessage(), $this->job);
+                $this->jobService->dispatch(new JobItemProcessedEvent($jobItem));
+            }
         } catch (MessageProcessedException $e) {
             $this->jobService->dispatch(new JobItemProcessedEvent($jobItem));
         } catch (JobCancelledException $e) {
             $this->jobService->dispatch(new JobItemCancelledEvent($jobItem));
             throw new UnrecoverableMessageHandlingException('Job Cancelled');
         } catch (ItemNotFoundException $e) {
-            $this->jobService->dispatch(new JobItemReceiveFailedEvent($e, $jobItem));
-            throw new UnrecoverableMessageHandlingException('Job Cancelled');
+            throw new UnrecoverableMessageHandlingException('JobItem not found');
         } catch (HandlerFailedException $e) {
             $this->jobService->dispatch(new JobItemProcessFailedEvent($e, $jobItem));
             throw $e;

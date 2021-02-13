@@ -14,11 +14,12 @@ use App\Entity\Account;
 use App\Entity\Job;
 use App\Entity\Source;
 use App\Entity\Traits\EntityGuidTrait;
+use App\Message\Job\JobRequestInterface;
 
 /**
  * Class SyncOrdersRequest.
  */
-class SyncOrdersRequest extends AbstractGuidEntity
+class SyncOrdersRequest extends AbstractGuidEntity implements JobRequestInterface
 {
     use EntityGuidTrait;
     use ParametersTrait;

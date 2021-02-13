@@ -17,6 +17,7 @@ use App\Helper\ValidationHelper;
 use App\Service\Brokerage\BrokerageServiceProvider;
 use App\Service\Entity\OrderEntityService;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * Class OrderService.
@@ -67,20 +68,21 @@ class OrderService extends AbstractService
     }
 
     /**
-     * @param SyncOrdersRequest $request
-     * @param Job|null          $job
+     * @param SyncOrdersRequest   $request
+     * @param MessageBusInterface $messageBus
+     * @param Job|null            $job
      *
      * @throws \Exception
      *
      * @return Job|null
      */
-    public function fetchOrderHistory(SyncOrdersRequest $request, Job $job): ?Job
+    public function fetchOrderHistory(SyncOrdersRequest $request, MessageBusInterface $messageBus, Job $job): ?Job
     {
         try {
             $brokerageService = $this->brokerageServiceProvider
                 ->getBrokerageService($request->getAccount()->getBrokerage());
 
-            return $brokerageService->fetchOrderHistory($request, $job);
+            return $brokerageService->fetchOrderHistory($request, $messageBus, $job);
         } catch (\Exception $e) {
             throw $e;
         }

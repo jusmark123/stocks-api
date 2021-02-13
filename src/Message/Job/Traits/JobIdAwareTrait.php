@@ -14,24 +14,24 @@ namespace App\Message\Job\Traits;
 trait JobIdAwareTrait
 {
     /**
-     * @var string
+     * @var string|null
      */
     protected $jobId;
 
     /**
      * @return string
      */
-    public function getJobId(): string
+    public function getJobId(): ?string
     {
         return $this->jobId;
     }
 
     /**
-     * @param string $jobId
+     * @param string|null $jobId
      *
      * @return $this
      */
-    public function setJobId(string $jobId)
+    public function setJobId(?string $jobId = null)
     {
         $this->jobId = $jobId;
 

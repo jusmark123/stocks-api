@@ -23,7 +23,6 @@ use Gedmo\Mapping\Annotation as Gedmo;
  * 			@ORM\UniqueConstraint(name="position_un_guid", columns={"guid"}),
  * 		},
  * 		indexes={
- *          @ORM\Index(name="position_ix_account_id", columns={"account_id"}),
  *          @ORM\Index(name="position_ix_source_id", columns={"source_id"}),
  *     }
  * )
@@ -41,10 +40,6 @@ class Position extends AbstractGuidEntity
 
     /**
      * @var Account
-     * @ORM\ManyToOne(targetEntity="Account", inversedBy="positions")
-     * @ORM\JoinColumns({
-     * 		@ORM\JoinColumn(name="account_id", referencedColumnName="id", nullable=false)
-     * })
      */
     private $account;
 
@@ -111,26 +106,6 @@ class Position extends AbstractGuidEntity
     public function setQty(int $qty): Position
     {
         $this->qty = $qty;
-
-        return $this;
-    }
-
-    /**
-     * @return Account
-     */
-    public function getAccount(): Account
-    {
-        return $this->account;
-    }
-
-    /**
-     * @param Account $account
-     *
-     * @return $this
-     */
-    public function setAccount(Account $account): Position
-    {
-        $this->account = $account;
 
         return $this;
     }
@@ -251,6 +226,26 @@ class Position extends AbstractGuidEntity
     public function setTicker(?TickerInterface $ticker): Position
     {
         $this->ticker = $ticker;
+
+        return $this;
+    }
+
+    /**
+     * @return Account
+     */
+    public function getAccount(): Account
+    {
+        return $this->account;
+    }
+
+    /**
+     * @param Account $account
+     *
+     * @return Position
+     */
+    public function setAccount(Account $account): Position
+    {
+        $this->account = $account;
 
         return $this;
     }

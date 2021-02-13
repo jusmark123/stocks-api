@@ -1,0 +1,50 @@
+resources:
+  App\Entity\Topic:
+    attributes:
+#      filters:
+#        - topic.search_filter
+#        - topic.order_filter
+      normalization_context:
+        groups: [ 'topic.get' ]
+      denormalization_context:
+        groups: [ 'topic.post' ]
+      order: {name: DESC}
+
+    collectionOperations:
+      get:
+        method: GET
+        swagger_context:
+          parameters:
+            - name: topicArn
+              in: query
+              type: string
+              required: false
+      post:
+        method: POST
+
+    itemOperations:
+      get:
+        method: GET
+      delete:
+        method: DELETE
+
+      get_notification:
+        method: GET
+        path: /topics/{id}/notification
+        defaults:
+          _api_resource_context:
+            identifiers:
+              - [ id, App\Entity\Topic, true ]
+        normalization_context:
+          groups: [ 'notification.get' ]
+        swagger_context:
+          summary: Publish Notification
+          tags: [ Topic ]
+
+    properties:
+      id:
+        identifier: false
+      guid:
+        identifier: true
+        swagger_context:
+          example: 'd6f68382-dd82-4324-b04c-89266d70ee2a'

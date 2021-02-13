@@ -273,7 +273,7 @@ class ExtendedRestContext extends AbstractContext
     public function validateTimestamp($nodeValue)
     {
         try {
-            $date = \DateTime::createFromFormat(DATE_ATOM, $nodeValue);
+            $date = \DateTime::createFromFormat(\DATE_ATOM, $nodeValue);
         } catch (\Exception | \TypeError $e) {
             throw new \AssertionError('Invalid Datetime format provided');
         }
@@ -317,8 +317,8 @@ class ExtendedRestContext extends AbstractContext
                 'The result of "%s" does not match node "%s", expected %s, gpt %s',
                 $endpoint,
                 $node,
-                json_encode($actual, JSON_PRETTY_PRINT),
-                json_encode($expected, JSON_PRETTY_PRINT)
+                json_encode($actual, \JSON_PRETTY_PRINT),
+                json_encode($expected, \JSON_PRETTY_PRINT)
             ));
         }
     }

@@ -29,10 +29,6 @@ final class SwaggerDecorator implements NormalizerInterface, SerializerAwareInte
     {
         $docs = $this->decorated->normalize($object, $format, $context);
 
-        unset($docs['paths']['/api/stocks/v1/alpaca_account_infos']);
-        unset($docs['paths']['/api/stocks/v1/alpaca_account_infos/{id}']);
-        unset($docs['paths']['/api/stocks/v1/alpaca_order_infos']);
-        unset($docs['paths']['/api/stocks/v1/alpaca_order_infos/{id}']);
         unset($docs['paths']['/api/stocks/v1/td_ameritrade_account_infos']);
         unset($docs['paths']['/api/stocks/v1/td_ameritrade_account_infos/{id}']);
 

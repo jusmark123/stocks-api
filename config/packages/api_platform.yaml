@@ -55,10 +55,11 @@ api_platform:
         items_per_page_parameter_name: 'itemsperpage'
 
     formats:
-      jsonhal:  ['application/hal+json']
-      json:     ['application/json']
-      html:     ['text/html']
-      csv:      ['text/csv']
+      jsonhal:  [ 'application/hal+json' ]
+      json:     [ 'application/json' ]
+      html:     [ 'text/html' ]
+      csv:      [ 'text/csv' ]
+      plain:    [ 'text/plain' ]
 
     error_formats:
       jsonproblem:

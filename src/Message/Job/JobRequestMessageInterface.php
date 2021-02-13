@@ -14,16 +14,16 @@ namespace App\Message\Job;
 interface JobRequestMessageInterface
 {
     /**
-     * @return string
+     * @return string|null
      */
-    public function getJobId(): string;
+    public function getJobId(): ?string;
 
     /**
-     * @param string $jobId
+     * @param string|null $jobId
      *
      * @return $this
      */
-    public function setJobId(string $jobId);
+    public function setJobId(?string $jobId = null);
 
     /**
      * @return string
@@ -34,4 +34,9 @@ interface JobRequestMessageInterface
      * @return string
      */
     public function getJobDescription(): string;
+
+    /**
+     * @return JobRequestInterface
+     */
+    public function getRequest();
 }

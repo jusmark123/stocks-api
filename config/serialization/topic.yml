@@ -1,0 +1,31 @@
+App\Entity\Topic:
+  attributes:
+    topicArn:
+      groups:
+        - topic.get
+    attributes:
+      groups:
+        - topic.get
+        - topic.post
+    name:
+      groups:
+        - topic.get
+        - topic.post
+    type:
+      groups:
+        - topic.get
+        - topic.post
+    contentBasedDeduplication:
+      groups:
+        - topic.get
+        - topic.post
+    subscriptions:
+      groups:
+        - topic.get
+    notifications:
+      groups:
+        - topic.get
+    tags:
+      groups:
+        - topic.get
+        - topic.post

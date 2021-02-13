@@ -88,6 +88,7 @@ class JobEventSubscriber extends AbstractJobEventSubscriber
      */
     public function cancelled(JobCancelledEvent $event)
     {
+        $event->getJob()->setCancelledAt(new \DateTime());
         $this->updateJobStatus($event, JobConstants::JOB_CANCELLED);
     }
 
@@ -101,6 +102,8 @@ class JobEventSubscriber extends AbstractJobEventSubscriber
         } else {
             $this->updateJobStatus($event, JobConstants::JOB_COMPLETE);
         }
+
+        $event->getJob()->setCompletedAt(new \DateTime());
     }
 
     /**
@@ -116,6 +119,7 @@ class JobEventSubscriber extends AbstractJobEventSubscriber
      */
     public function inComplete(JobIncompleteEvent $event)
     {
+        $event->getJob()->setFailedAt(new \DateTime());
         $this->updateJobStatus($event, JobConstants::JOB_INCOMPLETE);
     }
 
@@ -140,6 +144,7 @@ class JobEventSubscriber extends AbstractJobEventSubscriber
      */
     public function processing(JobProcessingEvent $event)
     {
+        $event->getJob()->setStartedAt(new \DateTime());
         $this->updateJobStatus($event, JobConstants::JOB_PROCESSING);
     }
 
@@ -148,6 +153,7 @@ class JobEventSubscriber extends AbstractJobEventSubscriber
      */
     public function processed(JobProcessedEvent $event)
     {
+        $event->getJob()->setProcessedAt(new \DateTime());
         $this->updateJobStatus($event, JobConstants::JOB_PROCESSED);
     }
 
@@ -156,6 +162,7 @@ class JobEventSubscriber extends AbstractJobEventSubscriber
      */
     public function received(JobReceivedEvent $event)
     {
+        $event->getJob()->setReceivedAt(new \DateTime());
         $this->updateJobStatus($event, JobConstants::JOB_RECEIVED);
     }
 }

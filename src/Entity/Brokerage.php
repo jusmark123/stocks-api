@@ -66,9 +66,9 @@ class Brokerage extends AbstractGuidEntity
     private $apiDocumentUrl;
 
     /**
-     * @var ArrayCollection}Account[]|PersistentCollection
+     * @var ArrayCollection|Account[]|PersistentCollection
      *
-     * @ORM\OneToMany(targetEntity="Account", mappedBy="brokerage", fetch="LAZY")
+     * @ORM\OneToMany(targetEntity="Account", mappedBy="brokerage", fetch="LAZY", cascade={"persist","remove"})
      */
     private $accounts;
 

@@ -13,9 +13,8 @@ use App\Constants\Transport\JobConstants;
 use App\Entity\Account;
 use App\Entity\Job;
 use App\Entity\Source;
-use App\Event\Job\JobCancelledEvent;
-use App\Event\Job\JobProcessFailedEvent;
-use App\Event\Job\JobReceiveFailedEvent;
+use App\Event\Job\JobInitiatedEvent;
+use App\Event\Job\JobInitiateFailedEvent;
 use App\Exception\JobCompletedException;
 use App\Message\Job\JobRequestMessage;
 use App\Message\Job\Stamp\JobStamp;
@@ -33,89 +32,108 @@ class JobRequestMessageHandler extends AbstractJobMessageHandler
      */
     public function __invoke(JobRequestMessage $jobRequestMessage): ?Job
     {
-        $jobId = $jobRequestMessage->getJobId();
+        $job = null;
         $requestMessage = $jobRequestMessage->getRequestMessage();
 
-        /** @var Job|null $job */
-        $job = $this->entityManager
-            ->getRepository(Job::class)
-            ->findOneBy(['guid' => $jobId]);
-
         try {
-            if (null === $job) {
+            if (null !== $jobRequestMessage->getJobId()) {
+                $job = $this->findJob($jobRequestMessage->getJobId());
+            } else {
                 /** @var Account $account */
-                $account = $this->entityManager
-                    ->getRepository(Account::class)
-                    ->findOneBy(['guid' => $jobRequestMessage->getAccountId()]);
-
-                if (!$account instanceof Account) {
-                    throw new ItemNotFoundException('Account not found');
-                }
+                $account = $this->getEntity($jobRequestMessage->getAccountId(), Account::class);
 
                 /** @var Source $source */
-                $source = $this->entityManager
-                    ->getRepository(Source::class)
-                    ->findOneBy(['guid' => $jobRequestMessage->getSourceId()]);
+                $source = $this->getEntity($jobRequestMessage->getSourceId(), Source::class);
 
-                if (!$source instanceof Source) {
-                    throw new ItemNotFoundException('Source not found');
-                }
+                // Check for existing jobs
+                $jobs = $this->jobService->getJobs($requestMessage, [
+                    JobConstants::JOB_INITIATED,
+                    JobConstants::JOB_PENDING,
+                    JobConstants::JOB_RECEIVED,
+                ]);
 
-                $job = $this->entityManager
-                    ->getRepository(Job::class)
-                    ->findOneBy([
-                        'name' => $requestMessage->getJobName(),
-                        'account' => $account,
-                        'source' => $source,
-                        'status' => [
-                            JobConstants::JOB_IN_PROGRESS,
-                            JobConstants::JOB_PROCESSED,
-                        ],
-                    ]);
+                if (!empty($jobs)) {
+                    foreach ($jobs as $dubJob) {
+                        $job = $this->syncJobStatus($dubJob);
+                    }
 
-                if (!$job instanceof Job) {
+                    if (!$this->shouldProcessJob($job)) {
+                        return $job;
+                    }
+                } else {
+                    // Create new job
                     $job = $this->jobService->createJob(
-                        $requestMessage->getJobName(),
-                        $requestMessage->getJobDescription(),
-                        $jobRequestMessage->getRequestMessage(),
-                        null,
+                        $requestMessage,
                         $this->userService->getCurrentUser(),
                         $account,
                         $source
                     );
-
-                    $this->jobService->save($job);
-                } else {
-                    $this->jobService->dispatch(new JobCancelledEvent($job));
-
-                    return $job->setStatus(JobConstants::JOB_CANCELLED);
                 }
             }
 
-            if (JobConstants::JOB_COMPLETE === $job->getStatus()) {
-                throw new JobCompletedException($job);
-            }
-
-            if (!\in_array($job->getStatus(), [JobConstants::JOB_PROCESSED, JobConstants::JOB_IN_PROGRESS], true)) {
-                $job->setStatus(JobConstants::JOB_PENDING);
-                $this->jobService->save($job);
-            }
-
             $requestMessage->setJobId($job->getGuid()->toString());
-
-            try {
-                $envelope = (new Envelope($requestMessage))->with(new JobStamp($job->getGuid()->toString()));
-                $this->getMessageBus()->dispatch($envelope);
-            } catch (\Exception $e) {
-                $this->jobService->dispatch(new JobProcessFailedEvent($e, $job, null));
-            }
+            $envelope = (new Envelope($requestMessage))->with(new JobStamp($job->getGuid()->toString()));
+            $this->getMessageBus()->dispatch($envelope);
+            $this->jobService->dispatch(new JobInitiatedEvent($job));
         } catch (JobCompletedException $e) {
-            $job->setErrorMessage($e->getMessage());
-
-            return $job;
+            $e->getJob()->setErrorMessage($e->getMessage());
         } catch (\Exception $e) {
-            $this->jobService->dispatch(new JobReceiveFailedEvent($e, $job, null));
+            $this->jobService->dispatch(new JobInitiateFailedEvent($e, $job, null));
         }
+
+        return $job;
+    }
+
+    /**
+     * @param string $jobId
+     *
+     * @return Job
+     */
+    public function findJob(string $jobId)
+    {
+        $job = $this->entityManager->getRepository(Job::class)
+            ->findOneBy(['guid' => $jobId]);
+
+        if (!$job instanceof Job) {
+            throw new ItemNotFoundException('Specified job not found');
+        }
+
+        return $job;
+    }
+
+    /**
+     * @param Job $job
+     *
+     * @return bool
+     */
+    private function shouldProcess(Job $job): bool
+    {
+        return null !== $job->getFailedAt();
+    }
+
+    /**
+     * @param Job $job
+     *
+     * @throws JobCompletedException
+     *
+     * @return Job
+     */
+    public function syncJobStatus(Job $job)
+    {
+        if (null !== $job->getFailedAt() && JobConstants::JOB_FAILED !== $job->getStatus()) {
+            $job->setStatus(JobConstants::JOB_FAILED);
+        } elseif (null !== $job->getCompletedAt() && JobConstants::JOB_COMPLETE !== $job->getStatus()) {
+            $job->setStatus(JobConstants::JOB_COMPLETE);
+            throw new JobCompletedException($job);
+        } elseif (null !== $job->getProcessedAt() && JobConstants::JOB_PROCESSED !== $job->getStatus()) {
+            $job->setStatus(JobConstants::JOB_PROCESSED);
+        } elseif (null !== $job->getStartedAt() && JobConstants::JOB_IN_PROGRESS !== $job->getStatus()) {
+            $job->setStatus(JobConstants::JOB_IN_PROGRESS);
+        } elseif (null !== $job->getReceivedAt() && JobConstants::JOB_RECEIVED !== $job->getStatus()) {
+            $job->setStatus(JobConstants::JOB_RECEIVED);
+        }
+
+        $this->jobService->save($job);
 
         return $job;
     }

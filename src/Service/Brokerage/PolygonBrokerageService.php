@@ -24,13 +24,16 @@ use App\Entity\TickerType;
 use App\Exception\HttpMessageException;
 use App\Helper\SerializerHelper;
 use App\Helper\ValidationHelper;
+use App\Message\Factory\SyncTickerMessageFactory;
+use App\Message\Job\Stamp\JobItemStamp;
 use App\Service\Entity\TickerEntityService;
 use App\Service\JobService;
 use Doctrine\ORM\EntityManagerInterface;
-use PolygonIO\rest\Rest;
 use Predis\Client;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
 use Symfony\Component\Serializer\Mapping\Loader\YamlFileLoader;
 
@@ -48,11 +51,6 @@ class PolygonBrokerageService extends AbstractBrokerageService
      * @var TickerEntityService
      */
     private $tickerService;
-
-    /**
-     * @var Rest
-     */
-    private $polygonApi;
 
     /**
      * PolygonBrokerageService constructor.
@@ -203,14 +201,15 @@ class PolygonBrokerageService extends AbstractBrokerageService
     }
 
     /**
-     * @param SyncTickersRequest $request
-     * @param Job                $job
+     * @param SyncTickersRequest  $request
+     * @param MessageBusInterface $messageBus
+     * @param Job                 $job
      *
      * @throws ClientExceptionInterface
      *
      * @return Job
      */
-    public function fetchTickers(SyncTickersRequest $request, Job $job): Job
+    public function fetchTickers(SyncTickersRequest $request, MessageBusInterface $messageBus, Job $job): Job
     {
         $params = $request->getParameters();
         $limit = $request->getLimit();
@@ -243,7 +242,18 @@ class PolygonBrokerageService extends AbstractBrokerageService
                 $exists = $this->jobService->jobItemExists($job, $tickerData[PolygonContstants::TICKER_INFO_UNIQUE_KEY]);
 
                 if (!$exists) {
-                    $this->jobService->createJobItem($tickerData, $job, $tickerData[PolygonContstants::TICKER_INFO_UNIQUE_KEY]);
+                    $jobItem = $this->jobService->createJobItem($tickerData, $job, $tickerData[PolygonContstants::TICKER_INFO_UNIQUE_KEY]);
+
+                    $envelope = (new Envelope(SyncTickerMessageFactory::create(
+                        $job->getGuid()->toString(),
+                        $jobItem->getGuid()->toString(),
+                        $jobItem->getData()
+                    )))->with(new JobItemStamp(
+                            $job->getGuid()->toString(),
+                            $jobItem->getGuid()->toString())
+                    );
+
+                    $messageBus->dispatch($envelope);
                 }
 
                 if (null !== $limit && $job->getJobItems()->count() >= $limit) {
@@ -261,11 +271,19 @@ class PolygonBrokerageService extends AbstractBrokerageService
         return $job;
     }
 
-    public function fetchTickerTypes(Account $account)
+    public function fetchTickerTypes()
     {
-        $this->polygonApi = new Rest($account->getApiKey());
+        $uri = $this->getUri(PolygonContstants::TICKER_TYPE_ENDPOINT);
 
-        return $this->polygonApi->reference->tickerTypes->get();
+        $request = $this->brokerageClient->createRequest(
+            $uri,
+            'GET',
+            PolygonContstants::REQUEST_HEADERS
+        );
+
+        $response = $this->brokerageClient->sendRequest($request);
+
+        return json_decode((string) $response->getBody(), true);
     }
 
     /**
@@ -336,16 +354,7 @@ class PolygonBrokerageService extends AbstractBrokerageService
      */
     public function syncTickerTypes(): void
     {
-        $tickerTypeService = $this->tickerService->getTickerTypeService();
-        $this->logger->info('Fetching ticker types...');
-        $request = $this->brokerageClient->createRequest(
-            $this->getUri(PolygonContstants::TICKER_TYPE_ENDPOINT),
-            'GET',
-            PolygonContstants::REQUEST_HEADERS
-        );
-
-        $response = $this->brokerageClient->sendRequest($request);
-        $tickerTypes = json_decode((string) $response->getBody(), true);
+        $tickerTypes = $this->fetchTickerTypes();
 
         foreach ($tickerTypes['results'] as $types) {
             foreach ($types as $code => $type) {
@@ -359,7 +368,7 @@ class PolygonBrokerageService extends AbstractBrokerageService
                 $entity = TickerTypeFactory::create()
                     ->setName($type)
                     ->setCode($code);
-                $tickerTypeService->save($entity);
+                $this->tickerService->getTickerTypeService()->save($entity);
             }
         }
         $this->logger->info('Finished fetching ticker types');

@@ -1,0 +1,27 @@
+resources:
+  App\DTO\Aws\Sns\SubscriptionRequest:
+    attributes:
+      normalization_context:
+        groups: [ 'subscription_request.get' ]
+      denormalization_context:
+        groups: [ 'subscription_request.post' ]
+
+    collectionOperations:
+      subscribe:
+        method: POST
+        path: /topics/subscribe
+        input: App\DTO\Aws\Sns\SubscriptionRequest
+        output: App\Entity\TopicSubscription
+        normalization_context:
+          groups: [ 'topic_subscription.get' ]
+        swagger_context:
+          summary: Subscription subscribe endpoint
+          tags: [ Topic ]
+
+    properties:
+      id:
+        identifier: false
+      guid:
+        identifier: true
+        swagger_context:
+          example: 'd6f68382-dd82-4324-b04c-89266d70ee2a'

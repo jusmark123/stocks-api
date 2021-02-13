@@ -6,10 +6,10 @@ default:
             contexts:
                 - App\Tests\Behat\ExtendedRestContext
                 - App\Tests\Behat\DatabaseContext
-                - App\Tests\Behat\FixtureContext
-                - Behatch\Context\RestContext
-                - Behatch\Context\JsonContext
                 - Behat\MinkExtension\Context\MinkContext
+                - App\Tests\Behat\FixtureContext
+                - Behatch\Context\JsonContext
+                - Behatch\Context\RestContext
 
     extensions:
         FriendsOfBehat\SymfonyExtension:
@@ -24,5 +24,4 @@ default:
             sessions:
                 default:
                     symfony: ~
-
         Behatch\Extension: ~

@@ -5,11 +5,17 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: 'en'
+    system_ip: '%env(SYSTEM_IP)%'
     project_namespace: '%env(PROJECT_NAMESPACE)%'
     project_name: '%env(PROJECT_NAME)%'
     project_version: '%env(PROJECT_VERSION)%'
     url_path_prefix: '/%project_namespace%/%project_name%/%project_version%'
     system_username: 'system'
+    app_topic_arn: 'arn:aws:sns:us-west-2:%env(AWS_ACCOUNT)%:app'
+    sns_config:
+        region: '%env(AWS_REGION)%'
+        accessKeyId: '%env(AWS_ACCESS_KEY_ID)%'
+        accessKeySecret: '%env(AWS_SECRET_ACCESS_KEY)%'
 
     env(RABBITAMQP_HOST): 'broadcast-client-socket-rabbitmq'
     env(RABBITAMQP_POST): '5672'
@@ -122,6 +128,16 @@ services:
     App\Entity\Manager\:
         resource: '../src/Entity/Manager/*'
 
+    ###### Event Listeners #######
+
+    App\EventListener\DeserializeListener:
+        autoconfigure: false
+        decorates: 'api_platform.listener.request.deserialize'
+        arguments:
+            $decorated: '@App\EventListener\DeserializeListener.inner'
+        tags:
+            - { name: 'kernel.event_listener', event: 'kernel.request', method: 'onKernelRequest', priority: 2 }
+
     ###### Event Subscribers #####
 
     App\EventSubscriber\:
@@ -129,6 +145,30 @@ services:
         autowire: true
         tags:
             - { name: kernel.event_subscriber }
+
+    App\EventSubscriber\Job\JobEventSubscriber:
+        autowire: true
+        autoconfigure: true
+        arguments:
+            $topicArn: '%app_topic_arn%'
+
+    App\EventSubscriber\Job\JobFailedEventSubscriber:
+        autowire: true
+        autoconfigure: true
+        arguments:
+            $topicArn: '%app_topic_arn%'
+
+    App\EventSubscriber\Job\JobItemEventSubscriber:
+        autowire: true
+        autoconfigure: true
+        arguments:
+            $topicArn: '%app_topic_arn%'
+
+    App\EventSubscriber\Job\JobItemFailedEventSubscriber:
+        autowire: true
+        autoconfigure: true
+        arguments:
+            $topicArn: '%app_topic_arn%'
 
     ###### Data Provider #######
 
@@ -144,6 +184,12 @@ services:
     App\Service\PaginatorService:
         autowire: true
 
+    App\Service\TopicService:
+        arguments:
+            $urlPrefix: '%url_path_prefix%'
+            $region: '%env(AWS_REGION)%'
+            $systemIp: '%env(SYSTEM_HOST)%'
+
     ###### Paginator Factory ##########
 
     App\Paginator\PaginatorFactory:
@@ -155,7 +201,13 @@ services:
         decorates: 'api_platform.swagger.normalizer.api_gateway'
         arguments: [ '@App\Swagger\SwaggerDecorator.inner' ]
         autoconfigure: false
-    
+
+    ###### Messages ######
+
+    App\Message\ApplicationMessage:
+        arguments:
+            $topicArn: '%app_topic_arn%'
+
     ###### Authentication Services ######
 
     stocks_api.token_success_handler:

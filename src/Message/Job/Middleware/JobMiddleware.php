@@ -53,17 +53,17 @@ class JobMiddleware implements MiddlewareInterface
     {
         $envelope = $stack->next()->handle($envelope, $stack);
 
-        $stamp = $envelope->last(JobStamp::class);
-
-        if (null !== $stamp) {
-            $job = $this->entityManager->findOneby(['guid' => $stamp->getJobId()]);
-
-            if ($envelope->last(ReceivedStamp::class)) {
-                $this->jobService->dispatch(new JobInProgressEvent($job));
-            } elseif ($envelope->last(SentStamp::class)) {
-                $this->jobService->dispatch(new JobPublishedEvent($job));
-            }
-        }
+//        $stamp = $envelope->last(JobStamp::class);
+//
+//        if (null !== $stamp) {
+//            $job = $this->entityManager->findOneby(['guid' => $stamp->getJobId()]);
+//
+//            if ($envelope->last(ReceivedStamp::class)) {
+//                $this->jobService->dispatch(new JobInProgressEvent($job));
+//            } elseif ($envelope->last(SentStamp::class)) {
+//                $this->jobService->dispatch(new JobPublishedEvent($job));
+//            }
+//        }
 
         return $envelope;
     }

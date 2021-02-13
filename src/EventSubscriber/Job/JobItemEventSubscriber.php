@@ -61,6 +61,7 @@ class JobItemEventSubscriber extends AbstractJobEventSubscriber
      */
     public function cancelled(JobItemCancelledEvent $event)
     {
+        $event->getJobItem()->setCancelledAt(new \DateTime());
         $this->updateJobItemStatus($event, JobConstants::JOB_CANCELLED, true);
     }
 
@@ -69,7 +70,9 @@ class JobItemEventSubscriber extends AbstractJobEventSubscriber
      */
     public function processed(JobItemProcessedEvent $event)
     {
+        $event->getJobItem()->setProcessedAt(new \DateTime());
         $this->updateJobItemStatus($event, JobConstants::JOB_PROCESSED, true);
+        $this->jobService->isJobComplete($event->getJob());
     }
 
     /**
@@ -77,6 +80,7 @@ class JobItemEventSubscriber extends AbstractJobEventSubscriber
      */
     public function processing(JobItemProcessingEvent $event)
     {
+        $event->getJobItem()->setStartedAt(new \DateTime());
         $this->updateJobItemStatus($event, JobConstants::JOB_IN_PROGRESS);
     }
 

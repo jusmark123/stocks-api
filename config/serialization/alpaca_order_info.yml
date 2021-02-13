@@ -1,4 +1,4 @@
-App\DTO\Brokerage\Alpaca\Order\AlpacaOrderInfo:
+App\DTO\Brokerage\Alpaca\Order\OrderInfo:
   attributes:
     account:
       groups:

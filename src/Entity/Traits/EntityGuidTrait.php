@@ -30,7 +30,7 @@ trait EntityGuidTrait
      */
     public function __construct()
     {
-        $this->setGuid(\Ramsey\Uuid\Uuid::uuid1());
+        $this->setGuid(\Ramsey\Uuid\Uuid::uuid4());
     }
 
     /**

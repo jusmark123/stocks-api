@@ -26,6 +26,7 @@ use Predis\Client;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 abstract class AbstractBrokerageService implements BrokerageServiceInterface, LoggerAwareInterface
 {
@@ -130,6 +131,11 @@ abstract class AbstractBrokerageService implements BrokerageServiceInterface, Lo
         // TODO: Implement getAccountInfo() method.
     }
 
+    public function getPositions(Account $account): ?array
+    {
+        // TODO: Implement getPositions() method.
+    }
+
     public function createOrderFromOrderInfo(OrderInfoInterface $orderInfo, Job $job): ?Order
     {
         // TODO: Implement createOrderFromOrderInfo() method.
@@ -140,14 +146,19 @@ abstract class AbstractBrokerageService implements BrokerageServiceInterface, Lo
         // TODO: Implement createOrderInfoFromMessage() method.
     }
 
-    public function fetchOrderHistory(SyncOrdersRequest $request, Job $job): ?Job
+    public function fetchOrderHistory(SyncOrdersRequest $request, MessageBusInterface $messageBus, Job $job): ?Job
     {
         // TODO: Implement fetchOrderHistory() method.
     }
 
-    public function fetchTickers(SyncTickersRequest $request, Job $job): ?Job
+    public function fetchTickers(SyncTickersRequest $request, MessageBusInterface $messageBus, Job $job): ?Job
     {
         // TODO: Implement fetchTickers() method.
+    }
+
+    public function fetchPositions($account): array
+    {
+        // TODO: Implement fetchPositions() method.
     }
 
     public function createTickerInfoFromMessage(array $message): ?TickerInterface

@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace App\Tests\Behat;
 
 use Behatch\HttpCall\HttpCallResult;
+use Behatch\HttpCall\HttpCallResultPool;
 use Behatch\Json\Json;
 
 /**
@@ -16,6 +17,17 @@ use Behatch\Json\Json;
  */
 class ExtendedJsonContext
 {
+//    /**
+//     * ExtendedJsonContext constructor.
+//     *
+//     * @param HttpCallResultPool $httpCallResultPool
+//     * @param string             $evaluationMode
+//     */
+//    public function __construct(HttpCallResultPool $httpCallResultPool, $evaluationMode = 'javascript')
+//    {
+//        parent::__construct($httpCallResultPool, $evaluationMode);
+//    }
+
     /**
      * @Then the JSON node :node should not equal the JSON node :reference
      *

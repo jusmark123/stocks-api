@@ -15,17 +15,20 @@ final class AlpacaConstants
 
     // Api Endpoints
     const ACCOUNT_ENDPOINT = self::API_VERSION.'/account';
+    const ACCOUNT_CONFIG_ENDPOINT = self::ACCOUNT_ENDPOINT.'/configurations';
     const ASSETS_ENDPOINT = self::API_VERSION.'/assets';
     const ORDERS_ENDPOINT = self::API_VERSION.'/orders';
+    const POSITIONS_ENDPOINT = self::API_VERSION.'/positions';
 
     const ORDER_HISTORY_DEFAULT_PAGE_LIMIT = 500;
     // AlpacaAccountInfoEntity Class
-    const ACCOUNT_INFO_ENTITY_CLASS = 'App\DTO\Brokerage\Alpaca\AlpacaAccountInfo';
+    const ACCOUNT_INFO_ENTITY_CLASS = 'App\DTO\Brokerage\Alpaca\AccountInfo';
+    const ACCOUNT_CONFIGURATION_ENTITY_CLASS = 'App\DTO\Brokerage\Alpaca\AccountConfiguration';
 
     // AlpacaOrderInfoEntity Class
-    const ORDER_INFO_ENTITY_CLASS = 'App\DTO\Brokerage\Alpaca\Order\AlpacaOrderInfo';
+    const ORDER_INFO_ENTITY_CLASS = 'App\DTO\Brokerage\Alpaca\Order\OrderInfo';
 
-    const POSITION_INFO_ENTITY_CLASS = 'App\DTO\Brokerage\Alpaca\PositionInfo';
+    const POSITION_INFO_ENTITY_CLASS = 'App\DTO\Brokerage\Alpaca\Position';
 
     // Brokerage Name
     const BROKERAGE_NAME = 'Alpaca Trader';
@@ -41,18 +44,19 @@ final class AlpacaConstants
     const REQUEST_RETURN_DATA_TYPE = 'json';
 
     const ACCOUNT_INFO_SERIALIZATION_CONFIG = '/opt/app-root/src/config/serialization/alpaca_account_info.yml';
+    const ACCOUNT_CONFIGURATION__SERIALIZATION_CONFIG = '/opt/app-root/src/config/serialization/alpaca_account_info.yml';
     const ORDER_INFO_SERIALIZATION_CONFIG = '/opt/app-root/src/config/serialization/alpaca_order_info.yml';
     const ORDER_INFO_UNIQUE_KEY = 'client_order_id';
     const ORDER_POSITION_INFO_SERIALIZATION_CONFIG = '/opt/app-root/src/config/serialization/alpaca_position_info.yml';
-    const TICKER_INFO_ENTITY_CLASS = 'App\DTO\Brokerage\Alpaca\AlpacaTickerInfo';
+    const TICKER_INFO_ENTITY_CLASS = 'App\DTO\Brokerage\Alpaca\TickerInfo';
 
     // Filter Enums
     const ORDERS_STATUS_ENUM = ['open', 'closed', 'all'];
     const ORDERS_DIRECTION_ENUM = ['asc', 'desc'];
 
     const ORDERS_FILTERS_DATATYPE = [
-        'nested' => FILTER_VALIDATE_BOOLEAN,
-        'limit' => FILTER_VALIDATE_INT,
+        'nested' => \FILTER_VALIDATE_BOOLEAN,
+        'limit' => \FILTER_VALIDATE_INT,
     ];
 
     // Enums

@@ -19,6 +19,8 @@ use App\Entity\Manager\JobEntityManager;
 use App\Entity\Source;
 use App\Entity\User;
 use App\Event\AbstractEvent;
+use App\Event\Job\JobCompleteEvent;
+use App\Message\Job\JobRequestMessageInterface;
 use App\Service\Entity\JobEntityService;
 use Doctrine\ORM\EntityManagerInterface;
 use Predis\Client;
@@ -78,6 +80,7 @@ class JobService extends AbstractService
         JobEntityManager $jobEntityManager,
         LoggerInterface $logger
     ) {
+        parent::__construct($logger);
         $this->cache = $cache;
         $this->defaultTypeService = $defaultTypeService;
         $this->dispatcher = $dispatcher;
@@ -111,31 +114,27 @@ class JobService extends AbstractService
     }
 
     /**
-     * @param string       $jobName
-     * @param string       $jobDescription
-     * @param array        $config
-     * @param mixed        $jobData
-     * @param User|null    $user
-     * @param Account|null $account
-     * @param Source|null  $source
+     * @param JobRequestMessageInterface|null $request
+     * @param User|null                       $user
+     * @param Account|null                    $account
+     * @param Source|null                     $source
+     * @param mixed                           $jobData
      *
      * @return Job
      */
     public function createJob(
-        string $jobName,
-        string $jobDescription,
-        $config = [],
-        $jobData = null,
+        JobRequestMessageInterface $request,
         ?User $user = null,
         ?Account $account = null,
-        ?Source $source = null
+        ?Source $source = null,
+        $jobData = null
     ) {
         $user = $user ?? $this->defaultTypeService->getDefaultUser();
         $job = JobFactory::create()
             ->setAccount($account)
-            ->setConfig($config)
-            ->setName($jobName)
-            ->setDescription($jobDescription)
+            ->setRequestHash(md5(serialize($request->getRequest())))
+            ->setName($request->getJobName())
+            ->setDescription($request->getJobDescription())
             ->setStatus(JobConstants::JOB_CREATED)
             ->setSource($source ?? $this->defaultTypeService->getDefaultSource())
             ->setUser($user)
@@ -152,6 +151,8 @@ class JobService extends AbstractService
                 $this->createJobItem($jobData, $job);
             }
         }
+
+        $this->jobEntityService->validate($job);
 
         return $job;
     }
@@ -195,20 +196,17 @@ class JobService extends AbstractService
     }
 
     /**
-     * @param        $account
-     * @param string $jobName
-     * @param array  $statuses
+     * @param JobRequestMessageInterface $request
+     * @param array                      $statuses
      *
-     * @return Job|null
+     * @return mixed
      */
-    public function getJob($account, string $jobName, array $statuses): ?Job
+    public function getJobs(JobRequestMessageInterface $request, array $statuses)
     {
-        return $this->jobEntityManager
-            ->findOneBy([
-                'account' => $account,
-                'name' => $jobName,
-                'status' => $statuses,
-            ]);
+        return $this->jobEntityManager->findBy([
+            'requestHash' => md5(serialize($request->getRequest())),
+            'status' => $statuses,
+        ]);
     }
 
     /**
@@ -227,24 +225,24 @@ class JobService extends AbstractService
     public function hasFailedJobs($job): bool
     {
         $items = $job->getJobItems()->filter(function ($jobItem) {
-            return JobConstants::JOB_PROCESSED !== $jobItem->getStatus();
+            return null !== $jobItem->getFailedAt();
         });
 
         return $items->count() > 0;
     }
 
     /**
-     * @param $job
-     *
-     * @return bool
+     * @param Job $job
      */
-    public function isJobComplete($job): bool
+    public function isJobComplete(Job $job)
     {
-        $items = $job->getJobItems()->filter(function ($jobItem) {
-            return \in_array($jobItem->getStatus(), [JobConstants::JOB_QUEUED, JobConstants::JOB_PENDING], true);
+        $items = $job->getJobItems()->filter(function (JobItem $jobItem) {
+            return null === $jobItem->getProcessedAt();
         });
 
-        return 0 === $items->count();
+        if (0 === $items->count()) {
+            $this->dispatch(new JobCompleteEvent($job));
+        }
     }
 
     /**

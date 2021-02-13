@@ -8,15 +8,14 @@ declare(strict_types=1);
 
 namespace App\EventSubscriber\Job;
 
-use App\Constants\Transport\JobConstants;
 use App\Entity\Job;
 use App\Entity\JobItem;
 use App\Event\Job\AbstractJobEvent;
 use App\Event\Job\AbstractJobFailedEvent;
+use App\Event\Job\JobIncompleteEvent;
 use App\Event\JobItem\AbstractJobItemFailedEvent;
 use App\EventSubscriber\AbstractEventSubscriber;
-use App\Message\Job\JobItemStatusMessage;
-use App\Message\Job\JobStatusMessage;
+use App\Message\ApplicationMessage;
 use App\Service\Entity\JobEntityService;
 use App\Service\Entity\JobItemEntityService;
 use App\Service\JobService;
@@ -24,7 +23,6 @@ use Doctrine\DBAL\Exception;
 use Predis\Client;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Messenger\Bridge\Amqp\Transport\AmqpStamp;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -71,6 +69,11 @@ class AbstractJobEventSubscriber extends AbstractEventSubscriber
     private $messageBus;
 
     /**
+     * @var string
+     */
+    private $topicArn;
+
+    /**
      * AbstractJobEventSubscriber constructor.
      *
      * @param Client                   $redis
@@ -80,6 +83,7 @@ class AbstractJobEventSubscriber extends AbstractEventSubscriber
      * @param JobService               $jobService
      * @param LoggerInterface          $logger
      * @param MessageBusInterface      $messageBus
+     * @param string                   $topicArn
      */
     public function __construct(
         Client $redis,
@@ -88,7 +92,8 @@ class AbstractJobEventSubscriber extends AbstractEventSubscriber
         JobItemEntityService $jobDataItemEntityService,
         JobService $jobService,
         LoggerInterface $logger,
-        MessageBusInterface $messageBus
+        MessageBusInterface $messageBus,
+        string $topicArn
     ) {
         $this->cache = $redis;
         $this->dispatcher = $dispatcher;
@@ -97,6 +102,7 @@ class AbstractJobEventSubscriber extends AbstractEventSubscriber
         $this->jobService = $jobService;
         $this->logger = $logger;
         $this->messageBus = $messageBus;
+        $this->topicArn = $topicArn;
     }
 
     /**
@@ -112,9 +118,10 @@ class AbstractJobEventSubscriber extends AbstractEventSubscriber
         $job = $event->getJob()->setStatus($status);
         $this->jobEntityService->save($job);
 
-        $envelope = (new Envelope(new JobStatusMessage($job->getGuid()->toString(), $status)))
-            ->with(new AmqpStamp(sprintf(JobConstants::JOB_STATUS_ROUTING_KEY, $job->getGuid()->toString()),
-                    AMQP_AUTOACK));
+        $envelope = new Envelope(new ApplicationMessage([
+            'type' => 'job_status',
+            'job' => $job->getGuid()->toString(),
+            'status' => $status, ], $this->topicArn));
 
         $this->messageBus->dispatch($envelope);
     }
@@ -144,12 +151,11 @@ class AbstractJobEventSubscriber extends AbstractEventSubscriber
             $this->jobItemEntityService->save($jobItem);
         }
 
-        $envelope = (new Envelope(new JobItemStatusMessage(
-                $job->getGuid()->toString(),
-                $jobItem->getGuid()->toString(),
-                $status))
-        )->with(new AmqpStamp(sprintf(JobConstants::JOB_STATUS_ROUTING_KEY, $job->getGuid()->toString()),
-                AMQP_AUTOACK));
+        $envelope = (new Envelope(new ApplicationMessage([
+            'type' => 'job_item_status',
+            'job' => $job->getGuid()->toString(),
+            'jobItem' => $jobItem->getGuid()->toString(),
+            'status' => $status, ], $this->topicArn)));
 
         $this->messageBus->dispatch($envelope);
     }
@@ -174,7 +180,7 @@ class AbstractJobEventSubscriber extends AbstractEventSubscriber
             $job->setErrorTrace($exception->getTraceAsString())
                 ->setErrorMessage($exception->getMessage());
         }
-
+        $job->setFailedAt(new \DateTime());
         $this->logError($event);
     }
 
@@ -190,7 +196,8 @@ class AbstractJobEventSubscriber extends AbstractEventSubscriber
             $jobItem->setErrorTrace($exception->getTraceAsString())
                 ->setErrorMessage($exception->getMessage());
         }
-
+        $jobItem->setFailedAt(new \DateTime())->setProcessedAt(new \DateTime());
+        $this->jobService->dispatch(new JobIncompleteEvent($jobItem->getJob(), $jobItem));
         $this->logError($event);
     }
 

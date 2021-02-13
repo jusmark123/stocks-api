@@ -1,0 +1,26 @@
+resources:
+  App\Entity\TopicSubscription:
+    attributes:
+      normalization_context:
+        groups: [ 'topic_subscription.get' ]
+      denormalization_context:
+        groups: [ 'topic_subscription.post' ]
+
+    itemOperations:
+      get:
+        method: GET
+      delete:
+        method: DELETE
+        path: /topic_subscriptions/{id}/unsubscribe
+
+    collectionOperations:
+      get:
+        method: GET
+
+    properties:
+      id:
+        identifier: false
+      guid:
+        identifier: true
+        swagger_context:
+          example: 'd6f68382-dd82-4324-b04c-89266d70ee2a'

@@ -2,5 +2,5 @@ App\DTO\Brokerage\AccountInfoInterface:
   discriminator_map:
     type_property: brokerage
     mapping:
-      alpaca: 'App\DTO\Brokerage\Alpaca\AlpacaAccountInfo'
+      alpaca: 'App\DTO\Brokerage\Alpaca\AccountInfo'
       td_ameritrade: 'App\DTO\Brokerage\TdAmeritrade\TdAmeritradeAccountInfo'

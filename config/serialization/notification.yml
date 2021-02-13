@@ -1,0 +1,52 @@
+App\DTO\Aws\Sns\Notification:
+  attributes:
+    messageId:
+      serialized_name: MessageId
+      groups:
+        - notification.get
+        - notification.post
+    token:
+      serialized_name: Token
+      groups:
+        - notification.get
+        - notification.post
+    type:
+      serialized_name: Type
+      groups:
+        - notification.get
+        - notification.post
+    topicArn:
+      serialized_name: TopicArn
+      groups:
+        - notification.get
+        - notification.post
+    message:
+      serialized_name: Message
+      groups:
+        - notification.get
+        - notification.post
+    subscribeUrl:
+      serialized_name: SubscribeURL
+      groups:
+        - notification.get
+        - notification.post
+    timestamp:
+      serialized_name: Timestamp
+      groups:
+        - notification.get
+        - notification.post
+    signatureVersion:
+      serialized_name: SignatureVersion
+      groups:
+        - notification.get
+        - notification.post
+    signature:
+      serialized_name: Signature
+      groups:
+        - notification.get
+        - notification.post
+    signingCertURL:
+      serialized_name: SigningCertURL
+      groups:
+        - notification.get
+        - notification.post

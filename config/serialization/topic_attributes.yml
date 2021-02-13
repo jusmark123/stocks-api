@@ -1,0 +1,20 @@
+App\DTO\Aws\Sns\TopicAttributes:
+  attributes:
+    effectiveDeliveryPolicy:
+      groups:
+        - topic.get
+    owner:
+      groups:
+        - topic.get
+    policy:
+      groups:
+        - topic.get
+    subscriptionsConfirmed:
+      groups:
+        - topic.get
+    subscriptionsDeleted:
+      groups:
+        - topic.get
+    subscriptionsPending:
+      groups:
+        - topic.get
