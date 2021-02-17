@@ -13,7 +13,7 @@ use App\Entity\Brokerage;
 /**
  * Class BrokerageEntityManager.
  */
-class BrokerageEntityManager extends AbstractEntityManager
+class BrokerageEntityManager extends EntityManager
 {
     const ENTITY_CLASS = Brokerage::class;
 }

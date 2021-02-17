@@ -16,7 +16,6 @@ use App\DTO\Brokerage\TickerInterface;
 use App\DTO\SyncOrdersRequest;
 use App\DTO\SyncTickersRequest;
 use App\Entity\Account;
-use App\Entity\Brokerage;
 use App\Entity\Factory\OrderFactory;
 use App\Entity\Factory\PositionFactory;
 use App\Entity\Job;
@@ -89,16 +88,6 @@ class AlpacaBrokerageService extends AbstractBrokerageService
         $this->brokerageClient = $brokerageClient;
         $this->defaultTypeService = $defaultTypeService;
         $this->polygonService = $polygonService;
-    }
-
-    /**
-     * @param Brokerage $brokerage
-     *
-     * @return bool
-     */
-    public function supports(Brokerage $brokerage): bool
-    {
-        return $brokerage instanceof Brokerage && AlpacaConstants::BROKERAGE_NAME === $brokerage->getName();
     }
 
     /**

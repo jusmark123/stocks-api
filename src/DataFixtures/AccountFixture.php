@@ -21,9 +21,9 @@ class AccountFixture extends AbstractDataFixture
     const ACCOUNT_STATUS_TYPE = 'accountStatusType';
     const API_KEY = 'apiKey';
     const API_SECRET = 'apiSecret';
-    const API_ENDPOINT_URL = 'ApiEndpointUrl';
     const BROKERAGE = 'brokerage';
     const DEFAULT = 'default';
+    const PAPER_ACCOUNT = 'paper';
     const USERS = 'users';
 
     /**
@@ -36,11 +36,11 @@ class AccountFixture extends AbstractDataFixture
                 ->setGuid(Uuid::fromString($item[self::GUID]))
                 ->setApiKey($item[self::API_KEY])
                 ->setApiSecret($item[self::API_SECRET])
-                ->setApiEndpointUrl($item[self::API_ENDPOINT_URL])
                 ->setBrokerage($item[self::BROKERAGE])
                 ->setDescription($item[self::DESCRIPTION])
                 ->setDefault($item[self::DEFAULT])
                 ->setName($item[self::NAME])
+                ->setPaperAccount($item[self::PAPER_ACCOUNT])
                 ->setAccountStatusType($item[self::ACCOUNT_STATUS_TYPE]);
 
             if ($item[self::USERS]) {
@@ -77,11 +77,11 @@ class AccountFixture extends AbstractDataFixture
                     sprintf('accountStatusType_%d', AccountStatusTypeConstants::ACTIVE)),
                 self::API_KEY => 'PKU2P6NISHZELU5ATWEQ',
                 self::API_SECRET => 'yACk0pUFDlBQRBrbktzTe5iODUumrQACriY7TSK3',
-                self::API_ENDPOINT_URL => 'https://paper-api.alpaca.markets',
                 self::BROKERAGE => $this->getReference(AlpacaConstants::BROKERAGE_NAME),
                 self::DESCRIPTION => 'Alpaca paper trading account',
                 self::DEFAULT => true,
                 self::NAME => 'alpaca-paper',
+                self::PAPER_ACCOUNT => 'true',
                 self::USERS => [
                     $this->getReference(UserConstants::SYSTEM_USER_USERNAME),
                 ],

@@ -13,7 +13,7 @@ use App\Entity\SourceType;
 /**
  * Class SourceTypeEntityManager.
  */
-class SourceTypeEntityManager extends AbstractEntityManager
+class SourceTypeEntityManager extends EntityManager
 {
     const ENTITY_CLASS = SourceType::class;
 }

@@ -10,7 +10,7 @@ namespace App\Entity\Manager;
 
 use App\Entity\Topic;
 
-class TopicEntityManager extends AbstractEntityManager
+class TopicEntityManager extends EntityManager
 {
     const ENTITY_CLASS = Topic::class;
 

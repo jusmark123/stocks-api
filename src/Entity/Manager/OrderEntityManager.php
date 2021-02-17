@@ -13,7 +13,7 @@ use App\Entity\Order;
 /**
  * Class OrderEntityManager.
  */
-class OrderEntityManager extends AbstractEntityManager
+class OrderEntityManager extends EntityManager
 {
     const ENTITY_CLASS = Order::class;
 }

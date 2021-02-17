@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\DTO\Brokerage\TickerInterface;
+use App\DTO\Brokerage\PositionInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\PersistentCollection;
@@ -33,29 +33,33 @@ use Gedmo\Mapping\Annotation as Gedmo;
 class Position extends AbstractGuidEntity
 {
     /**
-     * @var int
-     * @ORM\Column(name="quantity", type="integer", nullable=false, options={"default": 0})
-     */
-    private $qty;
-
-    /**
      * @var Account
+     *
+     * @ORM\ManyToOne(targetEntity="Account", inversedBy="positions", fetch="LAZY")
+     * @ORM\JoinColumns({
+     *      @ORM\JoinColumn(name="account_id", referencedColumnName="id", nullable=false)
+     * })
      */
-    private $account;
+    private Account $account;
 
     /**
-     * @var ArrayCollection|Order[]|PersistentCollection
+     * @var Order[]|ArrayCollection
      *
      * @ORM\OneToMany(targetEntity="Order", mappedBy="position", fetch="LAZY")
      */
     private $orders;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="side", type="string", nullable=false)
+     * @var PositionInterface
      */
-    private $side;
+    private PositionInterface $positionInfo;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="quantity", type="integer", nullable=false, options={"default": 0})
+     */
+    private int $qty;
 
     /**
      * @var Source
@@ -65,19 +69,19 @@ class Position extends AbstractGuidEntity
      * 		@ORM\JoinColumn(name="source_id", referencedColumnName="id", nullable=false)
      * })
      */
-    private $source;
+    private Source $source;
 
     /**
      * @var string
      *
      * @ORM\Column(name="symbol", type="string", length=10, nullable=false)
      */
-    private $symbol;
+    private string $symbol;
 
     /**
-     * @var TickerInterface|null
+     * @var Ticker|null
      */
-    private $ticker;
+    private ?Ticker $ticker;
 
     /**
      * Position constructor.
@@ -111,21 +115,13 @@ class Position extends AbstractGuidEntity
     }
 
     /**
-     * @return string
-     */
-    public function getExchange(): string
-    {
-        return $this->exchange;
-    }
-
-    /**
-     * @param string $exchange
+     * @param Order $order
      *
      * @return $this
      */
-    public function setExchange(string $exchange): Position
+    public function addOrder(Order $order): Position
     {
-        $this->exchange = $exchange;
+        $this->orders->add($order);
 
         return $this;
     }
@@ -138,6 +134,13 @@ class Position extends AbstractGuidEntity
         return $this->orders;
     }
 
+    public function removeOrder(Order $order): Position
+    {
+        $this->orders->removeElement($order);
+
+        return $this;
+    }
+
     /**
      * @param Order[]|ArrayCollection|PersistentCollection $orders
      *
@@ -146,6 +149,26 @@ class Position extends AbstractGuidEntity
     public function setOrders($orders)
     {
         $this->orders = $orders;
+
+        return $this;
+    }
+
+    /**
+     * @return PositionInterface
+     */
+    public function getPositionInfo(): PositionInterface
+    {
+        return $this->positionInfo;
+    }
+
+    /**
+     * @param PositionInterface $positionInfo
+     *
+     * @return Position
+     */
+    public function setPositionInfo(PositionInterface $positionInfo): Position
+    {
+        $this->positionInfo = $positionInfo;
 
         return $this;
     }
@@ -191,39 +214,19 @@ class Position extends AbstractGuidEntity
     }
 
     /**
-     * @return string
+     * @return Ticker|null
      */
-    public function getSide(): string
-    {
-        return $this->side;
-    }
-
-    /**
-     * @param string $side
-     *
-     * @return Position
-     */
-    public function setSide(string $side): Position
-    {
-        $this->side = $side;
-
-        return $this;
-    }
-
-    /**
-     * @return TickerInterface|null
-     */
-    public function getTicker(): ?TickerInterface
+    public function getTicker(): ?Ticker
     {
         return $this->ticker;
     }
 
     /**
-     * @param TickerInterface|null $ticker
+     * @param Ticker|null $ticker
      *
      * @return Position
      */
-    public function setTicker(?TickerInterface $ticker): Position
+    public function setTicker(?Ticker $ticker): Position
     {
         $this->ticker = $ticker;
 

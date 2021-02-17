@@ -12,6 +12,8 @@ final class AlpacaConstants
 {
     // Api Version
     const API_VERSION = '/v2';
+    const ≈ = 'https://api.alpaca.markets';
+    const PAPER_API_ENDPOINT = 'https://paper-api.alpaca.markets';
 
     // Api Endpoints
     const ACCOUNT_ENDPOINT = self::API_VERSION.'/account';

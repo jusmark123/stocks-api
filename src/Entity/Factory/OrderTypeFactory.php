@@ -15,6 +15,9 @@ use App\Entity\OrderType;
  */
 class OrderTypeFactory extends AbstractFactory
 {
+    /**
+     * @return OrderType
+     */
     public static function create(): OrderType
     {
         return new OrderType();

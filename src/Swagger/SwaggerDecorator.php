@@ -14,6 +14,9 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\SerializerAwareInterface;
 use Symfony\Component\Serializer\SerializerAwareTrait;
 
+/**
+ * Class SwaggerDecorator.
+ */
 final class SwaggerDecorator implements NormalizerInterface, SerializerAwareInterface
 {
     use SerializerAwareTrait;
@@ -28,9 +31,6 @@ final class SwaggerDecorator implements NormalizerInterface, SerializerAwareInte
     public function normalize($object, $format = null, array $context = [])
     {
         $docs = $this->decorated->normalize($object, $format, $context);
-
-        unset($docs['paths']['/api/stocks/v1/td_ameritrade_account_infos']);
-        unset($docs['paths']['/api/stocks/v1/td_ameritrade_account_infos/{id}']);
 
         return $docs;
     }

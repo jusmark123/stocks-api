@@ -33,9 +33,9 @@ class Brokerage extends AbstractGuidEntity
     /**
      * @var string|null
      *
-     * @ORM\Column(name="name", type="string", length=100, nullable=false)
+     * @ORM\Column(name="api_document_url", length=255, nullable=true)
      */
-    private $name;
+    private $apiDocumentUrl;
 
     /**
      * @var string
@@ -52,18 +52,27 @@ class Brokerage extends AbstractGuidEntity
     private $description;
 
     /**
+     * @var string|null
+     *
+     * @ORM\Column(name="name", type="string", length=100, nullable=false)
+     */
+    private $name;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="has_paper_accounts", type="boolean", nullable=false, options={"default"=false})
+     */
+    private $paperAccounts;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="url", type="string", length=255, nullable=false)
      */
     private $url;
 
-    /**
-     * @var string|null
-     *
-     * @ORM\Column(name="api_document_url", length=255, nullable=true)
-     */
-    private $apiDocumentUrl;
+    // Subresources
 
     /**
      * @var ArrayCollection|Account[]|PersistentCollection
@@ -101,13 +110,6 @@ class Brokerage extends AbstractGuidEntity
     private $tickers;
 
     /**
-     * @var ArrayCollection|PositionSideType[]|PersistentCollection
-     *
-     * @ORM\OneToMany(targetEntity="PositionSideType", mappedBy="brokerage", fetch="LAZY")
-     */
-    private $positionSideTypes;
-
-    /**
      * Brokerage constructor.
      *
      * @throws \Exception
@@ -126,19 +128,19 @@ class Brokerage extends AbstractGuidEntity
     /**
      * @return string
      */
-    public function getName(): string
+    public function getApiDocumentUrl(): string
     {
-        return $this->name;
+        return $this->apiDocumentUrl;
     }
 
     /**
-     * @param string $name
+     * @param string $apiDocumentUrl
      *
      * @return Brokerage
      */
-    public function setName(string $name): Brokerage
+    public function setApiDocumentUrl(string $apiDocumentUrl): Brokerage
     {
-        $this->name = $name;
+        $this->apiDocumentUrl = $apiDocumentUrl;
 
         return $this;
     }
@@ -184,6 +186,46 @@ class Brokerage extends AbstractGuidEntity
     /**
      * @return string
      */
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return Brokerage
+     */
+    public function setName(string $name): Brokerage
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasPaperAccounts(): bool
+    {
+        return $this->paperAccounts;
+    }
+
+    /**
+     * @param bool $paperAccounts
+     *
+     * @return Brokerage
+     */
+    public function setPaperAccounts(bool $paperAccounts): Brokerage
+    {
+        $this->paperAccounts = $paperAccounts;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
     public function getUrl(): string
     {
         return $this->url;
@@ -197,26 +239,6 @@ class Brokerage extends AbstractGuidEntity
     public function setUrl(string $url): Brokerage
     {
         $this->url = $url;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getApiDocumentUrl(): string
-    {
-        return $this->apiDocumentUrl;
-    }
-
-    /**
-     * @param string $apiDocumentUrl
-     *
-     * @return Brokerage
-     */
-    public function setApiDocumentUrl(string $apiDocumentUrl): Brokerage
-    {
-        $this->apiDocumentUrl = $apiDocumentUrl;
 
         return $this;
     }
@@ -238,7 +260,7 @@ class Brokerage extends AbstractGuidEntity
      */
     public function getAccounts()
     {
-        return $this->accounts->getValues();
+        return $this->accounts;
     }
 
     /**
@@ -252,19 +274,23 @@ class Brokerage extends AbstractGuidEntity
     }
 
     /**
-     * @return ArrayCollection|Order[]|PersistentCollection
+     * @return Order[]|ArrayCollection|PersistentCollection
      */
     public function getOrders()
     {
-        return $this->orders->getValues();
+        return $this->orders;
     }
 
     /**
      * @param Order[]|ArrayCollection|PersistentCollection $orders
+     *
+     * @return Brokerage
      */
-    public function setOrders($orders): void
+    public function setOrders($orders)
     {
         $this->orders = $orders;
+
+        return $this;
     }
 
     /**
@@ -308,26 +334,6 @@ class Brokerage extends AbstractGuidEntity
     }
 
     /**
-     * @return PositionSideType[]|ArrayCollection|PersistentCollection
-     */
-    public function getPositionSideTypes()
-    {
-        return $this->positionSideTypes;
-    }
-
-    /**
-     * @param PositionSideType[]|ArrayCollection|PersistentCollection $positionSideTypes
-     *
-     * @return Brokerage
-     */
-    public function setPositionSideTypes($positionSideTypes)
-    {
-        $this->positionSideTypes = $positionSideTypes;
-
-        return $this;
-    }
-
-    /**
      * @return Ticker[]|ArrayCollection|PersistentCollection
      */
     public function getTickers()
@@ -337,9 +343,13 @@ class Brokerage extends AbstractGuidEntity
 
     /**
      * @param Ticker[]|ArrayCollection|PersistentCollection $tickers
+     *
+     * @return Brokerage
      */
-    public function setTickers($tickers): void
+    public function setTickers($tickers)
     {
         $this->tickers = $tickers;
+
+        return $this;
     }
 }

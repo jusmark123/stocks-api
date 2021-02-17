@@ -46,11 +46,6 @@ class TopicSubscription extends AbstractGuidEntity
      */
     private $topic;
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     /**
      * @return UuidInterface
      */
@@ -59,8 +54,8 @@ class TopicSubscription extends AbstractGuidEntity
         if (null !== $this->subscriptionArn) {
             $parts = explode(':', $this->subscriptionArn);
 
-            if (6 === \count($parts)) {
-                $this->guid = Uuid::fromString(end($parts));
+            if (7 === \count($parts)) {
+                $this->setGuid(Uuid::fromString(end($parts)));
             }
         }
 

@@ -13,7 +13,7 @@ use App\Entity\Job;
 /**
  * Class JobEntityManager.
  */
-class JobEntityManager extends AbstractEntityManager
+class JobEntityManager extends EntityManager
 {
     const ENTITY_CLASS = Job::class;
 }

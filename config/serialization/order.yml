@@ -8,28 +8,11 @@ App\Entity\Order:
         - order.get
         - order.post
         - order.put
-    amountUsd:
+    orderInfo:
       groups:
         - order.get
         - order.post
         - order.put
-    brokerOrderId:
-      groups:
-        - order.get
-        - order.post
-        - order.put
-    brokerage:
-      groups:
-        - order.get
-        - order.post
-    fees:
-      groups:
-        - order.get
-        - order.post
-    filledQty:
-      groups:
-        - order.get
-        - order.post
     orderStatusType:
       groups:
         - order.get
@@ -45,11 +28,6 @@ App\Entity\Order:
         - order.get
         - order.post
         - order.put
-    side:
-      groups:
-        - order.get
-        - order.post
-        - order.put
     source:
       groups:
         - order.get
@@ -58,11 +36,6 @@ App\Entity\Order:
       groups:
         - order.get
         - order.post
-    user:
-      groups:
-        - order.get
-        - order.post
-        - order.put
     createdAt:
       groups:
         - order.get

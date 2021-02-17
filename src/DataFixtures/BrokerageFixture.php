@@ -28,6 +28,7 @@ class BrokerageFixture extends AbstractDataFixture
     const POSITION_SIDE_TYPES = 'position_side_type';
     const URL = 'url';
     const API_DOCUMENT_URL = 'api_document_url';
+    const API_ENDPOINT_URL = 'ApiEndpointUrl';
 
     /**
      * @param ObjectManager $manager
@@ -46,7 +47,8 @@ class BrokerageFixture extends AbstractDataFixture
                 ->setContext($item[self::CONTEXT])
                 ->setDescription($item[self::DESCRIPTION])
                 ->setUrl($item[self::URL])
-                ->setApiDocumentUrl($item[self::API_DOCUMENT_URL]);
+                ->setApiDocumentUrl($item[self::API_DOCUMENT_URL])
+                ->setApiEndpointUrl($item[self::API_ENDPOINT_URL]);
 
             foreach ($typeClasses as $class => $types) {
                 foreach ($types as $name => $value) {
@@ -88,6 +90,7 @@ class BrokerageFixture extends AbstractDataFixture
                 self::CONTEXT => AlpacaConstants::BROKERAGE_CONTEXT,
                 self::DESCRIPTION => AlpacaConstants::BROKERAGE_DESCRIPTION,
                 self::API_DOCUMENT_URL => AlpacaConstants::BROKERAGE_API_DOCUMENT_URL,
+                self::API_ENDPOINT_URL => AlpacaConstants::PAPER_API_ENDPOINT,
                 self::URL => AlpacaConstants::BROKERAGE_URL,
                 self::ORDER_CLASSES => AlpacaConstants::ORDER_POSITION_INFO_SERIALIZATION_CONFIG,
                 self::ORDER_TYPES => AlpacaConstants::ORDER_TYPES,

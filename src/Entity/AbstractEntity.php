@@ -13,6 +13,6 @@ use App\Entity\Interfaces\EntityInterface;
 /**
  * Class AbstractEntity.
  */
-abstract class AbstractEntity extends EntityInterface
+abstract class AbstractEntity implements EntityInterface
 {
 }

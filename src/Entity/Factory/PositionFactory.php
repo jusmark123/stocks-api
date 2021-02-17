@@ -1,13 +1,10 @@
 <?php
 
-/*
- * Stocks Api
- */
-
-declare(strict_types=1);
 
 namespace App\Entity\Factory;
 
+
+use App\DTO\Brokerage\PositionInterface;
 use App\Entity\Position;
 
 /**
@@ -15,8 +12,21 @@ use App\Entity\Position;
  */
 class PositionFactory extends AbstractFactory
 {
-    public static function create(): Position
+    /**
+     * @return Position
+     */
+    public static function init(): Position
     {
         return new Position();
+    }
+
+    /**
+     * @param PositionInterface $positionInfo
+     *
+     * @return Position
+     */
+    public static function create(PositionInterface $positionInfo): Position
+    {
+        return self::init()->setPositionInfo($positionInfo);
     }
 }

@@ -13,7 +13,7 @@ use App\Entity\AccountStatusType;
 /**
  * Class AccountStatusTypeEntityManager.
  */
-class AccountStatusTypeEntityManager extends AbstractEntityManager
+class AccountStatusTypeEntityManager extends EntityManager
 {
     const ENTITY_CLASS = AccountStatusType::class;
 }

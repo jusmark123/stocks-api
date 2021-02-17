@@ -6,9 +6,10 @@
 
 declare(strict_types=1);
 
-namespace App\Entity\Factory;
+namespace App\DTO\Brokerage\Alpaca\Factory;
 
 use App\DTO\Brokerage\Alpaca\AccountInfo;
+use App\Entity\Factory\AbstractFactory;
 
 class AlpacaAccountInfoFactory extends AbstractFactory
 {

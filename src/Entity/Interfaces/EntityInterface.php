@@ -11,6 +11,6 @@ namespace App\Entity\Interfaces;
 /**
  * Class EntityInterface.
  */
-class EntityInterface
+interface EntityInterface
 {
 }

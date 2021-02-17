@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!-- https://phpunit.readthedocs.io/en/latest/configuration.html -->
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="bin/.phpunit/phpunit.xsd"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
          backupGlobals="false"
          colors="true"
-         bootstrap="tests/bootstrap.php"
->
+         defaultTestSuite="unit"
+         bootstrap="tests/bootstrap.php">
+    <coverage>
+        <include>
+            <directory>src</directory>
+        </include>
+        <exclude>
+            <file>src/Kernel.php</file>
+            <directory>src/DataFixtures</directory>
+            <directory>src/Migrations</directory>
+            <directory>src/Entity/Repository</directory>
+        </exclude>
+    </coverage>
     <php>
         <env name="SYMFONY_DEPRECATIONS_HELPER" value="max[direct]=0&amp;max[indirect]=5&amp;verbose=0"/>
         <ini name="error_reporting" value="-1" />
@@ -20,28 +30,26 @@
         <env name="APP_SECRET" value="3a36441656c1792190f2bb6fae802418"/>
         <!-- ###- symfony/framework-bundle ### -->
 
+        <env name="JWT_PRIVATE_KEY_PATH" value="tests/_fixtures/jwt/private.pem"/>
+        <env name="JWT_PUBLIC_KEY_PATH" value="tests/_fixtures/jwt/public.pem"/>
+        <env name="JWT_PASSPHRASE" value="jbtrade123"/>
+        <env name="JWT_KEY_DIRECTORY" value="config/jwt/"/>
+
+
         <!-- ###+ nelmio/cors-bundle ### -->
-        <env name="CORS_ALLOW_ORIGIN" value="^https?://(localhost|127\.0\.0\.1)(:[0-9]+)?$"/>
+        <env name="CORS_ALLOW_ORIGIN" value="^https?://localhost:?[0-9]*$"/>
         <!-- ###- nelmio/cors-bundle ### -->
 
         <!-- ###+ doctrine/doctrine-bundle ### -->
         <env name="DATABASE_URL" value="mysql://db_user:db_password@127.0.0.1:3306/db_name?serverVersion=8.0"/>
         <!-- ###- doctrine/doctring-bundle ### -->
     </php>
-
     <testsuites>
-        <testsuite name="Project Test Suite">
+        <testsuite name="unit">
+            <directory>tests/Unit</directory>
+        </testsuite>
+        <testsuite name="all">
             <directory>tests</directory>
         </testsuite>
     </testsuites>
-
-    <filter>
-        <whitelist processUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">src</directory>
-        </whitelist>
-    </filter>
-
-    <listeners>
-        <listener class="Symfony\Bridge\PhpUnit\SymfonyTestsListener" />
-    </listeners>
 </phpunit>

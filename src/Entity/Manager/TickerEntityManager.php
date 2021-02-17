@@ -10,7 +10,7 @@ namespace App\Entity\Manager;
 
 use App\Entity\Ticker;
 
-class TickerEntityManager extends AbstractEntityManager
+class TickerEntityManager extends EntityManager
 {
     const ENTITY_CLASS = Ticker::class;
 }

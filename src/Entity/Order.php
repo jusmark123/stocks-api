@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\DTO\Brokerage\OrderInfoInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 
@@ -18,12 +19,9 @@ use Gedmo\Mapping\Annotation as Gedmo;
  * 		name="`order`",
  * 		uniqueConstraints={
  * 			@ORM\UniqueConstraint(name="order_un_guid", columns={"guid"}),
- *          @ORM\UniqueConstraint(name="order_un_broker_order_id_brokerage", columns={"broker_order_id", "brokerage_id"})
  * 		},
  * 		indexes={
  * 			@ORM\Index(name="order_ix_account_id", columns={"account_id"}),
- * 			@ORM\Index(name="order_ix_broker_id", columns={"brokerage_id"}),
- * 			@ORM\Index(name="order_ix_broker_order_id", columns={"broker_order_id"})
  * 		}
  * )
  * @ORM\Entity(repositoryClass="App\Entity\Repository\OrderRepository")
@@ -33,37 +31,9 @@ use Gedmo\Mapping\Annotation as Gedmo;
 class Order extends AbstractGuidEntity
 {
     /**
-     * @var float
-     * @ORM\Column(name="amount_usd", type="float")
+     * @var OrderInfoInterface
      */
-    private $amountUsd;
-
-    /**
-     * @var string
-     * @ORM\Column(name="broker_order_id", type="string", nullable=false)
-     */
-    private $brokerOrderId;
-
-    /**
-     * @var float
-     *
-     * @ORM\Column(name="fees", type="float", nullable=false, options={"default"=0.00})
-     */
-    private $fees;
-
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="qty", type="integer", nullable=false, options={"default"=0})
-     */
-    private $filledQty;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="side", type="string", nullable=false)
-     */
-    private $side;
+    private $orderInfo;
 
     /**
      * @var string
@@ -79,14 +49,6 @@ class Order extends AbstractGuidEntity
      * @ORM\JoinColumn(name="account_id", referencedColumnName="id", nullable=false)
      */
     private $account;
-
-    /**
-     * @var Brokerage
-     *
-     * @ORM\ManyToOne(targetEntity="Brokerage", inversedBy="orders", fetch="LAZY")
-     * @ORM\JoinColumn(name="brokerage_id", referencedColumnName="id", nullable=false)
-     */
-    private $brokerage;
 
     /**
      * @var OrderStatusType
@@ -121,99 +83,31 @@ class Order extends AbstractGuidEntity
     private $source;
 
     /**
-     * @var User|null
+     * Order constructor.
      *
-     * @ORM\ManyToOne(targetEntity="User", inversedBy="orders", fetch="LAZY", cascade={"remove"})
-     * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
+     * @throws \Exception
      */
-    private $user;
-
-    /**
-     * @return int
-     */
-    public function getFilledQty(): int
+    public function __construct()
     {
-        return $this->filledQty;
+        parent::__construct();
     }
 
     /**
-     * @param int $filledQty
-     *
-     * @return Order
+     * @return OrderInfoInterface
      */
-    public function setFilledQty(int $filledQty): Order
+    public function getOrderInfo(): OrderInfoInterface
     {
-        $this->filledQty = $filledQty;
-
-        return $this;
+        return $this->orderInfo;
     }
 
     /**
-     * @return float
-     */
-    public function getFees(): float
-    {
-        return $this->fees;
-    }
-
-    /**
-     * @param float $fees
+     * @param OrderInfoInterface $orderInfo
      *
      * @return Order
      */
-    public function setFees(float $fees): Order
+    public function setOrderInfo(OrderInfoInterface $orderInfo): Order
     {
-        $this->fees = $fees;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getSide(): string
-    {
-        return $this->side;
-    }
-
-    /**
-     * @param string $side
-     *
-     * @return Order
-     */
-    public function setSide(string $side): Order
-    {
-        $this->side = $side;
-
-        return $this;
-    }
-
-    /**
-     * @return string $brokerOrderId
-     */
-    public function getBrokerOrderId(): string
-    {
-        return $this->brokerOrderId;
-    }
-
-    public function setBrokerOrderId(string $brokerOrderId): Order
-    {
-        $this->brokerOrderId = $brokerOrderId;
-
-        return $this;
-    }
-
-    /**
-     * @return Brokerage $brokerage
-     */
-    public function getBrokerage(): Brokerage
-    {
-        return $this->brokerage;
-    }
-
-    public function setBrokerage(Brokerage $brokerage): Order
-    {
-        $this->brokerage = $brokerage;
+        $this->orderInfo = $orderInfo;
 
         return $this;
     }
@@ -299,26 +193,6 @@ class Order extends AbstractGuidEntity
     }
 
     /**
-     * @return User $user
-     */
-    public function getUser(): User
-    {
-        return $this->user;
-    }
-
-    /**
-     * @param User $user
-     *
-     * @return Order
-     */
-    public function setUser(User $user): Order
-    {
-        $this->user = $user;
-
-        return $this;
-    }
-
-    /**
      * @return OrderType
      */
     public function getOrderType(): OrderType
@@ -354,26 +228,6 @@ class Order extends AbstractGuidEntity
     public function setOrderStatusType(OrderStatusType $orderStatusType): Order
     {
         $this->orderStatusType = $orderStatusType;
-
-        return $this;
-    }
-
-    /**
-     * @return float
-     */
-    public function getAmountUsd(): float
-    {
-        return $this->amountUsd;
-    }
-
-    /**
-     * @param float $amountUsd
-     *
-     * @return Order
-     */
-    public function setAmountUsd(float $amountUsd): Order
-    {
-        $this->amountUsd = $amountUsd;
 
         return $this;
     }

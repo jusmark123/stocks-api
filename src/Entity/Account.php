@@ -64,12 +64,6 @@ class Account extends AbstractGuidEntity
     private $apiSecret;
 
     /**
-     * @var string|null
-     * @ORM\Column(name="api_endpoint_url", type="string", length=150, nullable=false)
-     */
-    private $apiEndpointUrl;
-
-    /**
      * @var Brokerage
      *
      * @ORM\ManyToOne(targetEntity="Brokerage", inversedBy="accounts", fetch="LAZY")
@@ -85,13 +79,6 @@ class Account extends AbstractGuidEntity
     private $configuration;
 
     /**
-     * @var string|null
-     *
-     * @ORM\Column(name="description", type="text", length=65535, nullable=true)
-     */
-    private $description;
-
-    /**
      * @var bool
      *
      * @ORM\Column(name="`is_default`", type="boolean", nullable=false, options={"default"=false})
@@ -101,14 +88,25 @@ class Account extends AbstractGuidEntity
     /**
      * @var string|null
      *
+     * @ORM\Column(name="description", type="text", length=65535, nullable=true)
+     */
+    private $description;
+
+    /**
+     * @var string|null
+     *
      * @ORM\Column(name="name", type="string", length=100, nullable=false)
      */
     private $name;
 
     /**
-     * @var array|null
+     * @var bool
+     *
+     * @ORM\Column(name="is_paper_account", type="boolean" nullable=false, options={"default"=false})
      */
-    private $streams;
+    private $paperAccount;
+
+    // Subresources
 
     /**
      * @var ArrayCollection|Job[]|PersistentCollection
@@ -118,27 +116,29 @@ class Account extends AbstractGuidEntity
     private $jobs;
 
     /**
-     * @var ArrayCollection|User[]|PersistentCollection
-     *
-     * @ORM\ManyToMany(targetEntity="User", inversedBy="accounts", fetch="LAZY")
-     * @ORM\JoinTable(name="account_users",
-     * 		joinColumns={@ORM\JoinColumn(name="account_id", referencedColumnName="id")},
-     * 		inverseJoinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")}
-     * )
-     */
-    private $users;
-
-    /**
-     * @var PositionInterface[]
-     */
-    private $positions;
-
-    /**
      * @var ArrayCollection|Order[]|PersistentCollection
      *
      * @ORM\OneToMany(targetEntity="Order", mappedBy="account", fetch="LAZY")
      */
     private $orders;
+
+    /**
+     * @var ArrayCollection|Position[]|PersistentCollection
+     *
+     * @ORM\OneToMany(targetEntity="Position", inversedBy="accounts", fetch="LAZY")
+     */
+    private $positions;
+
+    /**
+     * @var ArrayCollection|User[]|PersistentCollection
+     *
+     * @ORM\ManyToMany(targetEntity="User", inversedBy="accounts", fetch="LAZY")
+     * @ORM\JoinTable(name="account_users",
+     *        joinColumns={@ORM\JoinColumn(name="account_id", referencedColumnName="id")},
+     *        inverseJoinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")}
+     * )
+     */
+    private $users;
 
     /**
      * Account constructor.
@@ -170,26 +170,6 @@ class Account extends AbstractGuidEntity
     public function setAccountInfo(?AccountInfoInterface $accountInfo): Account
     {
         $this->accountInfo = $accountInfo;
-
-        return $this;
-    }
-
-    /**
-     * @return array|null
-     */
-    public function getStreams(): ?array
-    {
-        return $this->streams;
-    }
-
-    /**
-     * @param array|null $streams
-     *
-     * @return Account
-     */
-    public function setStreams(?array $streams): Account
-    {
-        $this->streams = $streams;
 
         return $this;
     }
@@ -255,26 +235,6 @@ class Account extends AbstractGuidEntity
     }
 
     /**
-     * @return string
-     */
-    public function getApiEndpointUrl(): string
-    {
-        return $this->apiEndpointUrl;
-    }
-
-    /**
-     * @param string $apiEndpointUrl
-     *
-     * @return Account
-     */
-    public function setApiEndpointUrl(string $apiEndpointUrl): Account
-    {
-        $this->apiEndpointUrl = $apiEndpointUrl;
-
-        return $this;
-    }
-
-    /**
      * @return Brokerage
      */
     public function getBrokerage(): Brokerage
@@ -323,7 +283,7 @@ class Account extends AbstractGuidEntity
     }
 
     /**
-     * @param  string
+     * @param string
      *
      * @return Account
      */
@@ -332,11 +292,6 @@ class Account extends AbstractGuidEntity
         $this->description = $description;
 
         return $this;
-    }
-
-    public function hasInfo()
-    {
-        return null !== $this->accountInfo;
     }
 
     /**
@@ -422,11 +377,11 @@ class Account extends AbstractGuidEntity
     }
 
     /**
-     * @param PositionInterface $position
+     * @param Position $position
      *
      * @return Account
      */
-    public function addPosition(PositionInterface $position): Account
+    public function addPosition(Position $position): Account
     {
         $this->positions->add($position);
 
@@ -434,31 +389,31 @@ class Account extends AbstractGuidEntity
     }
 
     /**
-     * @return PositionInterface[]
+     * @return Position[]|ArrayCollection|PersistentCollection
      */
     public function getPositions()
     {
-        return $this->positions;
+        return $this->positions->getValues();
     }
 
     /**
-     * @param PositionInterface[] $positions
+     * @param ArrayCollection|Position[] $positions
      *
      * @return Account
      */
     public function setPositions(array $positions): Account
     {
-        $this->positions = $positions;
+        $this->positions = new ArrayCollection($positions);
 
         return $this;
     }
 
     /**
-     * @param PositionInterface $position
+     * @param Position $position
      *
      * @return Account
      */
-    public function removePosition(PositionInterface $position): Account
+    public function removePosition(Position $position): Account
     {
         $this->positions->removeElement($position);
 
@@ -525,6 +480,26 @@ class Account extends AbstractGuidEntity
     public function setJobs($jobs): Account
     {
         $this->jobs = $jobs;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPaperAccount(): bool
+    {
+        return $this->paperAccount;
+    }
+
+    /**
+     * @param bool $paperAccount
+     *
+     * @return Account
+     */
+    public function setPaperAccount(bool $paperAccount): Account
+    {
+        $this->paperAccount = $paperAccount;
 
         return $this;
     }

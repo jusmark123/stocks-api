@@ -10,7 +10,7 @@ namespace App\Entity\Manager;
 
 use App\Entity\TopicSubscription;
 
-class TopicSubscriptionEntityManager extends AbstractEntityManager
+class TopicSubscriptionEntityManager extends EntityManager
 {
     const ENTITY_CLASS = TopicSubscription::class;
 

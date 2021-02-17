@@ -130,11 +130,10 @@ test-feature:
 .PHONY: test-feature
 
 test-unit:
-	$(testEnvVars) \
-	./vendor/bin/simple-phpunit \
-	--coverage-html build/coverage \
-	--coverage-clover build/coverage/clover.xml \
-	--log-junit build/reports/phpunit/junit.xml
+	vendor/bin/simple-phpunit \
+		--coverage-html build/coverage \
+		--coverage-clover build/coverage/clover.xml \
+		--log-junit build/reports/phpunit/junit.xml
 .PHONY: unit-test
 
 start-consumers:

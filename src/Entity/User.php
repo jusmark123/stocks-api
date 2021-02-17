@@ -336,7 +336,7 @@ class User extends AbstractGuidEntity implements UserInterface
      */
     public function getOrders()
     {
-        return $this->orders->getValues();
+        return $this->orders;
     }
 
     /**

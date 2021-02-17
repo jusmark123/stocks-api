@@ -42,13 +42,6 @@ class Algorithm extends AbstractGuidEntity
     private $description;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="filename", type="string", length=100, nullable=false)
-     */
-    private $filename;
-
-    /**
      * @var mixed
      *
      * @ORM\Column(name="config", type="text", length=65535, nullable=true)
@@ -105,31 +98,11 @@ class Algorithm extends AbstractGuidEntity
     }
 
     /**
-     * @return string
-     */
-    public function getFilename(): string
-    {
-        return $this->filename;
-    }
-
-    /**
-     * @param string $filename
-     *
-     * @return Algorithm
-     */
-    public function setFilename(string $filename): Algorithm
-    {
-        $this->filename = $filename;
-
-        return $this;
-    }
-
-    /**
-     * @return mixed
+     * @return array
      */
     public function getConfig()
     {
-        return $this->config;
+        return json_decode($this->config, true);
     }
 
     /**
@@ -137,9 +110,9 @@ class Algorithm extends AbstractGuidEntity
      *
      * @return Algorithm
      */
-    public function setConfig($config)
+    public function setConfig(array $config): Algorithm
     {
-        $this->config = $config;
+        $this->config = json_encode($config);
 
         return $this;
     }

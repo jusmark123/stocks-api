@@ -561,9 +561,9 @@ class Job extends AbstractGuidEntity
     /**
      * @param string $guid
      *
-     * @return JobItem|null
+     * @return JobItem|bool
      */
-    public function getJobItem(string $guid): JobItem
+    public function getJobItem(string $guid)
     {
         return $this->jobItems->filter(function ($jobItem) use ($guid) {
             if ($jobItem->getGuid()->toString() === $guid) {

@@ -14,7 +14,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 /**
  * Class AccountEntityManager.
  */
-class AccountEntityManager extends AbstractEntityManager
+class AccountEntityManager extends EntityManager
 {
     const ENTITY_CLASS = Account::class;
 
