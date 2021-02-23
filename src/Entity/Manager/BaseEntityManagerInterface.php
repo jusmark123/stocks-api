@@ -10,7 +10,6 @@ namespace App\Entity\Manager;
 
 use App\Entity\AbstractEntity;
 use App\Entity\Interfaces\EntityInterface;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectRepository;
 
 /**
@@ -71,7 +70,7 @@ interface BaseEntityManagerInterface
 
     /**
      * @param EntityInterface $entity
-     * @param bool           $flush
+     * @param bool            $flush
      *
      * @return AbstractEntity
      */

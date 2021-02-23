@@ -8,9 +8,8 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\DTO\Brokerage\AccountInfoInterface;
 use App\DTO\Brokerage\Alpaca\AccountConfiguration;
-use App\DTO\Brokerage\PositionInterface;
+use App\DTO\Brokerage\BrokerageAccountInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\PersistentCollection;
@@ -35,9 +34,9 @@ use Gedmo\Mapping\Annotation as Gedmo;
 class Account extends AbstractGuidEntity
 {
     /**
-     * @var AccountInfoInterface|null
+     * @var BrokerageAccountInterface|null
      */
-    private $accountInfo;
+    private ?BrokerageAccountInterface $accountInfo;
 
     /**
      * @var AccountStatusType
@@ -47,21 +46,21 @@ class Account extends AbstractGuidEntity
      * 		@ORM\JoinColumn(name="account_status_type_id", referencedColumnName="id", nullable=false)
      * })
      */
-    private $accountStatusType;
+    private AccountStatusType $accountStatusType;
 
     /**
      * @var string
      *
      * @ORM\Column(name="api_key", type="string", length=100, nullable=false)
      */
-    private $apiKey;
+    private string $apiKey;
 
     /**
      * @var string
      *
      * @ORM\Column(name="api_secret", type="string", length=100, nullable=false)
      */
-    private $apiSecret;
+    private string $apiSecret;
 
     /**
      * @var Brokerage
@@ -71,40 +70,40 @@ class Account extends AbstractGuidEntity
      * 		@ORM\JoinColumn(name="brokerage_id", referencedColumnName="id", nullable=false)
      * })
      */
-    private $brokerage;
+    private Brokerage $brokerage;
 
     /**
-     * @var AccountConfiguration
+     * @var AccountConfiguration|null
      */
-    private $configuration;
+    private ?AccountConfiguration $configuration = null;
 
     /**
      * @var bool
      *
      * @ORM\Column(name="`is_default`", type="boolean", nullable=false, options={"default"=false})
      */
-    private $default;
+    private bool $default;
 
     /**
      * @var string|null
      *
      * @ORM\Column(name="description", type="text", length=65535, nullable=true)
      */
-    private $description;
+    private ?string $description;
 
     /**
      * @var string|null
      *
      * @ORM\Column(name="name", type="string", length=100, nullable=false)
      */
-    private $name;
+    private ?string $name;
 
     /**
      * @var bool
      *
-     * @ORM\Column(name="is_paper_account", type="boolean" nullable=false, options={"default"=false})
+     * @ORM\Column(name="is_paper_account", type="boolean", nullable=false, options={"default"=false})
      */
-    private $paperAccount;
+    private bool $paperAccount;
 
     // Subresources
 
@@ -125,7 +124,7 @@ class Account extends AbstractGuidEntity
     /**
      * @var ArrayCollection|Position[]|PersistentCollection
      *
-     * @ORM\OneToMany(targetEntity="Position", inversedBy="accounts", fetch="LAZY")
+     * @ORM\OneToMany(targetEntity="Position", mappedBy="account", fetch="LAZY")
      */
     private $positions;
 
@@ -155,19 +154,19 @@ class Account extends AbstractGuidEntity
     }
 
     /**
-     * @return AccountInfoInterface|null
+     * @return BrokerageAccountInterface|null
      */
-    public function getAccountInfo(): ?AccountInfoInterface
+    public function getAccountInfo(): ?BrokerageAccountInterface
     {
         return $this->accountInfo;
     }
 
     /**
-     * @param AccountInfoInterface|null $accountInfo
+     * @param BrokerageAccountInterface|null $accountInfo
      *
      * @return Account
      */
-    public function setAccountInfo(?AccountInfoInterface $accountInfo): Account
+    public function setAccountInfo(?BrokerageAccountInterface $accountInfo): Account
     {
         $this->accountInfo = $accountInfo;
 
@@ -257,17 +256,17 @@ class Account extends AbstractGuidEntity
     /**
      * @return AccountConfiguration
      */
-    public function getConfiguration(): AccountConfiguration
+    public function getConfiguration(): ?AccountConfiguration
     {
         return $this->configuration;
     }
 
     /**
-     * @param AccountConfiguration $configuration
+     * @param AccountConfiguration|null $configuration
      *
      * @return Account
      */
-    public function setConfiguration(AccountConfiguration $configuration): Account
+    public function setConfiguration(?AccountConfiguration $configuration): Account
     {
         $this->configuration = $configuration;
 

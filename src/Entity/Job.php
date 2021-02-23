@@ -22,7 +22,6 @@ use Gedmo\Mapping\Annotation as Gedmo;
  *			@ORM\UniqueConstraint(name="job_un_guid", columns={"guid"})
  *		},
  *		indexes={
- *          @ORM\Index(name="job_ix_name_user_id", columns={"name","user_id"}),
  *          @ORM\Index(name="job_ix_name_source_id", columns={"name","source_id"}),
  *          @ORM\Index(name="job_ix_name_account_id", columns={"name","source_id"}),
  *      },
@@ -36,40 +35,40 @@ class Job extends AbstractGuidEntity
     /**
      * @var array|null
      */
-    private $config;
+    private ?array $config;
 
     /**
      * @var string|null
      *
      * @ORM\Column(name="description", type="text", length=65535, nullable=true)
      */
-    private $description;
+    private ?string $description;
 
     /**
      * @var string|null
      *
      * @ORM\Column(name="requestHash", type="string", length=255, nullable=true)
      */
-    private $requestHash;
+    private ?string $requestHash;
 
     /**
      * @var float
      */
-    private $percentComplete;
+    private float $percentComplete;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="error_message", type="text", length=65535, nullable=true)
      */
-    private $errorMessage;
+    private ?string $errorMessage;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="error_trace", type="text", length=65535, nullable=true)
      */
-    private $errorTrace;
+    private ?string $errorTrace;
 
     /**
      * @var int|string
@@ -81,14 +80,14 @@ class Job extends AbstractGuidEntity
      *
      * @ORM\Column(name="name", type="string", length=100, nullable=false)
      */
-    private $name;
+    private ?string $name;
 
     /**
      * @var string
      *
      * @ORM\Column(name="status", type="string", length=100, nullable=true)
      */
-    private $status;
+    private string $status;
 
     /**
      * @var Account|null
@@ -97,7 +96,7 @@ class Job extends AbstractGuidEntity
      * 		@ORM\JoinColumn(name="account_id", referencedColumnName="id", nullable=true)
      * })
      */
-    private $account;
+    private ?Account $account;
 
     /**
      * @var Source|null
@@ -106,16 +105,7 @@ class Job extends AbstractGuidEntity
      * 		@ORM\JoinColumn(name="source_id", referencedColumnName="id", nullable=true)
      * })
      */
-    private $source;
-
-    /**
-     * @var User
-     * @ORM\ManyToOne(targetEntity="User", inversedBy="jobs", fetch="LAZY")
-     * @ORM\JoinColumns({
-     * 		@ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
-     * })
-     */
-    private $user;
+    private ?Source $source;
 
     /**
      * @var ArrayCollection|JobItem[]|PersistentCollection
@@ -129,42 +119,42 @@ class Job extends AbstractGuidEntity
      *
      * @ORM\Column(name="received_at", type="datetime", nullable=true)
      */
-    private $receivedAt;
+    private ?\DateTime $receivedAt;
 
     /**
      * @var \DateTime|null
      *
      * @ORM\Column(name="started_at", type="datetime", nullable=true)
      */
-    private $startedAt;
+    private ?\DateTime $startedAt;
 
     /**
      * @var \DateTime|null
      *
      * @ORM\Column(name="processed_at", type="datetime", nullable=true)
      */
-    private $processedAt;
+    private ?\DateTime $processedAt;
 
     /**
      * @var \DateTime|null
      *
      * @ORM\Column(name="failed_at", type="datetime", nullable=true)
      */
-    private $failedAt;
+    private ?\DateTime $failedAt;
 
     /**
      * @var \DateTime|null
      *
      * @ORM\Column(name="cancelled_at", type="datetime", nullable=true)
      */
-    private $cancelledAt;
+    private ?\DateTime $cancelledAt;
 
     /**
      * @var \DateTime|null
      *
      * @ORM\Column(name="completed_at", type="datetime", nullable=true)
      */
-    private $completedAt;
+    private ?\DateTime $completedAt;
 
     /**
      * Job constructor.

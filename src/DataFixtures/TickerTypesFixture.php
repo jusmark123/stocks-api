@@ -20,12 +20,12 @@ class TickerTypesFixture extends AbstractDataFixture
     /**
      * @var BrokerageServiceProvider
      */
-    private $brokerageServiceProvider;
+    private BrokerageServiceProvider $brokerageServiceProvider;
 
     /**
      * @var EntityManagerInterface
      */
-    private $entityManager;
+    private EntityManagerInterface $entityManager;
 
     /**
      * TickerTypesFixture constructor.

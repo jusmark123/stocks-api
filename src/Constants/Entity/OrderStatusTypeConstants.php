@@ -15,7 +15,7 @@ final class OrderStatusTypeConstants
     const ERROR = 3;
     const PENDING = 4;
 
-    //Alpaca Order Statuses
+    //Alpaca OrderInfo Statuses
     const PARTIALLY_FILLED = 5;
     const FILLED = 6;
     const DONE_FOR_DAY = 7;
@@ -24,7 +24,7 @@ final class OrderStatusTypeConstants
     const PENDING_CANCEL = 10;
     const PENDING_REPLACE = 11;
 
-    //Td Ameritrade Order Statuses
+    //Td Ameritrade OrderInfo Statuses
     const APPROVED = 12;
     const REJECTED = 13;
     const CANCEL = 14;

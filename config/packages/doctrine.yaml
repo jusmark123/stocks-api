@@ -9,38 +9,37 @@ parameters:
   env(DATABASE_SERVER_VERSION): '5.6'
 
 doctrine:
-    dbal:
-      driver: 'pdo_%env(DATABASE_DRIVER)%'
-      server_version: '%env(DATABASE_SERVER_VERSION)%'
+  dbal:
+    mapping_types:
+      enum: string
+    dbname: '%env(DATABASE_NAME)%'
+    host: '%env(DATABASE_HOST)%'
+    port: '%env(DATABASE_PORT)%'
+    user: '%env(DATABASE_USER)%'
+    password: '%env(DATABASE_PASSWORD)%'
+    default_table_options:
       charset: utf8mb4
-      default_table_options:
-        charset: utf8mb4
-        collate: utf8mb4_unicode_ci
-      types:
-        uuid: Ramsey\Uuid\Doctrine\UuidType
+      collate: utf8mb4_unicode_ci
+    server_version: '%env(DATABASE_SERVER_VERSION)%'
+    types:
+      uuid: Ramsey\Uuid\Doctrine\UuidType
+      enumOrderType: App\Bridge\DBAL\Types\EnumOrderType
+      enumSideType: App\Bridge\DBAL\Types\EnumSideType
+      enumPositionType: App\Bridge\DBAL\Types\EnumPositionType
+      enumSourceClassType: App\Bridge\DBAL\Types\EnumSourceClassType
 
-      # IMPORTANT: You MUST configure your server version,
-      # either here or in the DATABASE_URL env var (see .env file)
-      #server_version: '5.7'
-
-      dbname: '%env(DATABASE_NAME)%'
-      host: '%env(DATABASE_HOST)%'
-      port: '%env(DATABASE_PORT)%'
-      user: '%env(DATABASE_USER)%'
-      password: '%env(DATABASE_PASSWORD)%'
-
-    orm:
-        auto_generate_proxy_classes: '%kernel.debug%'
-        naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
-        auto_mapping: true
-        filters:
-          softdeleteable:
-            class: Gedmo\SoftDeleteable\Filter\SoftDeleteableFilter
-            enabled: true
-        mappings:
-            App:
-                is_bundle: false
-                type: annotation
-                dir: '%kernel.project_dir%/src/Entity'
-                prefix: 'App\Entity'
-                alias: App
+  orm:
+    auto_generate_proxy_classes: '%kernel.debug%'
+    naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
+    auto_mapping: true
+    filters:
+      softdeleteable:
+        class: Gedmo\SoftDeleteable\Filter\SoftDeleteableFilter
+        enabled: true
+    mappings:
+      App:
+        is_bundle: false
+        type: annotation
+        dir: '%kernel.project_dir%/src/Entity'
+        prefix: 'App\Entity'
+        alias: App

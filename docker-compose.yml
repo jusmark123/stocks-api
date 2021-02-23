@@ -2,12 +2,12 @@ version: '3'
 
 services:
   stocks-api-php:
-    build:
-      context: ./docker/php-fpm
-      dockerfile: Dockerfile
-      args:
-        - JWT_PASSPHRASE=${JWT_PASSPHRASE}
-#    image: 448507992616.dkr.ecr.us-west-2.amazonaws.com/stocks-api-php-fpm:latest
+#    build:
+#      context: ./docker/php-fpm
+#      dockerfile: Dockerfile
+#      args:
+#        - JWT_PASSPHRASE=${JWT_PASSPHRASE}
+    image: 448507992616.dkr.ecr.us-west-2.amazonaws.com/stocks-api-php-fpm:latest
     container_name: ${DOCKER_RUNNING_IMAGE_NAME}
     volumes:
         - .:/opt/app-root/src

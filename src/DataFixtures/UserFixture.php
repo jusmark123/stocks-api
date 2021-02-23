@@ -23,6 +23,7 @@ class UserFixture extends AbstractDataFixture
     const USERNAME = 'username';
     const EMAIL = 'email';
     const USER_TYPE = 'user_type';
+    const SOURCE = 'source';
     const ROLES = 'roles';
 
     /**

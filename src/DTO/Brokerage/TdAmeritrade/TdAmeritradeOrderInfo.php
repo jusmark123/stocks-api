@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace App\DTO\Brokerage\TdAmeritrade;
 
-use App\DTO\Brokerage\OrderInfoInterface;
+use App\DTO\Brokerage\BrokerageOrderInterface;
 use App\Entity\Account;
 use App\Entity\Order;
 use App\Entity\User;
@@ -131,9 +131,9 @@ class TdAmeritradeOrderInfo
     /**
      * @param Account $account
      *
-     * @return $this|OrderInfoInterface
+     * @return $this|BrokerageOrderInterface
      */
-    public function setAccount(Account $account): OrderInfoInterface
+    public function setAccount(Account $account): BrokerageOrderInterface
     {
         $this->account = $account;
 
@@ -151,9 +151,9 @@ class TdAmeritradeOrderInfo
     /**
      * @param Order|null $order
      *
-     * @return $this|OrderInfoInterface
+     * @return $this|BrokerageOrderInterface
      */
-    public function setOrder(?Order $order): OrderInfoInterface
+    public function setOrder(?Order $order): BrokerageOrderInterface
     {
         $this->order = $order;
 

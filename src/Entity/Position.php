@@ -8,7 +8,6 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\DTO\Brokerage\PositionInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\PersistentCollection;
@@ -21,10 +20,8 @@ use Gedmo\Mapping\Annotation as Gedmo;
  * 		name="position",
  * 		uniqueConstraints={
  * 			@ORM\UniqueConstraint(name="position_un_guid", columns={"guid"}),
- * 		},
- * 		indexes={
- *          @ORM\Index(name="position_ix_source_id", columns={"source_id"}),
- *     }
+ *          @ORM\UniqueConstraint(name="position_un_source_type", columns={"source_id", "source_class", "ticker_id"}),
+ * 		}
  * )
  * @ORM\Entity(repositoryClass="App\Entity\Repository\PositionRepository")
  * @ORM\HasLifecycleCallbacks()
@@ -36,52 +33,65 @@ class Position extends AbstractGuidEntity
      * @var Account
      *
      * @ORM\ManyToOne(targetEntity="Account", inversedBy="positions", fetch="LAZY")
-     * @ORM\JoinColumns({
-     *      @ORM\JoinColumn(name="account_id", referencedColumnName="id", nullable=false)
-     * })
+     * @ORM\JoinColumn(name="account_id", referencedColumnName="id", nullable=false)
      */
     private Account $account;
 
     /**
-     * @var Order[]|ArrayCollection
+     * @var ArrayCollection|Order[]|PersistentCollection
      *
      * @ORM\OneToMany(targetEntity="Order", mappedBy="position", fetch="LAZY")
      */
     private $orders;
 
     /**
-     * @var PositionInterface
+     * @var float
+     *
+     * @ORM\Column(name="quantity", type="float", nullable=false, options={"default"=0.00})
      */
-    private PositionInterface $positionInfo;
+    private float $quantity;
 
     /**
-     * @var int
+     * @var string
      *
-     * @ORM\Column(name="quantity", type="integer", nullable=false, options={"default": 0})
+     * @ORM\Column(name="side", type="enumSideType", length=20, nullable=false)
      */
-    private int $qty;
+    private string $side;
+
+    /**
+     * @var string
+     */
+    private string $status;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="type", type="enumPositionType", length=30, nullable=false)
+     */
+    private string $type;
 
     /**
      * @var Source
      *
      * @ORM\ManyToOne(targetEntity="Source", inversedBy="positions", fetch="LAZY")
-     * @ORM\JoinColumns({
-     * 		@ORM\JoinColumn(name="source_id", referencedColumnName="id", nullable=false)
-     * })
+     * @ORM\JoinColumn(name="source_id", referencedColumnName="id", nullable=false)
      */
     private Source $source;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="symbol", type="string", length=10, nullable=false)
+     * @ORM\Column(name="source_class", type="string", length=125, nullable=false)
      */
-    private string $symbol;
+    private string $sourceClass;
 
     /**
      * @var Ticker|null
+     *
+     * @ORM\ManyToOne(targetEntity="Ticker", inversedBy="positions", fetch="LAZY")
+     * @ORM\JoinColumn(name="ticker_id", referencedColumnName="id", nullable=false)
      */
-    private ?Ticker $ticker;
+    private Ticker $ticker;
 
     /**
      * Position constructor.
@@ -95,33 +105,21 @@ class Position extends AbstractGuidEntity
     }
 
     /**
-     * @return int
+     * @return Account
      */
-    public function getQty(): int
+    public function getAccount(): Account
     {
-        return $this->qty;
+        return $this->account;
     }
 
     /**
-     * @param int $qty
+     * @param Account $account
      *
-     * @return $this
+     * @return Position
      */
-    public function setQty(int $qty): Position
+    public function setAccount(Account $account): Position
     {
-        $this->qty = $qty;
-
-        return $this;
-    }
-
-    /**
-     * @param Order $order
-     *
-     * @return $this
-     */
-    public function addOrder(Order $order): Position
-    {
-        $this->orders->add($order);
+        $this->account = $account;
 
         return $this;
     }
@@ -132,13 +130,6 @@ class Position extends AbstractGuidEntity
     public function getOrders()
     {
         return $this->orders;
-    }
-
-    public function removeOrder(Order $order): Position
-    {
-        $this->orders->removeElement($order);
-
-        return $this;
     }
 
     /**
@@ -154,21 +145,81 @@ class Position extends AbstractGuidEntity
     }
 
     /**
-     * @return PositionInterface
+     * @return float
      */
-    public function getPositionInfo(): PositionInterface
+    public function getQuantity(): float
     {
-        return $this->positionInfo;
+        return $this->quantity;
     }
 
     /**
-     * @param PositionInterface $positionInfo
+     * @param float $quantity
      *
      * @return Position
      */
-    public function setPositionInfo(PositionInterface $positionInfo): Position
+    public function setQuantity(float $quantity): Position
     {
-        $this->positionInfo = $positionInfo;
+        $this->quantity = $quantity;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSide(): string
+    {
+        return $this->side;
+    }
+
+    /**
+     * @param string $side
+     *
+     * @return Position
+     */
+    public function setSide(string $side): Position
+    {
+        $this->side = $side;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getType(): string
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param string $type
+     *
+     * @return Position
+     */
+    public function setType(string $type): Position
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStatus(): string
+    {
+        return $this->status;
+    }
+
+    /**
+     * @param string $status
+     *
+     * @return Position
+     */
+    public function setStatus(string $status): Position
+    {
+        $this->status = $status;
 
         return $this;
     }
@@ -194,26 +245,6 @@ class Position extends AbstractGuidEntity
     }
 
     /**
-     * @return string
-     */
-    public function getSymbol(): string
-    {
-        return $this->symbol;
-    }
-
-    /**
-     * @param string $symbol
-     *
-     * @return Position
-     */
-    public function setSymbol(string $symbol): Position
-    {
-        $this->symbol = $symbol;
-
-        return $this;
-    }
-
-    /**
      * @return Ticker|null
      */
     public function getTicker(): ?Ticker
@@ -222,33 +253,13 @@ class Position extends AbstractGuidEntity
     }
 
     /**
-     * @param Ticker|null $ticker
+     * @param Ticker $ticker
      *
      * @return Position
      */
-    public function setTicker(?Ticker $ticker): Position
+    public function setTicker(Ticker $ticker): Position
     {
         $this->ticker = $ticker;
-
-        return $this;
-    }
-
-    /**
-     * @return Account
-     */
-    public function getAccount(): Account
-    {
-        return $this->account;
-    }
-
-    /**
-     * @param Account $account
-     *
-     * @return Position
-     */
-    public function setAccount(Account $account): Position
-    {
-        $this->account = $account;
 
         return $this;
     }

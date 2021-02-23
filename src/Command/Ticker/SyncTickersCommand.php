@@ -12,13 +12,14 @@ use ApiPlatform\Core\Exception\ItemNotFoundException;
 use App\Command\AbstractCommand;
 use App\Constants\Transport\JobConstants;
 use App\DataPersister\SyncTickersDataPersister;
+use App\DTO\Brokerage\YahooFinance\TickerRequest;
 use App\DTO\SyncTickersRequest;
 use App\Entity\Account;
 use App\Entity\Job;
 use App\Entity\Source;
-use App\Service\Brokerage\PolygonBrokerageService;
 use App\Service\DefaultTypeService;
 use App\Service\JobService;
+use App\Service\Ticker\TickerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -43,37 +44,37 @@ class SyncTickersCommand extends AbstractCommand implements LoggerAwareInterface
     /**
      * @var DefaultTypeService
      */
-    private $defaultTypeService;
+    private DefaultTypeService $defaultTypeService;
 
     /**
      * @var EntityManagerInterface
      */
-    private $entityManager;
+    private EntityManagerInterface $entityManager;
 
     /**
      * @var MessageBusInterface
      */
-    private $messageBus;
+    private MessageBusInterface $messageBus;
 
     /**
      * @var JobService
      */
-    private $jobService;
+    private JobService $jobService;
 
     /**
-     * @var PolygonBrokerageService
+     * @var TickerService
      */
-    private $polygonService;
+    private TickerService $tickerService;
 
     /**
      * SyncTickersCommand constructor.
      *
-     * @param DefaultTypeService      $defaultTypeService
-     * @param EntityManagerInterface  $entityManager
-     * @param JobService              $jobService
-     * @param LoggerInterface         $logger
-     * @param MessageBusInterface     $messageBus
-     * @param PolygonBrokerageService $polygonService
+     * @param DefaultTypeService     $defaultTypeService
+     * @param EntityManagerInterface $entityManager
+     * @param JobService             $jobService
+     * @param LoggerInterface        $logger
+     * @param MessageBusInterface    $messageBus
+     * @param TickerService          $tickerService
      */
     public function __construct(
         DefaultTypeService $defaultTypeService,
@@ -81,7 +82,7 @@ class SyncTickersCommand extends AbstractCommand implements LoggerAwareInterface
         JobService $jobService,
         LoggerInterface $logger,
         MessageBusInterface $messageBus,
-        PolygonBrokerageService $polygonService
+        TickerService $tickerService
     ) {
         parent::__construct(self::NAME);
         $this->defaultTypeService = $defaultTypeService;
@@ -89,7 +90,7 @@ class SyncTickersCommand extends AbstractCommand implements LoggerAwareInterface
         $this->jobService = $jobService;
         $this->logger = $logger;
         $this->messageBus = $messageBus;
-        $this->polygonService = $polygonService;
+        $this->tickerService = $tickerService;
     }
 
     protected function configure()
@@ -149,6 +150,8 @@ class SyncTickersCommand extends AbstractCommand implements LoggerAwareInterface
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         try {
+            $request = (new TickerRequest())->setLimit(1000)->setCount(1000);
+            $this->tickerService->fetchTickers($request);
             $job = $this->getJob($input->getOption('job_id'));
             $source = $this->getSource($input->getOption('source_id'));
             $account = $this->getAccount($input->getOption('account_id'));

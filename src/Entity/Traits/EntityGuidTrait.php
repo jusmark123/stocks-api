@@ -8,8 +8,10 @@ declare(strict_types=1);
 
 namespace App\Entity\Traits;
 
-use App\Entity\Interfaces\EntityGuidInterface;
 use Doctrine\ORM\Mapping as ORM;
+use Exception;
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 
 /**
  * Traits EntityGuidTrait.
@@ -17,36 +19,36 @@ use Doctrine\ORM\Mapping as ORM;
 trait EntityGuidTrait
 {
     /**
-     * @var \Ramsey\Uuid\Uuid
+     * @var UuidInterface
      *
      * @ORM\Column(name="guid", type="uuid", nullable=false)
      */
-    protected $guid;
+    protected UuidInterface $guid;
 
     /**
      * GuidAwareTrait constructor.
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function __construct()
     {
-        $this->setGuid(\Ramsey\Uuid\Uuid::uuid4());
+        $this->setGuid(Uuid::uuid4());
     }
 
     /**
-     * @return \Ramsey\Uuid\Uuid
+     * @return Uuid
      */
-    public function getGuid(): \Ramsey\Uuid\UuidInterface
+    public function getGuid(): UuidInterface
     {
         return $this->guid;
     }
 
     /**
-     * @param \Ramsey\Uuid\Uuid $guid
+     * @param UuidInterface $guid
      *
-     * @return EntityGuidInterface
+     * @return self
      */
-    public function setGuid(\Ramsey\Uuid\UuidInterface $guid): EntityGuidInterface
+    public function setGuid(UuidInterface $guid): self
     {
         $this->guid = $guid;
 

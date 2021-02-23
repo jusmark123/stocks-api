@@ -12,7 +12,7 @@ final class AlpacaConstants
 {
     // Api Version
     const API_VERSION = '/v2';
-    const ≈ = 'https://api.alpaca.markets';
+    const API_ENDPOINT = 'https://api.alpaca.markets';
     const PAPER_API_ENDPOINT = 'https://paper-api.alpaca.markets';
 
     // Api Endpoints
@@ -24,7 +24,7 @@ final class AlpacaConstants
 
     const ORDER_HISTORY_DEFAULT_PAGE_LIMIT = 500;
     // AlpacaAccountInfoEntity Class
-    const ACCOUNT_INFO_ENTITY_CLASS = 'App\DTO\Brokerage\Alpaca\AccountInfo';
+    const ACCOUNT_INFO_ENTITY_CLASS = 'App\DTO\Brokerage\Alpaca\Account';
     const ACCOUNT_CONFIGURATION_ENTITY_CLASS = 'App\DTO\Brokerage\Alpaca\AccountConfiguration';
 
     // AlpacaOrderInfoEntity Class
@@ -50,7 +50,7 @@ final class AlpacaConstants
     const ORDER_INFO_SERIALIZATION_CONFIG = '/opt/app-root/src/config/serialization/alpaca_order_info.yml';
     const ORDER_INFO_UNIQUE_KEY = 'client_order_id';
     const ORDER_POSITION_INFO_SERIALIZATION_CONFIG = '/opt/app-root/src/config/serialization/alpaca_position_info.yml';
-    const TICKER_INFO_ENTITY_CLASS = 'App\DTO\Brokerage\Alpaca\TickerInfo';
+    const TICKER_INFO_ENTITY_CLASS = 'App\DTO\Brokerage\Alpaca\Ticker';
 
     // Filter Enums
     const ORDERS_STATUS_ENUM = ['open', 'closed', 'all'];

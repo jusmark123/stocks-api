@@ -26,6 +26,10 @@ App\Entity\Source:
         - source.get
         - source.post
         - source.put
+    positionSources:
+      groups:
+        - source.get
+        - source.put
     createdAt:
       groups:
         - source.get

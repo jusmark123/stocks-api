@@ -8,7 +8,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Entity\Factory;
 
-use App\DTO\Brokerage\Alpaca\Order\OrderInfo;
 use App\Entity\Factory\AccountFactory;
 use App\Entity\Factory\OrderStatusTypeFactory;
 use App\Entity\Factory\OrderTypeFactory;
@@ -63,7 +62,7 @@ class OrderTest extends TestCase
         $this->assertSame($this->entity, $this->entity->setAccount($account));
         $this->assertEquals($account, $this->entity->getAccount());
 
-        $orderInfo = new OrderInfo();
+        $orderInfo = new Order();
         $this->assertSame($this->entity, $this->entity->setOrderInfo($orderInfo));
         $this->assertEquals($orderInfo, $this->entity->getOrderInfo());
 

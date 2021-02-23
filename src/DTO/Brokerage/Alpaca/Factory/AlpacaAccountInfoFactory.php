@@ -8,16 +8,16 @@ declare(strict_types=1);
 
 namespace App\DTO\Brokerage\Alpaca\Factory;
 
-use App\DTO\Brokerage\Alpaca\AccountInfo;
+use App\DTO\Brokerage\Alpaca\Account;
 use App\Entity\Factory\AbstractFactory;
 
 class AlpacaAccountInfoFactory extends AbstractFactory
 {
     /**
-     * @return AccountInfo
+     * @return Account
      */
-    public static function create(): AccountInfo
+    public static function create(): Account
     {
-        return new AccountInfo();
+        return new Account();
     }
 }

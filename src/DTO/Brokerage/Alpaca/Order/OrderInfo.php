@@ -8,172 +8,168 @@ declare(strict_types=1);
 
 namespace App\DTO\Brokerage\Alpaca\Order;
 
-use App\DTO\Brokerage\OrderInfoInterface;
+use App\DTO\Brokerage\BrokerageOrderInterface;
 use App\Entity\Account;
 use App\Entity\Order;
 use App\Entity\Source;
 use App\Entity\Traits\CreatedAtTrait;
-use App\Entity\Traits\CreatedByTrait;
 use App\Entity\Traits\ModifiedAtTrait;
-use App\Entity\Traits\ModifiedByTrait;
 use App\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 
-class OrderInfo implements OrderInfoInterface
+class OrderInfo implements BrokerageOrderInterface
 {
     use CreatedAtTrait;
-    use CreatedByTrait;
     use ModifiedAtTrait;
-    use ModifiedByTrait;
 
     /**
      * @var Account
      */
-    private $account;
+    private Account $account;
 
     /**
      * @var Order|null
      */
-    private $order;
+    private ?Order $order;
 
     /**
      * @var User|null
      */
-    private $user;
+    private ?User $user;
 
     /**
      * @var Source
      */
-    private $source;
+    private Source $source;
 
     /**
      * @var string
      */
-    private $id;
+    private string $id;
 
     /**
      * @var string
      */
-    private $clientOrderId;
+    private string $clientOrderId;
 
     /**
      * @var \DateTime|null
      */
-    private $updatedAt;
+    private ?\DateTime $updatedAt;
 
     /**
      * @var \DateTime|null
      */
-    private $submittedAt;
+    private ?\DateTime $submittedAt;
 
     /**
      * @var \DateTime|null
      */
-    private $filledAt;
+    private ?\DateTime $filledAt;
 
     /**
      * @var \DateTime|null
      */
-    private $expiredAt;
+    private ?\DateTime $expiredAt;
 
     /**
      * @var \DateTime|null
      */
-    private $cancelledAt;
+    private ?\DateTime $cancelledAt;
 
     /**
      * @var \DateTime|null
      */
-    private $failedAt;
+    private ?\DateTime $failedAt;
 
     /**
      * @var \DateTime|null
      */
-    private $replacedAt;
+    private ?\DateTime $replacedAt;
 
     /**
      * The order that this order was replaced by.
      *
      * @var OrderInfo|null
      */
-    private $replacedBy;
+    private ?OrderInfo $replacedBy;
 
     /**
      * The order that this order replaces.
      *
      * @var OrderInfo|null
      */
-    private $replaces;
+    private ?OrderInfo $replaces;
 
     /**
      * @var string
      */
-    private $assetId;
+    private string $assetId;
 
     /**
      * @var string
      */
-    private $symbol;
+    private string $symbol;
 
     /**
      * @var string
      */
-    private $assetClass;
+    private string $assetClass;
 
     /**
      * @var int
      */
-    private $qty;
+    private int $qty;
 
     /**
      * @var int
      */
-    private $filledQty;
+    private int $filledQty;
 
     /**
      * @var string
      */
-    private $type;
+    private string $type;
 
     /**
      * @var string
      */
-    private $side;
+    private string $side;
 
     /**
      * @var string
      */
-    private $timeInForce;
+    private string $timeInForce;
 
     /**
      * @var float|null
      */
-    private $limitPrice;
+    private ?float $limitPrice;
 
     /**
      * @var float|null
      */
-    private $stopPrice;
+    private ?float $stopPrice;
 
     /**
      * @var float|null
      */
-    private $filledAvgPrice;
+    private ?float $filledAvgPrice;
 
     /**
      * @var string
      */
-    private $status;
+    private string $status;
 
     /**
      * If true, eligible for execution outside regular trading hours.
      *
      * @var bool
      */
-    private $extendedHours;
+    private bool $extendedHours;
 
     /**
-     * When querying non-simple order_class orders in a nested style, an array of Order entities associated with this order. Otherwise, null.
+     * When querying non-simple order_class orders in a nested style, an array of OrderInfo entities associated with this order. Otherwise, null.
      *
      * @var ArrayCollection|OrderInfo[]
      */
@@ -184,21 +180,21 @@ class OrderInfo implements OrderInfoInterface
      *
      * @var float|null
      */
-    private $trailPrice;
+    private ?float $trailPrice;
 
     /**
      * The percent value away from the high water mark for trailing stop orders.
      *
      * @var float|null
      */
-    private $trailPercent;
+    private ?float $trailPercent;
 
     /**
      * The highest (lowest) market price seen since the trailing stop order was submitted.
      *
      * @var float|null
      */
-    private $hwm;
+    private ?float $hwm;
 
     /**
      * OrderInfo Constructor.
@@ -219,33 +215,25 @@ class OrderInfo implements OrderInfoInterface
     /**
      * @param Account $account
      *
-     * @return $this|OrderInfoInterface
+     * @return $this|BrokerageOrderInterface
      */
-    public function setAccount(Account $account): OrderInfoInterface
+    public function setAccount(Account $account): BrokerageOrderInterface
     {
         $this->account = $account;
 
         return $this;
     }
 
-    /**
-     * @return Order
-     */
-    public function getOrder(): Order
+    public function getOrder(): ?Order
     {
         return $this->order;
     }
 
-    /**
-     * @param Order $order
-     *
-     * @return $this|OrderInfoInterface
-     */
-    public function setOrder(Order $order): OrderInfoInterface
+    public function setOrder(Order $order): BrokerageOrderInterface
     {
         $this->order = $order;
 
-        return $this;
+        return $order;
     }
 
     /**
@@ -261,7 +249,7 @@ class OrderInfo implements OrderInfoInterface
      *
      * @return OrderInfo
      */
-    public function setSource(Source $source): OrderInfoInterface
+    public function setSource(Source $source): BrokerageOrderInterface
     {
         $this->source = $source;
 

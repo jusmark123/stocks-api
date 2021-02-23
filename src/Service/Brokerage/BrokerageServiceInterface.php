@@ -8,9 +8,9 @@ declare(strict_types=1);
 
 namespace App\Service\Brokerage;
 
-use App\DTO\Brokerage\AccountInfoInterface;
-use App\DTO\Brokerage\OrderInfoInterface;
-use App\DTO\Brokerage\TickerInterface;
+use App\DTO\Brokerage\BrokerageAccountInterface;
+use App\DTO\Brokerage\BrokerageOrderInterface;
+use App\DTO\Brokerage\BrokerageTickerInterface;
 use App\DTO\SyncOrdersRequest;
 use App\DTO\SyncTickersRequest;
 use App\Entity\Account;
@@ -35,9 +35,9 @@ interface BrokerageServiceInterface
     /**
      * @param Account $account
      *
-     * @return AccountInfoInterface|null
+     * @return BrokerageAccountInterface|null
      */
-    public function getAccountInfo(Account $account): ?AccountInfoInterface;
+    public function getAccountInfo(Account $account): ?BrokerageAccountInterface;
 
     /**
      * @param Account $account
@@ -47,19 +47,19 @@ interface BrokerageServiceInterface
     public function getPositions(Account $account): ?array;
 
     /**
-     * @param OrderInfoInterface $orderInfo
-     * @param Job                $job
+     * @param BrokerageOrderInterface $orderInfo
+     * @param Job                     $job
      *
      * @return Order
      */
-    public function createOrderFromOrderInfo(OrderInfoInterface $orderInfo, Job $job): ?Order;
+    public function createOrderFromOrderInfo(BrokerageOrderInterface $orderInfo, Job $job): ?Order;
 
     /**
      * @param array $message
      *
-     * @return OrderInfoInterface|null
+     * @return BrokerageOrderInterface|null
      */
-    public function createOrderInfoFromMessage(array $message): ?OrderInfoInterface;
+    public function createOrderInfoFromMessage(array $message): ?BrokerageOrderInterface;
 
     /**
      * @param SyncOrdersRequest   $request
@@ -82,17 +82,17 @@ interface BrokerageServiceInterface
     /**
      * @param array $message
      *
-     * @return TickerInterface|null
+     * @return BrokerageTickerInterface|null
      */
-    public function createTickerInfoFromMessage(array $message): ?TickerInterface;
+    public function createTickerInfoFromMessage(array $message): ?BrokerageTickerInterface;
 
     /**
-     * @param TickerInterface $tickerInfo
-     * @param Job             $job
+     * @param BrokerageTickerInterface $tickerInfo
+     * @param Job                      $job
      *
      * @return Ticker|null
      */
-    public function createTickerFromTickerInfo(TickerInterface $tickerInfo, Job $job): ?Ticker;
+    public function createTickerFromTickerInfo(BrokerageTickerInterface $tickerInfo, Job $job): ?Ticker;
 
     /**
      * @return string

@@ -1,17 +1,20 @@
 <?php
 
+/*
+ * Stocks Api
+ */
+
+declare(strict_types=1);
 
 namespace App\Tests\Unit\Entity;
-
 
 use App\Entity\Factory\AccountFactory;
 use App\Entity\Factory\OrderFactory;
 use App\Entity\Factory\SourceFactory;
 use App\Entity\Factory\TickerFactory;
 use App\Entity\Position;
-use Doctrine\Common\Collections\ArrayCollection;
-use PHPUnit\Framework\TestCase;
 use Phake;
+use PHPUnit\Framework\TestCase;
 
 class PositionTest extends TestCase
 {

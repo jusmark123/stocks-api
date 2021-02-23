@@ -64,6 +64,7 @@ parameters:
 
 imports:
     - resource: 'api_filters/*.yml'
+    - { resource: 'brokerage.yaml', ignore_errors: true }
 
 services:
     # default configuration for services in *this* file
@@ -87,6 +88,8 @@ services:
     _instanceof:
         App\Service\Brokerage\BrokerageServiceInterface:
             tags: [ 'stocks_api.brokerage_services_provider' ]
+        App\Service\Ticker\TickerServiceInterface:
+            tags: [ 'stocks_api.ticker_service_provider' ]
 
     ####### Filters ###########
 
@@ -189,6 +192,11 @@ services:
             $urlPrefix: '%url_path_prefix%'
             $region: '%env(AWS_REGION)%'
             $systemIp: '%env(SYSTEM_HOST)%'
+
+    App\Service\Ticker\TickerServiceProvider:
+        autowire: true
+        arguments:
+            $tickerServices: !tagged stocks_api.ticker_service_provider
 
     ###### Paginator Factory ##########
 

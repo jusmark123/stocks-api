@@ -52,6 +52,13 @@ class CustomExportCustomField
      */
     private $orSearchPreFilter;
 
+    /**
+     * CustomExportCustomField constructor.
+     *
+     * @param array $attributes
+     *
+     * @throws AnnotationException
+     */
     public function __construct(array $attributes)
     {
         foreach (self::REQUIRED_ATTRIBUTES as $required) {

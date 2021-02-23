@@ -56,13 +56,14 @@ class Screener extends AbstractGuidEntity
     private $config;
 
     /**
-     * @var Source
-     * @ORM\ManyToOne(targetEntity="Source", fetch="LAZY")
-     * @ORM\JoinColumns({
-     *      @ORM\JoinColumn(name="source_id", referencedColumnName="id", nullable=false)
-     * })
+     * Screener constructor.
+     *
+     * @throws \Exception
      */
-    private $source;
+    public function __construct()
+    {
+        parent::__construct();
+    }
 
     /**
      * @return string
@@ -140,26 +141,6 @@ class Screener extends AbstractGuidEntity
     public function setConfig($config)
     {
         $this->config = $config;
-
-        return $this;
-    }
-
-    /**
-     * @return Source
-     */
-    public function getSource(): Source
-    {
-        return $this->source;
-    }
-
-    /**
-     * @param Source $source
-     *
-     * @return Screener
-     */
-    public function setSource(Source $source): Screener
-    {
-        $this->source = $source;
 
         return $this;
     }

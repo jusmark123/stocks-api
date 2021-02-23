@@ -10,9 +10,10 @@ namespace App\Service\Brokerage;
 
 use App\Client\BrokerageClient;
 use App\Constants\Brokerage\AlpacaConstants;
-use App\DTO\Brokerage\AccountInfoInterface;
-use App\DTO\Brokerage\OrderInfoInterface;
-use App\DTO\Brokerage\TickerInterface;
+use App\DTO\Brokerage\BrokerageAccountHistoryRequestInterface;
+use App\DTO\Brokerage\BrokerageAccountInterface;
+use App\DTO\Brokerage\BrokerageOrderInterface;
+use App\DTO\Brokerage\BrokerageTickerInterface;
 use App\DTO\SyncOrdersRequest;
 use App\DTO\SyncTickersRequest;
 use App\Entity\Account;
@@ -20,10 +21,10 @@ use App\Entity\Factory\OrderFactory;
 use App\Entity\Factory\PositionFactory;
 use App\Entity\Job;
 use App\Entity\Order;
-use App\Entity\OrderStatusType;
 use App\Entity\OrderType;
 use App\Entity\Position;
 use App\Entity\Ticker;
+use App\Exception\InvalidAccountConfiguration;
 use App\Helper\SerializerHelper;
 use App\Helper\ValidationHelper;
 use App\Message\Factory\SyncOrderHistoryMessageFactory;
@@ -50,17 +51,17 @@ class AlpacaBrokerageService extends AbstractBrokerageService
     /**
      * @var BrokerageClient
      */
-    private $brokerageClient;
+    private BrokerageClient $brokerageClient;
 
     /**
      * @var DefaultTypeService
      */
-    private $defaultTypeService;
+    private DefaultTypeService $defaultTypeService;
 
     /**
      * @var PolygonBrokerageService
      */
-    private $polygonService;
+    private PolygonBrokerageService $polygonService;
 
     /**
      * AlpacaBrokerageService constructor.
@@ -91,18 +92,13 @@ class AlpacaBrokerageService extends AbstractBrokerageService
     }
 
     /**
-     * @param OrderInfoInterface $orderInfo
-     * @param Job                $job
+     * @param BrokerageOrderInterface $orderInfo
+     * @param Job                     $job
      *
      * @return Order
      */
-    public function createOrderFromOrderInfo(OrderInfoInterface $orderInfo, Job $job): Order
+    public function createOrderFromOrderInfo(BrokerageOrderInterface $orderInfo, Job $job): Order
     {
-        /** @var OrderStatusType $orderStatusType */
-        $orderStatusType = $this->entityManager
-            ->getRepository(OrderStatusType::class)
-            ->findOneBy(['name' => $orderInfo->getStatus()]);
-
         /** @var OrderType $orderType */
         $orderType = $this->entityManager
             ->getRepository(OrderType::class)
@@ -122,7 +118,6 @@ class AlpacaBrokerageService extends AbstractBrokerageService
             ->setFilledQty($orderInfo->getFilledQty())
             ->setModifiedAt($orderInfo->getUpdatedAt())
             ->setModifiedBy($orderInfo->getUser()->getUsername())
-            ->setOrderStatusType($orderStatusType)
             ->setOrderType($orderType)
             ->setPosition($position)
             ->setSide($orderInfo->getSide())
@@ -138,9 +133,9 @@ class AlpacaBrokerageService extends AbstractBrokerageService
     /**
      * @param array $message
      *
-     * @return OrderInfoInterface|null
+     * @return BrokerageOrderInterface|null
      */
-    public function createOrderInfoFromMessage(array $message): ?OrderInfoInterface
+    public function createOrderInfoFromMessage(array $message): ?BrokerageOrderInterface
     {
         $classMetaDataFactory = new ClassMetadataFactory(
             new YamlFileLoader(AlpacaConstants::ORDER_INFO_SERIALIZATION_CONFIG)
@@ -158,14 +153,14 @@ class AlpacaBrokerageService extends AbstractBrokerageService
     }
 
     /**
-     * @param OrderInfoInterface $orderInfo
-     * @param Account            $account
+     * @param BrokerageOrderInterface $orderInfo
+     * @param Account                 $account
      *
-     * @throws ClientExceptionInterface
+     *@throws ClientExceptionInterface
      *
      * @return Position|null
      */
-    public function createPositionFromPositionHistory(OrderInfoInterface $orderInfo, Account $account): ?Position
+    public function createPositionFromPositionHistory(BrokerageOrderInterface $orderInfo, Account $account): ?Position
     {
         $request = $this->brokerageClient->createRequest(
             $this->getUri('positions/'.$orderInfo->getSymbol()),
@@ -196,12 +191,12 @@ class AlpacaBrokerageService extends AbstractBrokerageService
     }
 
     /**
-     * @param TickerInterface $tickerInfo
-     * @param Job             $job
+     * @param BrokerageTickerInterface $tickerInfo
+     * @param Job                      $job
      *
      * @return Ticker
      */
-    public function createTickerFromTickerInfo(TickerInterface $tickerInfo, Job $job): Ticker
+    public function createTickerFromTickerInfo(BrokerageTickerInterface $tickerInfo, Job $job): Ticker
     {
         return $this->polygonService->createTickerFromTickerInfo($tickerInfo, $job);
     }
@@ -209,9 +204,9 @@ class AlpacaBrokerageService extends AbstractBrokerageService
     /**
      * @param array $message
      *
-     * @return TickerInterface|null
+     * @return BrokerageTickerInterface|null
      */
-    public function createTickerInfoFromMessage(array $message): ?TickerInterface
+    public function createTickerInfoFromMessage(array $message): ?BrokerageTickerInterface
     {
         return $this->polygonService->createTickerInfoFromMessage($message);
     }
@@ -219,15 +214,23 @@ class AlpacaBrokerageService extends AbstractBrokerageService
     /**
      * @param string $symbol
      *
-     * @return TickerInterface|null
+     * @return BrokerageTickerInterface|null
      *
      * @deprecated
      */
-    public function fetchTicker(string $symbol): ?TickerInterface
+    public function fetchTicker(string $symbol): ?BrokerageTickerInterface
     {
         return $this->polygonService->fetchTicker($symbol);
     }
 
+    /**
+     * @param Account $account
+     *
+     * @throws ClientExceptionInterface
+     * @throws InvalidAccountConfiguration
+     *
+     * @return array|null
+     */
     public function getPositions(Account $account): ?array
     {
         $positions = [];
@@ -276,11 +279,11 @@ class AlpacaBrokerageService extends AbstractBrokerageService
     /**
      * @param Account $account
      *
-     * @throws ClientExceptionInterface
+     *@throws ClientExceptionInterface
      *
-     * @return AccountInfoInterface|null
+     * @return BrokerageAccountInterface|null
      */
-    public function getAccountInfo(Account $account): ?AccountInfoInterface
+    public function getAccountInfo(Account $account): ?BrokerageAccountInterface
     {
         $request = $this->brokerageClient->createRequest(
             $this->getUri(AlpacaConstants::ACCOUNT_ENDPOINT, $account),
@@ -301,6 +304,14 @@ class AlpacaBrokerageService extends AbstractBrokerageService
         );
     }
 
+    /**
+     * @param Account $account
+     *
+     * @throws ClientExceptionInterface
+     * @throws InvalidAccountConfiguration
+     *
+     * @return mixed
+     */
     public function getAccountConfiguration(Account $account)
     {
         $request = $this->brokerageClient->createRequest(
@@ -322,8 +333,32 @@ class AlpacaBrokerageService extends AbstractBrokerageService
         );
     }
 
-    public function getAccountHistory()
+    /**
+     * @param BrokerageAccountHistoryRequestInterface $request
+     *
+     * @throws ClientExceptionInterface
+     * @throws InvalidAccountConfiguration
+     *
+     * @return mixed
+     */
+    public function getAccountHistory(BrokerageAccountHistoryRequestInterface $request)
     {
+        $account = $request->getAccount();
+        $params = $request->getFilters();
+        $limit = $request->getLimit();
+
+        $uri = $this->getUri(AlpacaConstants::ORDERS_ENDPOINT, $account);
+        $uri .= empty($params) ? '' : '?'.http_build_query($params);
+
+        $request = $this->brokerageClient->createRequest('GET', $uri, $this->getRequestHeaders($account));
+        $response = $this->brokerageClient->sendRequest($request);
+        $accountHistory = json_decode((string) $response->getBody(), true);
+
+        if (json_last_error()) {
+            throw new \Exception(json_last_error_msg());
+        }
+
+        return $accountHistory;
     }
 
     /**
@@ -332,6 +367,7 @@ class AlpacaBrokerageService extends AbstractBrokerageService
      * @param Job                 $job
      *
      * @throws ClientExceptionInterface
+     * @throws InvalidAccountConfiguration
      *
      * @return Job|null
      */
@@ -450,7 +486,7 @@ class AlpacaBrokerageService extends AbstractBrokerageService
     }
 
     /**
-     * @param Account|null $account |null
+     * @throws ClientExceptionInterface
      */
     public function syncTickerTypes()
     {

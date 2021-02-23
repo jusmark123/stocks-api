@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\DTO\Brokerage\BrokerageOrderStatus;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
@@ -35,42 +36,42 @@ class Brokerage extends AbstractGuidEntity
      *
      * @ORM\Column(name="api_document_url", length=255, nullable=true)
      */
-    private $apiDocumentUrl;
+    private ?string $apiDocumentUrl;
 
     /**
      * @var string
      *
      * @ORM\Column(name="context", type="string", length=100, nullable=false)
      */
-    private $context;
+    private string $context;
 
     /**
      * @var string|null
      *
      * @ORM\Column(name="description", type="text", length=65535, nullable=true)
      */
-    private $description;
+    private ?string $description;
 
     /**
      * @var string|null
      *
      * @ORM\Column(name="name", type="string", length=100, nullable=false)
      */
-    private $name;
+    private ?string $name;
 
     /**
      * @var bool
      *
      * @ORM\Column(name="has_paper_accounts", type="boolean", nullable=false, options={"default"=false})
      */
-    private $paperAccounts;
+    private bool $paperAccounts;
 
     /**
      * @var string
      *
      * @ORM\Column(name="url", type="string", length=255, nullable=false)
      */
-    private $url;
+    private string $url;
 
     // Subresources
 
@@ -82,18 +83,9 @@ class Brokerage extends AbstractGuidEntity
     private $accounts;
 
     /**
-     * @var ArrayCollection|Order[]|PersistentCollection
-     *
-     * @ORM\OneToMany(targetEntity="Order", mappedBy="brokerage", fetch="LAZY")
+     * @var BrokerageOrderStatus[]
      */
-    private $orders;
-
-    /**
-     * @var ArrayCollection|OrderStatusType[]|PersistentCollection
-     *
-     * @ORM\OneToMany(targetEntity="OrderStatusType", mappedBy="brokerage", fetch="LAZY")
-     */
-    private $orderStatusTypes;
+    private array $orderStatuses;
 
     /**
      * @var ArrayCollection|OrderType[]|PersistentCollection
@@ -118,11 +110,8 @@ class Brokerage extends AbstractGuidEntity
     {
         parent::__construct();
         $this->accounts = new ArrayCollection();
-        $this->orders = new ArrayCollection();
         $this->tickers = new ArrayCollection();
         $this->orderTypes = new ArrayCollection();
-        $this->orderStatusTypes = new ArrayCollection();
-        $this->positionSideTypes = new ArrayCollection();
     }
 
     /**
@@ -274,41 +263,21 @@ class Brokerage extends AbstractGuidEntity
     }
 
     /**
-     * @return Order[]|ArrayCollection|PersistentCollection
+     * @return BrokerageOrderStatus[]
      */
-    public function getOrders()
+    public function getOrderStatuses(): array
     {
-        return $this->orders;
+        return $this->orderStatuses;
     }
 
     /**
-     * @param Order[]|ArrayCollection|PersistentCollection $orders
+     * @param BrokerageOrderStatus[] $orderStatuses
      *
      * @return Brokerage
      */
-    public function setOrders($orders)
+    public function setOrderStatuses(array $orderStatuses): Brokerage
     {
-        $this->orders = $orders;
-
-        return $this;
-    }
-
-    /**
-     * @return OrderStatusType[]|ArrayCollection|PersistentCollection
-     */
-    public function getOrderStatusTypes()
-    {
-        return $this->orderStatusTypes;
-    }
-
-    /**
-     * @param OrderStatusType[]|ArrayCollection|PersistentCollection $orderStatusTypes
-     *
-     * @return Brokerage
-     */
-    public function setOrderStatusTypes($orderStatusTypes)
-    {
-        $this->orderStatusTypes = $orderStatusTypes;
+        $this->orderStatuses = $orderStatuses;
 
         return $this;
     }

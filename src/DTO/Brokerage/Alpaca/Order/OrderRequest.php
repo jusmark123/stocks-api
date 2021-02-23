@@ -8,13 +8,13 @@ declare(strict_types=1);
 
 namespace App\DTO\Brokerage\Alpaca\Order;
 
-use App\DTO\Brokerage\OrderRequestInterface;
+use App\DTO\Brokerage\BrokerageOrderRequestInterface;
 use App\Entity\Order;
 
-class OrderRequest implements OrderRequestInterface
+class OrderRequest implements BrokerageOrderRequestInterface
 {
     /**
-     * @var Order
+     * @var OrderInfo
      */
     private $order;
 
@@ -89,7 +89,7 @@ class OrderRequest implements OrderRequestInterface
     private $stopLoss;
 
     /**
-     * @return Order
+     * @return OrderInfo
      */
     public function getOrder(): Order
     {
@@ -97,7 +97,7 @@ class OrderRequest implements OrderRequestInterface
     }
 
     /**
-     * @param Order $order
+     * @param OrderInfo $order
      *
      * @return OrderRequest
      */

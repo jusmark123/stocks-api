@@ -9,9 +9,9 @@ declare(strict_types=1);
 namespace App\Service\Brokerage;
 
 use App\Constants\Brokerage\PolygonContstants;
-use App\DTO\Brokerage\AccountInfoInterface;
-use App\DTO\Brokerage\OrderInfoInterface;
-use App\DTO\Brokerage\TickerInterface;
+use App\DTO\Brokerage\BrokerageAccountInterface;
+use App\DTO\Brokerage\BrokerageOrderInterface;
+use App\DTO\Brokerage\BrokerageTickerInterface;
 use App\DTO\SyncOrdersRequest;
 use App\DTO\SyncTickersRequest;
 use App\Entity\Account;
@@ -36,30 +36,32 @@ abstract class AbstractBrokerageService implements BrokerageServiceInterface, Lo
 {
     use LoggerAwareTrait;
 
+    protected const BROKERAGE_CONSTANTS = '';
+
     /**
      * @var Client
      */
-    protected $cache;
+    protected Client $cache;
 
     /**
      * @var Account
      */
-    protected $defaultAccount;
+    protected Account $defaultAccount;
 
     /**
      * @var JobService
      */
-    protected $jobService;
+    protected JobService $jobService;
 
     /**
      * @var ValidationHelper
      */
-    protected $validator;
+    protected ValidationHelper $validator;
 
     /**
      * @var EntityManagerInterface
      */
-    protected $entityManager;
+    protected EntityManagerInterface $entityManager;
 
     /**
      * AbstractBrokerageService constructor.
@@ -123,9 +125,9 @@ abstract class AbstractBrokerageService implements BrokerageServiceInterface, Lo
         }
 
         if ($account->isPaperAccount()) {
-            $uri = $this->getConstantsClass()::PAPER_API_ENDPOINT;
+            $uri = $this->getConstantsClass()::PAPER_API_ENDPOINT.$uri;
         } else {
-            $uri = $this->getConstantsClass()::API_ENDPOINT;
+            $uri = $this->getConstantsClass()::API_ENDPOINT.$uri;
         }
 
         if (null !== $params) {
@@ -149,9 +151,9 @@ abstract class AbstractBrokerageService implements BrokerageServiceInterface, Lo
     /**
      * @param Account $account
      *
-     * @return AccountInfoInterface|null
+     * @return BrokerageAccountInterface|null
      */
-    public function getAccountInfo(Account $account): ?AccountInfoInterface
+    public function getAccountInfo(Account $account): ?BrokerageAccountInterface
     {
         // TODO: Implement getAccountInfo() method.
     }
@@ -167,12 +169,12 @@ abstract class AbstractBrokerageService implements BrokerageServiceInterface, Lo
     }
 
     /**
-     * @param OrderInfoInterface $orderInfo
-     * @param Job                $job
+     * @param BrokerageOrderInterface $orderInfo
+     * @param Job                     $job
      *
      * @return Order|null
      */
-    public function createOrderFromOrderInfo(OrderInfoInterface $orderInfo, Job $job): ?Order
+    public function createOrderFromOrderInfo(BrokerageOrderInterface $orderInfo, Job $job): ?Order
     {
         // TODO: Implement createOrderFromOrderInfo() method.
     }
@@ -180,9 +182,9 @@ abstract class AbstractBrokerageService implements BrokerageServiceInterface, Lo
     /**
      * @param array $message
      *
-     * @return OrderInfoInterface|null
+     * @return BrokerageOrderInterface|null
      */
-    public function createOrderInfoFromMessage(array $message): ?OrderInfoInterface
+    public function createOrderInfoFromMessage(array $message): ?BrokerageOrderInterface
     {
         // TODO: Implement createOrderInfoFromMessage() method.
     }
@@ -224,21 +226,29 @@ abstract class AbstractBrokerageService implements BrokerageServiceInterface, Lo
     /**
      * @param array $message
      *
-     * @return TickerInterface|null
+     * @return BrokerageTickerInterface|null
      */
-    public function createTickerInfoFromMessage(array $message): ?TickerInterface
+    public function createTickerInfoFromMessage(array $message): ?BrokerageTickerInterface
     {
         // TODO: Implement createTickerInfoFromMessage() method.
     }
 
     /**
-     * @param TickerInterface $tickerInfo
-     * @param Job             $job
+     * @param BrokerageTickerInterface $tickerInfo
+     * @param Job                      $job
      *
      * @return Ticker|null
      */
-    public function createTickerFromTickerInfo(TickerInterface $tickerInfo, Job $job): ?Ticker
+    public function createTickerFromTickerInfo(BrokerageTickerInterface $tickerInfo, Job $job): ?Ticker
     {
         // TODO: Implement createTickerFromTickerInfo() method.
+    }
+
+    /**
+     * @return string
+     */
+    public function getConstantsClass(): string
+    {
+        return static::BROKERAGE_CONSTANTS;
     }
 }

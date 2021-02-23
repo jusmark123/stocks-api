@@ -8,21 +8,23 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\DTO\Brokerage\OrderInfoInterface;
+use App\DTO\Brokerage\BrokerageOrderInterface;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\PersistentCollection;
 use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
- * class Order.
+ * class OrderInfo.
  *
  * @ORM\Table(
- * 		name="`order`",
- * 		uniqueConstraints={
+ *        name="`order`",
+ *        uniqueConstraints={
  * 			@ORM\UniqueConstraint(name="order_un_guid", columns={"guid"}),
- * 		},
- * 		indexes={
+ *        },
+ *        indexes={
  * 			@ORM\Index(name="order_ix_account_id", columns={"account_id"}),
- * 		}
+ *        }
  * )
  * @ORM\Entity(repositoryClass="App\Entity\Repository\OrderRepository")
  * @ORM\HasLifecycleCallbacks()
@@ -31,32 +33,36 @@ use Gedmo\Mapping\Annotation as Gedmo;
 class Order extends AbstractGuidEntity
 {
     /**
-     * @var OrderInfoInterface
-     */
-    private $orderInfo;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="symbol", type="string", length=10, nullable=false)
-     */
-    private $symbol;
-
-    /**
      * @var Account
      *
      * @ORM\ManyToOne(targetEntity="Account", inversedBy="orders")
      * @ORM\JoinColumn(name="account_id", referencedColumnName="id", nullable=false)
      */
-    private $account;
+    private Account $account;
 
     /**
-     * @var OrderStatusType
+     * @var float
      *
-     * @ORM\ManyToOne(targetEntity="OrderStatusType")
-     * @ORM\JoinColumn(name="order_status_type_id", referencedColumnName="id")
+     * @ORM\Column(name="filled_average_price", type="float", nullable=false, options={"default"=0.00})
      */
-    private $orderStatusType;
+    private float $filledAveragePrice;
+
+    /**
+     * @var BrokerageOrderInterface
+     */
+    private BrokerageOrderInterface $orderInfo;
+
+    /**
+     * @var ArrayCollection|OrderLog[]|PersistentCollection
+     *
+     * @ORM\OneToMany(targetEntity="OrderLog", mappedBy="order", fetch="LAZY", cascade={"persist", "remove"})
+     */
+    private $orderLogs;
+
+    /**
+     * @var BrokerageOrderInterface
+     */
+    private BrokerageOrderInterface $orderStatus;
 
     /**
      * @var OrderType
@@ -64,15 +70,14 @@ class Order extends AbstractGuidEntity
      * @ORM\ManyToOne(targetEntity="OrderType")
      * @ORM\JoinColumn(name="order_type_id", referencedColumnName="id")
      */
-    private $orderType;
+    private OrderType $orderType;
 
     /**
-     * @var Position|null
+     * @var string
      *
-     * @ORM\ManyToOne(targetEntity="Position", inversedBy="orders", fetch="LAZY", cascade={"persist", "remove"})
-     * @ORM\JoinColumn(name="position_id", referencedColumnName="id", nullable=true)
+     * @ORM\Column(name="side", type="enumSideType", length=20, nullable=false)
      */
-    private $position;
+    private string $side;
 
     /**
      * @var Source
@@ -80,76 +85,47 @@ class Order extends AbstractGuidEntity
      * @ORM\ManyToOne(targetEntity="Source", inversedBy="orders", fetch="LAZY", cascade={"remove"})
      * @ORM\JoinColumn(name="source_id", referencedColumnName="id", nullable=false)
      */
-    private $source;
+    private Source $source;
 
     /**
-     * Order constructor.
+     * @var Ticker
+     *
+     * @ORM\ManyToOne(targetEntity="Ticker", inversedBy="orders", fetch="LAZY")
+     * @ORM\JoinColumn(name="ticker_id", referencedColumnName="id", nullable=false)
+     */
+    private Ticker $ticker;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="quantity", type="float", nullable=false, options={"default"=0.00})
+     */
+    private float $quantity;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="quantity_filled", type="float", nullable=false, options={"default"=0.00})
+     */
+    private float $quantityFilled;
+
+    /**
+     * @var Position
+     *
+     * @ORM\ManyToOne(targetEntity="Position", inversedBy="orders", fetch="LAZY")
+     * @ORM\JoinColumn(name="position_id", referencedColumnName="id", nullable=false)
+     */
+    private Position $position;
+
+    /**
+     * OrderInfo constructor.
      *
      * @throws \Exception
      */
     public function __construct()
     {
         parent::__construct();
-    }
-
-    /**
-     * @return OrderInfoInterface
-     */
-    public function getOrderInfo(): OrderInfoInterface
-    {
-        return $this->orderInfo;
-    }
-
-    /**
-     * @param OrderInfoInterface $orderInfo
-     *
-     * @return Order
-     */
-    public function setOrderInfo(OrderInfoInterface $orderInfo): Order
-    {
-        $this->orderInfo = $orderInfo;
-
-        return $this;
-    }
-
-    /**
-     * @return Position|null
-     */
-    public function getPosition(): ?Position
-    {
-        return $this->position;
-    }
-
-    /**
-     * @param Position|null $position
-     *
-     * @return $this
-     */
-    public function setPosition(?Position $position): Order
-    {
-        $this->position = $position;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getSymbol(): string
-    {
-        return $this->symbol;
-    }
-
-    /**
-     * @param string $symbol
-     *
-     * @return Order
-     */
-    public function setSymbol(string $symbol): Order
-    {
-        $this->symbol = $symbol;
-
-        return $this;
+        $this->orderLogs = new ArrayCollection();
     }
 
     /**
@@ -168,6 +144,46 @@ class Order extends AbstractGuidEntity
     public function setAccount(Account $account): Order
     {
         $this->account = $account;
+
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getFilledAveragePrice(): float
+    {
+        return $this->filledAveragePrice;
+    }
+
+    /**
+     * @param float $filledAveragePrice
+     *
+     * @return Order
+     */
+    public function setFilledAveragePrice(float $filledAveragePrice): Order
+    {
+        $this->filledAveragePrice = $filledAveragePrice;
+
+        return $this;
+    }
+
+    /**
+     * @return BrokerageOrderInterface
+     */
+    public function getOrderInfo(): BrokerageOrderInterface
+    {
+        return $this->orderInfo;
+    }
+
+    /**
+     * @param BrokerageOrderInterface $orderInfo
+     *
+     * @return Order
+     */
+    public function setOrderInfo(BrokerageOrderInterface $orderInfo): Order
+    {
+        $this->orderInfo = $orderInfo;
 
         return $this;
     }
@@ -193,6 +209,26 @@ class Order extends AbstractGuidEntity
     }
 
     /**
+     * @return OrderLog[]|ArrayCollection|PersistentCollection
+     */
+    public function getOrderLogs()
+    {
+        return $this->orderLogs;
+    }
+
+    /**
+     * @param OrderLog[]|ArrayCollection|PersistentCollection $orderLogs
+     *
+     * @return Order
+     */
+    public function setOrderLogs($orderLogs): Order
+    {
+        $this->orderLogs = $orderLogs;
+
+        return $this;
+    }
+
+    /**
      * @return OrderType
      */
     public function getOrderType(): OrderType
@@ -213,21 +249,101 @@ class Order extends AbstractGuidEntity
     }
 
     /**
-     * @return OrderStatusType
+     * @return BrokerageOrderInterface
      */
-    public function getOrderStatusType(): OrderStatusType
+    public function getOrderStatus(): BrokerageOrderInterface
     {
-        return $this->orderStatusType;
+        return $this->orderStatus;
     }
 
     /**
-     * @param OrderStatusType $orderStatusType
+     * @param BrokerageOrderInterface $orderStatus
      *
      * @return Order
      */
-    public function setOrderStatusType(OrderStatusType $orderStatusType): Order
+    public function setOrderStatus(BrokerageOrderInterface $orderStatus): Order
     {
-        $this->orderStatusType = $orderStatusType;
+        $this->orderStatus = $orderStatus;
+
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getQuantity(): float
+    {
+        return $this->quantity;
+    }
+
+    /**
+     * @param float $quantity
+     *
+     * @return Order
+     */
+    public function setQuantity(float $quantity): Order
+    {
+        $this->quantity = $quantity;
+
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getQuantityFilled(): float
+    {
+        return $this->quantityFilled;
+    }
+
+    /**
+     * @param float $quantityFilled
+     *
+     * @return Order
+     */
+    public function setQuantityFilled(float $quantityFilled): Order
+    {
+        $this->quantityFilled = $quantityFilled;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSide(): string
+    {
+        return $this->side;
+    }
+
+    /**
+     * @param string $side
+     *
+     * @return Order
+     */
+    public function setSide(string $side): Order
+    {
+        $this->side = $side;
+
+        return $this;
+    }
+
+    /**
+     * @return Ticker
+     */
+    public function getTicker(): Ticker
+    {
+        return $this->ticker;
+    }
+
+    /**
+     * @param Ticker $ticker
+     *
+     * @return Order
+     */
+    public function setTicker(Ticker $ticker): Order
+    {
+        $this->ticker = $ticker;
 
         return $this;
     }

@@ -10,8 +10,6 @@ namespace App\DataFixtures;
 
 use App\Constants\Brokerage\AlpacaConstants;
 use App\Entity\Factory\BrokerageFactory;
-use App\Entity\OrderType;
-use App\Entity\PositionSideType;
 use Doctrine\Persistence\ObjectManager;
 use Ramsey\Uuid\Uuid;
 
@@ -24,11 +22,11 @@ class BrokerageFixture extends AbstractDataFixture
     const DESCRIPTION = 'description';
     const ORDER_CLASSES = 'order_class_type';
     const ORDER_STATUSES = 'order_status_type';
+    const PAPER_ACCOUNTS = 'paper_accounts';
     const ORDER_TYPES = 'order_type';
     const POSITION_SIDE_TYPES = 'position_side_type';
     const URL = 'url';
     const API_DOCUMENT_URL = 'api_document_url';
-    const API_ENDPOINT_URL = 'ApiEndpointUrl';
 
     /**
      * @param ObjectManager $manager
@@ -36,11 +34,6 @@ class BrokerageFixture extends AbstractDataFixture
     public function load(ObjectManager $manager)
     {
         foreach ($this->getData() as $item) {
-            $typeClasses = [
-                OrderType::class => $items[self::ORDER_TYPES] ?? [],
-                PositionSideType::class => $items[self::POSITION_SIDE_TYPES] ?? [],
-            ];
-
             $brokerage = BrokerageFactory::create()
                 ->setGuid(Uuid::fromString($item[self::GUID]))
                 ->setName($item[self::NAME])
@@ -48,20 +41,8 @@ class BrokerageFixture extends AbstractDataFixture
                 ->setDescription($item[self::DESCRIPTION])
                 ->setUrl($item[self::URL])
                 ->setApiDocumentUrl($item[self::API_DOCUMENT_URL])
-                ->setApiEndpointUrl($item[self::API_ENDPOINT_URL]);
+                ->setPaperAccounts($item[self::PAPER_ACCOUNTS]);
 
-            foreach ($typeClasses as $class => $types) {
-                foreach ($types as $name => $value) {
-                    $type = (new $class())
-                        ->setBrokerage($brokerage)
-                        ->setName($name)
-                        ->setDescription($value);
-
-                    $manager->persist($type);
-
-                    $this->setReference(sprintf('%s_%s', $class, $name), $type);
-                }
-            }
             $manager->persist($brokerage);
             $this->setReference($item[self::REFERENCE_ID], $brokerage);
         }
@@ -90,11 +71,10 @@ class BrokerageFixture extends AbstractDataFixture
                 self::CONTEXT => AlpacaConstants::BROKERAGE_CONTEXT,
                 self::DESCRIPTION => AlpacaConstants::BROKERAGE_DESCRIPTION,
                 self::API_DOCUMENT_URL => AlpacaConstants::BROKERAGE_API_DOCUMENT_URL,
-                self::API_ENDPOINT_URL => AlpacaConstants::PAPER_API_ENDPOINT,
                 self::URL => AlpacaConstants::BROKERAGE_URL,
                 self::ORDER_CLASSES => AlpacaConstants::ORDER_POSITION_INFO_SERIALIZATION_CONFIG,
                 self::ORDER_TYPES => AlpacaConstants::ORDER_TYPES,
-                self::POSITION_SIDE_TYPES => AlpacaConstants::POSITION_SIDE_TYPES,
+                self::PAPER_ACCOUNTS => true,
             ],
         ];
     }

@@ -18,7 +18,7 @@ use App\MessageClient\ClientPublisher\ClientPublisher;
 use App\MessageClient\Protocol\MessageFactory;
 use App\MessageClient\Protocol\Packet;
 use App\Service\DefaultTypeService;
-use App\Service\TickerService;
+use App\Service\Ticker\TickerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use React\Promise\ExtendedPromiseInterface;

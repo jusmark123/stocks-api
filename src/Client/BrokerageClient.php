@@ -160,7 +160,7 @@ class BrokerageClient extends AbstractClient implements BrokerageClientInterface
     public function createRequest(string $url, string $method = 'GET', array $headers = [], array $body = []): RequestInterface
     {
         if ('POST' === $method) {
-            $headers['Content-Length'] = \strlen($body);
+            $headers['Content-Length'] = \strlen(json_encode($body));
             $headers['Content-Type'] = 'application/json';
         }
 
@@ -168,14 +168,14 @@ class BrokerageClient extends AbstractClient implements BrokerageClientInterface
             $method,
             $url,
             $headers,
-            \in_array($method, ['POST', 'PUT'], true) ? $body : ''
+            \in_array($method, ['POST', 'PUT'], true) ? json_encode($body) : ''
         );
     }
 
     /**
      * @param ResponseInterface $response
      *
-     * @throws \HttpResponseException
+     * @throws HttpMessageException
      *
      * @return ResponseInterface
      */

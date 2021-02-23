@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\DTO\Brokerage\OrderInfoInterface;
+use App\DTO\Brokerage\BrokerageOrderInterface;
 use App\DTO\SyncOrdersRequest;
 use App\Entity\Account;
 use App\Entity\Job;
@@ -101,7 +101,7 @@ class OrderService extends AbstractService
      * @param array $orderInfoMessage
      * @param Job   $job
      *
-     * @return OrderInfoInterface|null
+     * @return BrokerageOrderInterface|null
      */
     public function syncOrderHistory(array $orderInfoMessage, Job $job): ?Order
     {

@@ -9,7 +9,13 @@ groupId := $(shell id -g)
 .env:
 	cp .env.dist .env
 
+symfony-cli:
+	XDEBUG_MODE=off curl -sS https://get.symfony.com/cli/installer | bash
+	mv /root/.symfony/bin/symfony /usr/local/bin/symfony
+.PHONY: symfony-cli
+
 local: .env
+	aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin 448507992616.dkr.ecr.us-west-2.amazonaws.com
 	docker-compose up -d
 	dev-exec make build
 .PHONY:local
@@ -22,7 +28,7 @@ PHONY: build-cache
 build-database: build-drop-database build-create-database build-migrate build-validate-database build-fixtures
 .PHONY: build-database
 
-build: .env generate-keys build-dependencies build-database
+build: .env generate-keys symfony-cli build-dependencies build-database
 .PHONY: build
 
 build-dependencies:

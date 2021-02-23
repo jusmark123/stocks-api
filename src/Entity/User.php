@@ -8,6 +8,10 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Traits\CreatedAtTrait;
+use App\Entity\Traits\DeactivatedAtTrait;
+use App\Entity\Traits\EntityGuidTrait;
+use App\Entity\Traits\ModifiedAtTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\PersistentCollection;
@@ -21,7 +25,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\Table(
  * 		name="user",
  * 		uniqueConstraints={
- * 			@ORM\UniqueConstraint(name="user_un_guid", columns={"guid"}),
+ *          @ORM\UniqueConstraint(name="user_un_guid", columns={"guid"}),
  * 			@ORM\UniqueConstraint(name="user_un_email_username", columns={"email", "username"})
  * 		}
  * )
@@ -29,63 +33,88 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\HasLifecycleCallbacks()
  * @Gedmo\SoftDeleteable(fieldName="deactivatedAt", timeAware=false)
  */
-class User extends AbstractGuidEntity implements UserInterface
+class User extends Source implements UserInterface
 {
+    use CreatedAtTrait;
+    use DeactivatedAtTrait;
+    use EntityGuidTrait;
+    use ModifiedAtTrait;
+
     /**
-     * @var string|null
+     * @var ArrayCollection|Account[]|PersistentCollection
      *
-     * @ORM\Column(name="username", type="string", length=100, nullable=false)
+     * @ORM\ManyToMany(targetEntity="Account", mappedBy="users", fetch="LAZY", cascade={"persist"})
      */
-    private $username;
-
-    /**
-     * @var string|null
-     * @ORM\Column(name="first_name", type="string", length=100, nullable=true)
-     */
-    private $firstName;
-
-    /**
-     * @var string|null
-     * @ORM\Column(name="last_name", type="string", length=100, nullable=true)
-     */
-    private $lastName;
-
-    /**
-     * @var string
-     * @ORM\Column(name="email", type="string", length=255, nullable=false)
-     */
-    private $email;
-
-    /**
-     * @var string|null
-     * @ORM\Column(name="password", type="string", length=255, nullable=true)
-     */
-    private $password;
-
-    /**
-     * @var string|null
-     * @Groups({"user.put"})
-     */
-    private $plainPassword;
-
-    /**
-     * @var string|null
-     * @ORM\Column(name="phone", type="string", length=20, nullable=true)
-     */
-    private $phone;
+    private $accounts;
 
     /**
      * @var string|null
      * @ORM\Column(name="avatar", type="text", length=1677216, nullable=true)
      */
-    private $avatar;
+    private ?string $avatar;
 
     /**
      * @var string|null
      *
      * @ORM\Column(name="description", type="text", length=65535, nullable=true)
      */
-    private $description;
+    private ?string $description;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="email", type="string", length=255, nullable=false)
+     */
+    private string $email;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="first_name", type="string", length=100, nullable=true)
+     */
+    private ?string $firstName;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="last_name", type="string", length=100, nullable=true)
+     */
+    private ?string $lastName;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="password", type="string", length=255, nullable=true)
+     */
+    private ?string $password;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="phone", type="string", length=20, nullable=true)
+     */
+    private ?string $phone;
+
+    /**
+     * @var string|null
+     *
+     * @Groups({"user.put"})
+     */
+    private ?string $plainPassword;
+
+    /**
+     * @var array
+     *
+     * @ORM\Column(type="json")
+     */
+    private $roles = [];
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="username", type="string", length=100, nullable=false)
+     */
+    private $username;
 
     /**
      * @var UserType
@@ -98,31 +127,6 @@ class User extends AbstractGuidEntity implements UserInterface
     private $userType;
 
     /**
-     * @var ArrayCollection|Account[]|PersistentCollection
-     * @ORM\ManyToMany(targetEntity="Account", mappedBy="users", fetch="LAZY", cascade={"persist"})
-     */
-    private $accounts;
-
-    /**
-     * @var ArrayCollection|Order[]|PersistentCollection
-     * @ORM\OneToMany(targetEntity="Order", mappedBy="user", fetch="LAZY")
-     */
-    private $orders;
-
-    /**
-     * @var ArrayCollection|Job[]|PersistentCollection
-     *
-     * @ORM\OneToMany(targetEntity="Job", mappedBy="user", fetch="LAZY")
-     */
-    private $jobs;
-
-    /**
-     * @var array
-     * @ORM\Column(type="json")
-     */
-    private $roles = [];
-
-    /**
      * User constructor.
      *
      * @throws \Exception
@@ -131,8 +135,6 @@ class User extends AbstractGuidEntity implements UserInterface
     {
         parent::__construct();
         $this->accounts = new ArrayCollection();
-        $this->jobs = new ArrayCollection();
-        $this->orders = new ArrayCollection();
     }
 
     /**
@@ -315,70 +317,6 @@ class User extends AbstractGuidEntity implements UserInterface
     public function setAccounts($accounts): User
     {
         $this->accounts = $accounts;
-
-        return $this;
-    }
-
-    /**
-     * @param Order $order
-     *
-     * @return User
-     */
-    public function addOrder(Order $order): User
-    {
-        $this->orders[] = $order;
-
-        return $this;
-    }
-
-    /**
-     * @return ArrayCollection|Order[]|PersistentCollection
-     */
-    public function getOrders()
-    {
-        return $this->orders;
-    }
-
-    /**
-     * @param Order $order
-     *
-     * @return User
-     */
-    public function removeOrder(Order $order): User
-    {
-        $this->orders->removeElement($order);
-
-        return $this;
-    }
-
-    /**
-     * @param ArrayCollection|Order[]|PersistentCollection $orders
-     *
-     * @return User
-     */
-    public function setOrders($orders): User
-    {
-        $this->orders = $orders;
-
-        return $this;
-    }
-
-    /**
-     * @return ArrayCollection|Job[]|PersistentCollection
-     */
-    public function getJobs()
-    {
-        return $this->jobs;
-    }
-
-    /**
-     * @param ArrayCollection|Job[]|PersistentCollection $jobs
-     *
-     * @return User
-     */
-    public function setJobs($jobs): User
-    {
-        $this->jobs = $jobs;
 
         return $this;
     }

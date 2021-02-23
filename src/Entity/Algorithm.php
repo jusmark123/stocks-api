@@ -8,6 +8,11 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Interfaces\EntityGuidInterface;
+use App\Entity\Traits\CreatedAtTrait;
+use App\Entity\Traits\DeactivatedAtTrait;
+use App\Entity\Traits\EntityGuidTrait;
+use App\Entity\Traits\ModifiedAtTrait;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 
@@ -19,27 +24,33 @@ use Gedmo\Mapping\Annotation as Gedmo;
  *      uniqueConstraints={
  *          @ORM\UniqueConstraint(name="algorithm_un_guid", columns={"guid"}),
  *      },
- *     indexes={}
+ *      indexes={}
  * )
  * @ORM\Entity(repositoryClass="App\Entity\Repository\AlgorithmRepository")
  * @ORM\HasLifecycleCallbacks()
  * @Gedmo\SoftDeleteable(fieldName="deactivatedAt", timeAware=false)
  */
-class Algorithm extends AbstractGuidEntity
+class Algorithm extends Source implements EntityGuidInterface
 {
+    use CreatedAtTrait;
+    use DeactivatedAtTrait;
+    use EntityGuidTrait;
+    use ModifiedAtTrait;
+    use Traits\EntityGuidTrait;
+
     /**
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=100, nullable=false)
      */
-    private $name;
+    private string $name;
 
     /**
      * @var string
      *
      * @ORM\Column(name="description", type="text", length=65535, nullable=true)
      */
-    private $description;
+    private string $description;
 
     /**
      * @var mixed
@@ -49,13 +60,14 @@ class Algorithm extends AbstractGuidEntity
     private $config;
 
     /**
-     * @var Source
-     * @ORM\ManyToOne(targetEntity="Source", fetch="LAZY")
-     * @ORM\JoinColumns({
-     *      @ORM\JoinColumn(name="source_id", referencedColumnName="id", nullable=false)
-     * })
+     * Algorithm constructor.
+     *
+     * @throws \Exception
      */
-    private $source;
+    public function __construct()
+    {
+        parent::__construct();
+    }
 
     /**
      * @return string
@@ -113,26 +125,6 @@ class Algorithm extends AbstractGuidEntity
     public function setConfig(array $config): Algorithm
     {
         $this->config = json_encode($config);
-
-        return $this;
-    }
-
-    /**
-     * @return Source
-     */
-    public function getSource(): Source
-    {
-        return $this->source;
-    }
-
-    /**
-     * @param Source $source
-     *
-     * @return Algorithm
-     */
-    public function setSource(Source $source): Algorithm
-    {
-        $this->source = $source;
 
         return $this;
     }

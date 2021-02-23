@@ -13,7 +13,6 @@ use App\Entity\AbstractGuidEntity;
 use App\Entity\Account;
 use App\Entity\Job;
 use App\Entity\Source;
-use App\Entity\Traits\EntityGuidTrait;
 use App\Message\Job\JobRequestInterface;
 
 /**
@@ -21,7 +20,6 @@ use App\Message\Job\JobRequestInterface;
  */
 class SyncOrdersRequest extends AbstractGuidEntity implements JobRequestInterface
 {
-    use EntityGuidTrait;
     use ParametersTrait;
 
     /**

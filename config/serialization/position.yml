@@ -15,11 +15,6 @@ App\Entity\Position:
     qty:
       groups:
         - position.get
-    source:
-      groups:
-        - position.get
-        - position.post
-        - position.put
     side:
       groups:
         - position.get

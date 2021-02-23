@@ -8,16 +8,16 @@ declare(strict_types=1);
 
 namespace App\DTO\Brokerage\TdAmeritrade\Factory;
 
-use App\DTO\Brokerage\TdAmeritrade\TdAmeritradeAccountInfo;
+use App\DTO\Brokerage\TdAmeritrade\TdAmeritradeBrokerageAccount;
 use App\Entity\Factory\AbstractFactory;
 
 class TdAmeritradeAccountInfoFactory extends AbstractFactory
 {
     /**
-     * @return TdAmeritradeAccountInfo
+     * @return TdAmeritradeBrokerageAccount
      */
-    public static function create(): TdAmeritradeAccountInfo
+    public static function create(): TdAmeritradeBrokerageAccount
     {
-        return new TdAmeritradeAccountInfo();
+        return new TdAmeritradeBrokerageAccount();
     }
 }

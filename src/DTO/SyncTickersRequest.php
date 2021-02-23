@@ -13,12 +13,10 @@ use App\DTO\Traits\ParametersTrait;
 use App\Entity\Account;
 use App\Entity\Job;
 use App\Entity\Source;
-use App\Entity\Traits\EntityGuidTrait;
 use App\Message\Job\JobRequestInterface;
 
 class SyncTickersRequest implements JobRequestInterface
 {
-    use EntityGuidTrait;
     use JobRequestTrait;
     use ParametersTrait;
 

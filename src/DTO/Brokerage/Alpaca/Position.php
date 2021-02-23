@@ -8,12 +8,12 @@ declare(strict_types=1);
 
 namespace App\DTO\Brokerage\Alpaca;
 
-use App\DTO\Brokerage\PositionInterface;
+use App\DTO\Brokerage\BrokeragePositionInterface;
 
 /**
  * Class Position.
  */
-class Position implements PositionInterface
+class Position implements BrokeragePositionInterface
 {
     /**
      * @var string

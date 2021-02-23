@@ -15,7 +15,7 @@ use App\Exception\MessageProcessedException;
 use App\Message\Job\Handler\AbstractJobMessageHandler;
 use App\Message\SyncTickerMessage;
 use App\Service\JobService;
-use App\Service\TickerService;
+use App\Service\Ticker\TickerService;
 use App\Service\UserService;
 use Doctrine\ORM\EntityManagerInterface;
 use Predis\Client;

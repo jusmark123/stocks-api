@@ -5,6 +5,7 @@ App\Entity\AccountStatusType:
         - account_status_type.get
     name:
       groups:
+        - account.get
         - account_status_type.get
         - account_status_type.post
         - account_status_type.put

@@ -14,7 +14,6 @@ use App\Entity\Factory\OrderFactory;
 use App\Entity\Factory\OrderStatusTypeFactory;
 use App\Entity\Factory\OrderTypeFactory;
 use App\Entity\Factory\TickerFactory;
-use App\Entity\PositionSideType;
 use Doctrine\Common\Collections\ArrayCollection;
 use Phake;
 use PHPUnit\Framework\TestCase;

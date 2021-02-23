@@ -194,7 +194,6 @@ class EntityManagerTest extends TestCase
 
         Phake::verify($this->manager)->persist(Phake::anyParameters());
         Phake::verify($this->manager, Phake::times(0))->flush();
-
     }
 
     /**

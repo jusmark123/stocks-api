@@ -11,10 +11,11 @@ namespace App\Entity\Manager;
 use App\Entity\AbstractEntity;
 use App\Entity\Interfaces\EntityInterface;
 use App\Service\EntityStateService;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Connection;
-use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\ORM\UnitOfWork;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Persistence\ObjectRepository;
 
@@ -48,14 +49,14 @@ class EntityManager implements BaseEntityManagerInterface
      *
      * @param ManagerRegistry    $doctrine
      * @param EntityStateService $stateService
-     * @param string             $entityClass
-     * @param string             $entityListenerClass
+     * @param string|null        $entityClass
+     * @param string|null        $entityListenerClass
      */
     public function __construct(
         ManagerRegistry $doctrine,
         EntityStateService $stateService,
-        string $entityClass = '',
-        string $entityListenerClass = ''
+        ?string $entityClass = null,
+        ?string $entityListenerClass = null
     ) {
         $this->doctrine = $doctrine;
         $this->stateService = $stateService;
@@ -189,9 +190,11 @@ class EntityManager implements BaseEntityManagerInterface
      *
      * @return array|AbstractEntity[]
      */
-    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ArrayCollection
     {
-        return $this->getEntityRepository()->findBy($criteria, $orderBy, $limit, $offset);
+        $entities = $this->getEntityRepository()->findBy($criteria, $orderBy, $limit, $offset);
+
+        return new ArrayCollection($entities);
     }
 
     /**

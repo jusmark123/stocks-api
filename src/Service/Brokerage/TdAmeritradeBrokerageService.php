@@ -28,16 +28,17 @@ use Symfony\Component\Serializer\Mapping\Loader\YamlFileLoader;
  */
 class TdAmeritradeBrokerageService extends AbstractBrokerageService
 {
-    const BROKERAGE_CONSTANTS = TdAmeritradeConstants::class;
+    protected const BROKERAGE_CONSTANTS = TdAmeritradeConstants::class;
 
     /**
      * @var BrokerageClientInterface
      */
-    private $brokerageClient;
+    private BrokerageClientInterface $brokerageClient;
 
     /**
      * TdAmeritradeBrokerageService constructor.
      *
+     * @param Client                 $cache
      * @param BrokerageClient        $brokerageClient
      * @param EntityManagerInterface $entityManager
      * @param JobService             $jobService
@@ -69,11 +70,11 @@ class TdAmeritradeBrokerageService extends AbstractBrokerageService
     /**
      * @param Account $account
      *
-     * @throws ClientExceptionInterface
+     *@throws ClientExceptionInterface
      *
-     * @return \App\DTO\Brokerage\AccountInfoInterface|null
+     * @return \App\DTO\Brokerage\BrokerageAccountInterface|null
      */
-    public function getAccountInfo(Account $account): ?\App\DTO\Brokerage\AccountInfoInterface
+    public function getAccountInfo(Account $account): ?\App\DTO\Brokerage\BrokerageAccountInterface
     {
         $classMetaDataFactory = new ClassMetadataFactory(
             new YamlFileLoader(TdAmeritradeConstants::ORDER_INFO_SERIALIZATION_CONFIG));
@@ -91,14 +92,6 @@ class TdAmeritradeBrokerageService extends AbstractBrokerageService
             TdAmeritradeConstants::ACCOUNT_INFO_ENTITY_CLASS,
             TdAmeritradeConstants::REQUEST_RETURN_DATA_TYPE
         );
-    }
-
-    /**
-     * @return string
-     */
-    public function getConstantsClass(): string
-    {
-        return self::BROKERAGE_CONSTANTS;
     }
 
     /**

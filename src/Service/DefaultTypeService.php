@@ -9,8 +9,6 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Constants\Entity\UserConstants;
-use App\Entity\Manager\OrderStatusTypeEntityManager;
-use App\Entity\PositionSideType;
 use App\Entity\Source;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
@@ -21,31 +19,20 @@ class DefaultTypeService extends AbstractService
     /**
      * @var EntityManagerInterface
      */
-    private $entityManager;
-
-    /**
-     * @var OrderStatusTypeEntityManager
-     */
-    private $orderStatusType;
+    private EntityManagerInterface $entityManager;
 
     public function __construct(
         EntityManagerInterface $entityManager,
-        LoggerInterface $logger,
-        OrderStatusTypeEntityManager $orderStatusType
+        LoggerInterface $logger
     ) {
         $this->entityManager = $entityManager;
-        $this->orderStatusType = $orderStatusType;
         parent::__construct($logger);
     }
 
-    public function getDefaultPositionSideType(): PositionSideType
-    {
-    }
-
     /**
-     * @return Source
+     * @return object|Source
      */
-    public function getDefaultSource(): Source
+    public function getDefaultSource(): object
     {
         return $this->entityManager
             ->getRepository(Source::class)
@@ -53,9 +40,9 @@ class DefaultTypeService extends AbstractService
     }
 
     /**
-     * @return User
+     * @return object|User
      */
-    public function getDefaultUser(): User
+    public function getDefaultUser()
     {
         return $this->entityManager
             ->getRepository(User::class)

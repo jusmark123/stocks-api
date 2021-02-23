@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Entity;
 
-use App\DTO\Brokerage\Polygon\PolygonTickerInfo;
+use App\DTO\Brokerage\Polygon\PolygonBrokerageTickerInfo;
 use App\Entity\Factory\BrokerageFactory;
 use App\Entity\Factory\TickerTypeFactory;
 use App\Entity\Ticker;
@@ -60,7 +60,7 @@ class TickerTest extends TestCase
         $this->assertSame($this->entity, $this->entity->setTicker('string'));
         $this->assertEquals('string', $this->entity->getTicker());
 
-        $tickerInfo = new PolygonTickerInfo();
+        $tickerInfo = new PolygonBrokerageTickerInfo();
         $this->assertSame($this->entity, $this->entity->setTickerInfo($tickerInfo));
         $this->assertEquals($tickerInfo, $this->entity->getTickerInfo());
 

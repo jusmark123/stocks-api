@@ -81,7 +81,7 @@ class AccountFixture extends AbstractDataFixture
                 self::DESCRIPTION => 'Alpaca paper trading account',
                 self::DEFAULT => true,
                 self::NAME => 'alpaca-paper',
-                self::PAPER_ACCOUNT => 'true',
+                self::PAPER_ACCOUNT => true,
                 self::USERS => [
                     $this->getReference(UserConstants::SYSTEM_USER_USERNAME),
                 ],

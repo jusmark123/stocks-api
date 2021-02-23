@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace App\Entity\Traits;
 
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 
@@ -17,20 +18,49 @@ use Gedmo\Mapping\Annotation as Gedmo;
 trait CreatedAtTrait
 {
     /**
-     * @var \DateTime
+     * @var DateTime
+     *
      * @Gedmo\Timestampable(on="create")
      * @ORM\Column(name="created_at", type="datetime", nullable=false)
      */
-    protected $createdAt;
+    protected DateTime $createdAt;
+
+    /**
+     * @var string|null
+     *
+     * @Gedmo\Blameable(on="create")
+     * @ORM\Column(name="created_by", type="string", length=255, nullable=true)
+     */
+    protected ?string $createdBy = null;
+
+    /**
+     * Returns createdAt.
+     *
+     * @return DateTime $createdAt
+     */
+    public function getCreatedAt(): DateTime
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * Returns createdBy.
+     *
+     * @return string
+     */
+    public function getCreatedBy(): ?string
+    {
+        return $this->createdBy;
+    }
 
     /**
      * Sets createdAt.
      *
-     * @param \DateTime $createdAt
+     * @param DateTime $createdAt
      *
      * @return $this
      */
-    public function setCreatedAt(\DateTime $createdAt)
+    public function setCreatedAt(DateTime $createdAt): self
     {
         $this->createdAt = $createdAt;
 
@@ -38,12 +68,14 @@ trait CreatedAtTrait
     }
 
     /**
-     * Returns createdAt.
+     * @param string|null $createdBy
      *
-     * @return $createdAt
+     * @return $this
      */
-    public function getCreatedAt(): \DateTime
+    public function setCreatedBy(?string $createdBy): self
     {
-        return $this->createdAt;
+        $this->createdBy = $createdBy;
+
+        return $this;
     }
 }

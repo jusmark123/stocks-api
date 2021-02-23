@@ -30,6 +30,6 @@ final class PolygonContstants
     const TICKER_INFO_SERIALIZATION_CONFIG = '/opt/app-root/src/config/serialization/polygon_ticker_info.yml';
     const TICKER_DETAIL_SERIALIZATION_CONFIG = '/opt/app-root/src/config/serialization/polygon_ticker_detail.yml';
     const TICKER_INFO_UNIQUE_KEY = 'ticker';
-    const TICKER_INFO_ENTITY_CLASS = 'App\DTO\Brokerage\Polygon\PolygonTickerInfo';
+    const TICKER_INFO_ENTITY_CLASS = 'App\DTO\Brokerage\Polygon\PolygonBrokerageTickerInfo';
     const TICKER_DETAIL_ENTITY_CLASS = 'App\DTO\Brokerage\Polygon\PolygonTickerDetail';
 }

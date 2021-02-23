@@ -9,7 +9,7 @@ declare(strict_types=1);
 namespace App\Command\Ticker;
 
 use App\Entity\Manager\TickerTypeEntityManager;
-use App\Service\TickerService;
+use App\Service\Ticker\TickerService;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
@@ -25,7 +25,7 @@ class SyncTickerTypesCommand extends Command implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    const NAME = 'stocks-api:api:sync-ticker-types';
+    const NAME = 'stocks-api:api:sync-ticker-Types';
 
     /**
      * @var TickerService

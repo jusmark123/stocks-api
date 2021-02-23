@@ -12,7 +12,7 @@ use ApiPlatform\Core\Exception\ItemNotFoundException;
 use App\Client\BrokerageClient;
 use App\Constants\Brokerage\AlpacaConstants;
 use App\Constants\Brokerage\PolygonContstants;
-use App\DTO\Brokerage\TickerInterface;
+use App\DTO\Brokerage\BrokerageTickerInterface;
 use App\DTO\SyncTickersRequest;
 use App\Entity\Account;
 use App\Entity\Brokerage;
@@ -88,12 +88,12 @@ class PolygonBrokerageService extends AbstractBrokerageService
     }
 
     /**
-     * @param TickerInterface $tickerInfo
-     * @param Job             $job
+     * @param BrokerageTickerInterface $tickerInfo
+     * @param Job                      $job
      *
      * @return Ticker|null
      */
-    public function createTickerFromTickerInfo(TickerInterface $tickerInfo, Job $job): ?Ticker
+    public function createTickerFromTickerInfo(BrokerageTickerInterface $tickerInfo, Job $job): ?Ticker
     {
         $account = $job->getAccount();
 
@@ -148,9 +148,9 @@ class PolygonBrokerageService extends AbstractBrokerageService
     /**
      * @param array $message
      *
-     * @return TickerInterface|null
+     * @return BrokerageTickerInterface|null
      */
-    public function createTickerInfoFromMessage(array $message): ?TickerInterface
+    public function createTickerInfoFromMessage(array $message): ?BrokerageTickerInterface
     {
         $classMetaDataFactory = new ClassMetadataFactory(
             new YamlFileLoader(PolygonContstants::TICKER_INFO_SERIALIZATION_CONFIG));
@@ -169,11 +169,11 @@ class PolygonBrokerageService extends AbstractBrokerageService
     /**
      * @param string $symbol
      *
-     * @throws ClientExceptionInterface
+     *@throws ClientExceptionInterface
      *
-     * @return TickerInterface
+     * @return BrokerageTickerInterface
      */
-    public function fetchTicker(string $symbol): TickerInterface
+    public function fetchTicker(string $symbol): BrokerageTickerInterface
     {
         foreach (PolygonContstants::TICKER_ENDPOINTS as $key => $endpoint) {
             try {
@@ -371,6 +371,6 @@ class PolygonBrokerageService extends AbstractBrokerageService
                 $this->tickerService->getTickerTypeService()->save($entity);
             }
         }
-        $this->logger->info('Finished fetching ticker types');
+        $this->logger->info('Finished fetching ticker Types');
     }
 }

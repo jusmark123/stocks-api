@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace App\Event\Order;
 
-use App\DTO\Brokerage\OrderRequestInterface;
+use App\DTO\Brokerage\BrokerageOrderRequestInterface;
 use App\Event\AbstractEvent;
 
 /**
@@ -24,25 +24,25 @@ class OrderReceivedEvent extends AbstractEvent
     private $orderRequestMessage;
 
     /**
-     * @var OrderRequestInterface
+     * @var BrokerageOrderRequestInterface
      */
     protected $orderRequest;
 
     /**
      * OrderReceivedEvent Constructor.
      *
-     * @param OrderRequestInterface $orderRequest
+     * @param BrokerageOrderRequestInterface $orderRequest
      */
-    public function __construct(array $orderRequestMessage, OrderRequestInterface $orderRequest)
+    public function __construct(array $orderRequestMessage, BrokerageOrderRequestInterface $orderRequest)
     {
         $this->orderRequestMessage = $orderRequestMessage;
         $this->orderRequest = $orderRequest;
     }
 
     /**
-     * @return OrderRequestInterface
+     * @return BrokerageOrderRequestInterface
      */
-    public function getOrderRequest(): OrderRequestInterface
+    public function getOrderRequest(): BrokerageOrderRequestInterface
     {
         return $this->orderRequest;
     }
