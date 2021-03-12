@@ -24,7 +24,7 @@ resources:
             401:
               description: "Unauthorized"
             404:
-              description: "Account not found"
+              description: "AlpacaAccount not found"
 
     properties:
       id:

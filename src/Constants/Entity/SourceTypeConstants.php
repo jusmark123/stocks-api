@@ -22,7 +22,7 @@ final class SourceTypeConstants
         self::ALGORITHM => 'Algorithm',
         self::SCRIPT => 'Script',
         self::SYSTEM => 'System',
-        self::SERVICE_ACCOUNT => 'Service Account',
+        self::SERVICE_ACCOUNT => 'Service AlpacaAccount',
         self::SCHEDULER => 'Scheduler',
     ];
 

@@ -16,77 +16,77 @@ class OrderRequest implements BrokerageOrderRequestInterface
     /**
      * @var OrderInfo
      */
-    private $order;
+    private OrderInfo $order;
 
     /**
      *  @var string
      */
-    private $symbol;
+    private string $symbol;
 
     /**
      * @var int
      */
-    private $qty;
+    private int $qty;
 
     /**
      * @var string
      */
-    private $side;
+    private string $side;
 
     /**
      * @var string
      */
-    private $type;
+    private string $type;
 
     /**
      * @var string
      */
-    private $timeInForce;
+    private string $timeInForce;
 
     /**
      * @var float
      */
-    private $limitPrice;
+    private float $limitPrice;
 
     /**
      * @var float
      */
-    private $stopPrice;
+    private float $stopPrice;
 
     /**
      * @var float
      */
-    private $trailPrice;
+    private float $trailPrice;
 
     /**
      * @var float
      */
-    private $trailPercent;
+    private float $trailPercent;
 
     /**
      * @var bool
      */
-    private $extendedHours;
+    private bool $extendedHours;
 
     /**
      * @var string
      */
-    private $clientOrderId;
+    private string $clientOrderId;
 
     /**
      * @var string
      */
-    private $orderClass;
+    private string $orderClass;
 
     /**
      * @var TakeProfit
      */
-    private $takeProfit;
+    private TakeProfit $takeProfit;
 
     /**
      * @var StopLoss
      */
-    private $stopLoss;
+    private StopLoss $stopLoss;
 
     /**
      * @return OrderInfo

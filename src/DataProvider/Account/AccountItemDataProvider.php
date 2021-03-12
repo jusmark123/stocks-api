@@ -73,16 +73,15 @@ class AccountItemDataProvider implements ItemDataProviderInterface, RestrictedDa
         $account = $this->accountEntityManager->findOneBy(['guid' => $id]);
 
         if (!$account instanceof Account) {
-            throw new ItemNotFoundException('Account not found.');
+            throw new ItemNotFoundException('AlpacaAccount not found.');
         }
 
         $brokerageService = $this->brokerageServiceProvider->getBrokerageService($account->getBrokerage());
-        $accountInfo = $brokerageService->getAccountInfo($account);
-        $positions = $brokerageService->getPositions($account);
-        $configuration = $brokerageService->getAccountConfiguration($account);
-        $account->setAccountInfo($accountInfo)
-            ->setPositions($positions)
-            ->setConfiguration($configuration);
+
+        $account
+            ->setAccountInfo($brokerageService->fetchAccountInfo($account))
+            ->setPositions($brokerageService->fetchPositions($account))
+            ->setConfiguration($brokerageService->fetchAccountConfiguration($account));
 
         return $account;
     }

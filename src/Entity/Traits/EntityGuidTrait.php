@@ -36,7 +36,7 @@ trait EntityGuidTrait
     }
 
     /**
-     * @return Uuid
+     * @return UuidInterface
      */
     public function getGuid(): UuidInterface
     {

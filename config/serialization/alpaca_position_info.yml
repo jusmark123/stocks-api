@@ -1,4 +1,4 @@
-App\DTO\Brokerage\Alpaca\Position:
+App\DTO\Brokerage\Alpaca\AlpacaPosition:
   attributes:
     assetId:
       groups:

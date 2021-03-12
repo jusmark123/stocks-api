@@ -9,12 +9,12 @@ declare(strict_types=1);
 namespace App\DTO\Brokerage\TdAmeritrade;
 
 use App\Constants\Brokerage\TdAmeritradeConstants;
-use App\DTO\Brokerage\BrokerageAccountInterface;
+use App\DTO\Brokerage\AccountInterface;
 
 /**
- * Class TdAmeritradeBrokerageAccount.
+ * Class TdAmeritradeAccount.
  */
-class TdAmeritradeBrokerageAccount implements BrokerageAccountInterface
+class TdAmeritradeAccount implements AccountInterface
 {
     /**
      * @var string

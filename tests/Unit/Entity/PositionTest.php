@@ -48,7 +48,7 @@ class PositionTest extends TestCase
         $this->assertSame($this->entity, $this->entity->setSource($source));
         $this->assertEquals($source, $this->entity->getSource());
 
-        $positionInfo = new \App\DTO\Brokerage\Alpaca\Position();
+        $positionInfo = new \App\DTO\Brokerage\Alpaca\AlpacaPosition();
         $this->assertSame($this->entity, $this->entity->setPositionInfo($positionInfo));
         $this->assertEquals($positionInfo, $this->entity->getPositionInfo());
 

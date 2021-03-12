@@ -71,7 +71,7 @@ class Ticker extends AbstractGuidEntity
     /**
      * @var TickerSector|null
      *
-     * @ORM\ManyToOne(targetEntity="tickerSector", inversedBy="tickers", fetch="LAZY", cascade="persist")
+     * @ORM\ManyToOne(targetEntity="TickerSector", inversedBy="tickers", fetch="LAZY", cascade="persist")
      * @ORM\JoinColumn(name="sector_id", referencedColumnName="id", nullable=true)
      */
     private ?TickerSector $sector = null;
@@ -89,6 +89,8 @@ class Ticker extends AbstractGuidEntity
     private ?BrokerageTickerInterface $tickerInfo;
 
     /**
+     * @deprecated
+     *
      * @var TickerType|null
      *
      * @ORM\ManyToOne(targetEntity="TickerType")
@@ -313,6 +315,8 @@ class Ticker extends AbstractGuidEntity
     }
 
     /**
+     * @deprecated
+     *
      * @return TickerType|null
      */
     public function getTickerType(): ?TickerType
@@ -321,6 +325,8 @@ class Ticker extends AbstractGuidEntity
     }
 
     /**
+     * @deprecated
+     *
      * @param TickerType|null $tickerType
      *
      * @return Ticker

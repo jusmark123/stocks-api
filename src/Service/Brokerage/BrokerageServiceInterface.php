@@ -8,17 +8,12 @@ declare(strict_types=1);
 
 namespace App\Service\Brokerage;
 
-use App\DTO\Brokerage\BrokerageAccountInterface;
-use App\DTO\Brokerage\BrokerageOrderInterface;
-use App\DTO\Brokerage\BrokerageTickerInterface;
-use App\DTO\SyncOrdersRequest;
-use App\DTO\SyncTickersRequest;
+use App\DTO\Brokerage\AccountHistoryInterface;
+use App\DTO\Brokerage\AccountHistoryRequestInterface;
+use App\DTO\Brokerage\AccountInterface;
+use App\DTO\Brokerage\Alpaca\AlpacaAccountConfiguration;
 use App\Entity\Account;
 use App\Entity\Brokerage;
-use App\Entity\Job;
-use App\Entity\Order;
-use App\Entity\Ticker;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * Interface BrokerageServiceInterface.
@@ -35,64 +30,37 @@ interface BrokerageServiceInterface
     /**
      * @param Account $account
      *
-     * @return BrokerageAccountInterface|null
+     * @return AlpacaAccountConfiguration|null
      */
-    public function getAccountInfo(Account $account): ?BrokerageAccountInterface;
+    public function fetchAccountConfiguration(Account $account): ?AlpacaAccountConfiguration;
+
+    /**
+     * @param Account $account
+     *
+     * @return AccountInterface|null
+     */
+    public function fetchAccountInfo(Account $account): ?AccountInterface;
+
+    /**
+     * @param AccountHistoryRequestInterface $request
+     *
+     * @return AccountInterface|null
+     */
+    public function fetchAccountHistory(AccountHistoryRequestInterface $request): ?AccountHistoryInterface;
 
     /**
      * @param Account $account
      *
      * @return array|null
      */
-    public function getPositions(Account $account): ?array;
+    public function fetchPositions(Account $account): ?array;
 
     /**
-     * @param BrokerageOrderInterface $orderInfo
-     * @param Job                     $job
+     * @param Account $account
      *
-     * @return Order
+     * @return array|null
      */
-    public function createOrderFromOrderInfo(BrokerageOrderInterface $orderInfo, Job $job): ?Order;
-
-    /**
-     * @param array $message
-     *
-     * @return BrokerageOrderInterface|null
-     */
-    public function createOrderInfoFromMessage(array $message): ?BrokerageOrderInterface;
-
-    /**
-     * @param SyncOrdersRequest   $request
-     * @param MessageBusInterface $messageBus
-     * @param Job                 $job
-     *
-     * @return Job|null
-     */
-    public function fetchOrderHistory(SyncOrdersRequest $request, MessageBusInterface $messageBus, Job $job): ?Job;
-
-    /**
-     * @param SyncTickersRequest  $request
-     * @param MessageBusInterface $messageBus
-     * @param Job                 $job
-     *
-     * @return Job|null
-     */
-    public function fetchTickers(SyncTickersRequest $request, MessageBusInterface $messageBus, Job $job): ?Job;
-
-    /**
-     * @param array $message
-     *
-     * @return BrokerageTickerInterface|null
-     */
-    public function createTickerInfoFromMessage(array $message): ?BrokerageTickerInterface;
-
-    /**
-     * @param BrokerageTickerInterface $tickerInfo
-     * @param Job                      $job
-     *
-     * @return Ticker|null
-     */
-    public function createTickerFromTickerInfo(BrokerageTickerInterface $tickerInfo, Job $job): ?Ticker;
+    public function fetchOrders(Account $account): ?array;
 
     /**
      * @return string

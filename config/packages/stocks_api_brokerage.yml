@@ -16,7 +16,7 @@ stocks_api_brokerage_client:
                   method: GET
               response:
                 resource: App\DTO\Brokerage\Alpaca\AlpacaAccountResponse
-                serialization: alpaca_account_info.yml
+                serialization: alpaca_account.yml
             order:
               uri: /orders
               itemOperations:

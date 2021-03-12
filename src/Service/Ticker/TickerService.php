@@ -51,11 +51,6 @@ class TickerService extends AbstractService
     private DefaultTypeService $defaultTypeService;
 
     /**
-     * @var RequestFactory
-     */
-    private RequestFactory $requestFactory;
-
-    /**
      * @var ValidationHelper
      */
     private ValidationHelper $validator;
@@ -83,35 +78,10 @@ class TickerService extends AbstractService
         $this->tickerServiceProvider = $tickerServiceProvider;
         $this->defaultTypeService = $defaultTypeService;
         $this->tickerEntityService = $tickerEntityService;
-        $this->polygonBrokerageService = $polygonBrokerageService;
         $this->validator = $validator;
         parent::__construct($logger);
     }
 
-    /**
-     * @throws \Psr\Http\Client\ClientExceptionInterface
-     */
-    public function syncTickerTypes(): void
-    {
-        $this->polygonBrokerageService->syncTickerTypes();
-    }
-
-    /**
-     * @param array $tickerData
-     * @param Job   $job
-     *
-     * @return Ticker|null
-     */
-    public function syncTicker(array $tickerData, Job $job): ?Ticker
-    {
-        $account = $job->getAccount();
-        $brokerageService = $this->brokerageServiceProvider->getBrokerageService($account->getBrokerage());
-        $tickerInfo = $brokerageService->createTickerInfoFromMessage($tickerData);
-        $ticker = $brokerageService->createTickerFromTickerInfo($tickerInfo, $job);
-        $this->tickerEntityService->save($ticker);
-
-        return $ticker;
-    }
 
     /**
      * @param TickerRequest $request
@@ -241,21 +211,6 @@ class TickerService extends AbstractService
 
     private function parseTableToArray($table, $columns = 0)
     {
-        $elements = $table->childNodes->getElementsByTagName('tr');
 
-        if (null !== $elements) {
-            $resultarray = [];
-            foreach ($elements as $key => $element) {
-                if (0 === $key) {
-                    continue;
-                }
-                $row = $element->childNodes;
-                foreach ($row as $columns) {
-                    $resultarray[] = $row->nodeValue;
-                }
-            }
-
-            return $resultarray;
-        }
     }
 }

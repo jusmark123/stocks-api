@@ -11,9 +11,9 @@ namespace App\DTO\Brokerage\Alpaca;
 use App\DTO\Brokerage\BrokeragePositionInterface;
 
 /**
- * Class Position.
+ * Class AlpacaPosition.
  */
-class Position implements BrokeragePositionInterface
+class AlpacaPosition implements BrokeragePositionInterface
 {
     /**
      * @var string
@@ -101,9 +101,9 @@ class Position implements BrokeragePositionInterface
     /**
      * @param string $assetId
      *
-     * @return Position
+     * @return AlpacaPosition
      */
-    public function setAssetId(string $assetId): Position
+    public function setAssetId(string $assetId): AlpacaPosition
     {
         $this->assetId = $assetId;
 
@@ -121,9 +121,9 @@ class Position implements BrokeragePositionInterface
     /**
      * @param string $symbol
      *
-     * @return Position
+     * @return AlpacaPosition
      */
-    public function setSymbol(string $symbol): Position
+    public function setSymbol(string $symbol): AlpacaPosition
     {
         $this->symbol = $symbol;
 
@@ -141,9 +141,9 @@ class Position implements BrokeragePositionInterface
     /**
      * @param string $assetClass
      *
-     * @return Position
+     * @return AlpacaPosition
      */
-    public function setAssetClass(string $assetClass): Position
+    public function setAssetClass(string $assetClass): AlpacaPosition
     {
         $this->assetClass = $assetClass;
 
@@ -161,9 +161,9 @@ class Position implements BrokeragePositionInterface
     /**
      * @param float $avgEntryPrice
      *
-     * @return Position
+     * @return AlpacaPosition
      */
-    public function setAvgEntryPrice(string $avgEntryPrice): Position
+    public function setAvgEntryPrice(string $avgEntryPrice): AlpacaPosition
     {
         $this->avgEntryPrice = (float) $avgEntryPrice;
 
@@ -181,9 +181,9 @@ class Position implements BrokeragePositionInterface
     /**
      * @param float $changeToday
      *
-     * @return Position
+     * @return AlpacaPosition
      */
-    public function setChangeToday(string $changeToday): Position
+    public function setChangeToday(string $changeToday): AlpacaPosition
     {
         $this->changeToday = (float) $changeToday;
 
@@ -201,9 +201,9 @@ class Position implements BrokeragePositionInterface
     /**
      * @param float $costBasis
      *
-     * @return Position
+     * @return AlpacaPosition
      */
-    public function setCostBasis(string $costBasis): Position
+    public function setCostBasis(string $costBasis): AlpacaPosition
     {
         $this->costBasis = (float) $costBasis;
 
@@ -221,9 +221,9 @@ class Position implements BrokeragePositionInterface
     /**
      * @param float $currentPrice
      *
-     * @return Position
+     * @return AlpacaPosition
      */
-    public function setCurrentPrice(string $currentPrice): Position
+    public function setCurrentPrice(string $currentPrice): AlpacaPosition
     {
         $this->currentPrice = (float) $currentPrice;
 
@@ -241,9 +241,9 @@ class Position implements BrokeragePositionInterface
     /**
      * @param string $exchange
      *
-     * @return Position
+     * @return AlpacaPosition
      */
-    public function setExchange(string $exchange): Position
+    public function setExchange(string $exchange): AlpacaPosition
     {
         $this->exchange = $exchange;
 
@@ -261,9 +261,9 @@ class Position implements BrokeragePositionInterface
     /**
      * @param float $lastDayPrice
      *
-     * @return Position
+     * @return AlpacaPosition
      */
-    public function setLastDayPrice(string $lastDayPrice): Position
+    public function setLastDayPrice(string $lastDayPrice): AlpacaPosition
     {
         $this->lastDayPrice = (float) $lastDayPrice;
 
@@ -281,9 +281,9 @@ class Position implements BrokeragePositionInterface
     /**
      * @param float $marketValue
      *
-     * @return Position
+     * @return AlpacaPosition
      */
-    public function setMarketValue(string $marketValue): Position
+    public function setMarketValue(string $marketValue): AlpacaPosition
     {
         $this->marketValue = (float) $marketValue;
 
@@ -301,9 +301,9 @@ class Position implements BrokeragePositionInterface
     /**
      * @param int $qty
      *
-     * @return Position
+     * @return AlpacaPosition
      */
-    public function setQty(string $qty): Position
+    public function setQty(string $qty): AlpacaPosition
     {
         $this->qty = (int) $qty;
 
@@ -321,9 +321,9 @@ class Position implements BrokeragePositionInterface
     /**
      * @param string $side
      *
-     * @return Position
+     * @return AlpacaPosition
      */
-    public function setSide(string $side): Position
+    public function setSide(string $side): AlpacaPosition
     {
         $this->side = $side;
 
@@ -341,9 +341,9 @@ class Position implements BrokeragePositionInterface
     /**
      * @param float $unrealizedPl
      *
-     * @return Position
+     * @return AlpacaPosition
      */
-    public function setUnrealizedPl(string $unrealizedPl): Position
+    public function setUnrealizedPl(string $unrealizedPl): AlpacaPosition
     {
         $this->unrealizedPl = (float) $unrealizedPl;
 
@@ -361,9 +361,9 @@ class Position implements BrokeragePositionInterface
     /**
      * @param float $unrealizedPlpc
      *
-     * @return Position
+     * @return AlpacaPosition
      */
-    public function setUnrealizedPlpc(string $unrealizedPlpc): Position
+    public function setUnrealizedPlpc(string $unrealizedPlpc): AlpacaPosition
     {
         $this->unrealizedPlpc = (float) $unrealizedPlpc;
 
@@ -381,9 +381,9 @@ class Position implements BrokeragePositionInterface
     /**
      * @param string $unrealizedIntradayPl
      *
-     * @return Position
+     * @return AlpacaPosition
      */
-    public function setUnrealizedIntradayPl(string $unrealizedIntradayPl): Position
+    public function setUnrealizedIntradayPl(string $unrealizedIntradayPl): AlpacaPosition
     {
         $this->unrealizedIntradayPl = (float) $unrealizedIntradayPl;
 

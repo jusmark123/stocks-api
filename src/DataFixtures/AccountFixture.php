@@ -75,8 +75,8 @@ class AccountFixture extends AbstractDataFixture
                 self::GUID => '3347b24d-2984-449a-9bde-ccaa5f81946c',
                 self::ACCOUNT_STATUS_TYPE => $this->getReference(
                     sprintf('accountStatusType_%d', AccountStatusTypeConstants::ACTIVE)),
-                self::API_KEY => 'PKU2P6NISHZELU5ATWEQ',
-                self::API_SECRET => 'yACk0pUFDlBQRBrbktzTe5iODUumrQACriY7TSK3',
+                self::API_KEY => 'PK9XGWQ9QH13FAXYVQ4L',
+                self::API_SECRET => 'PccEYUfNTAPqROk19uiEHyaMAPQE9y5MO5Vokebz',
                 self::BROKERAGE => $this->getReference(AlpacaConstants::BROKERAGE_NAME),
                 self::DESCRIPTION => 'Alpaca paper trading account',
                 self::DEFAULT => true,

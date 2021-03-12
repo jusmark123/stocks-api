@@ -55,10 +55,12 @@ class AccountCollectionDataProvider implements ContextAwareCollectionDataProvide
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
     {
         $accounts = $this->accountEntityManager->findAll();
-        $accounts = array_map(function ($account) {
+        $accounts = array_map(function (Account $account) {
             $brokerageService = $this->brokerageServiceProvider->getBrokerageService($account->getBrokerage());
-            $accountInfo = $brokerageService->getAccountInfo($account);
-            $account->setAccountInfo($accountInfo);
+            $account
+                ->setAccountInfo($brokerageService->fetchAccountInfo($account))
+                ->setConfiguration($brokerageService->fetchAccountConfiguration($account))
+                ->setPositions($brokerageService->fetchPositions($account));
 
             return $account;
         }, $accounts);

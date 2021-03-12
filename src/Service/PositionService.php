@@ -8,11 +8,13 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use ApiPlatform\Core\Bridge\Symfony\Validator\Validator;
 use App\DTO\SyncPositionsRequest;
 use App\Entity\Job;
 use App\Entity\Position;
 use App\Helper\ValidationHelper;
 use App\Service\Brokerage\BrokerageServiceProvider;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -20,25 +22,25 @@ use Psr\Log\LoggerInterface;
  */
 class PositionService extends AbstractService
 {
-    private $brokerageServiceProvider;
+    private BrokerageServiceProvider $brokerageServiceProvider;
 
-    private $defaultTypeService;
+    private DefaultTypeService $defaultTypeService;
 
-    private $positionEntityService;
+    private EntityManagerInterface $entityManager;
 
-    private $validator;
+    private ValidationHelper $validator;
 
     public function __construct(
         BrokerageServiceProvider $brokerageServiceProvider,
         DefaultTypeService $defaultTypeService,
+        EntityManagerInterface $entityManager,
         LoggerInterface $logger,
-        PositionEntityService $positionEntityService,
         ValidationHelper $validator
     ) {
         $this->brokerageServiceProvider = $brokerageServiceProvider;
         $this->defaultTypeService = $defaultTypeService;
+        $this->entityManager = $entityManager;
         $this->logger = $logger;
-        $this->positionEntityService = $positionEntityService;
         $this->validator = $validator;
         parent::__construct($logger);
     }

@@ -64,9 +64,21 @@ class TickerRequest implements TickerRequestInterface
      */
     private array $range;
 
-    public function __construct()
+    /**
+     * TickerRequest constructor.
+     *
+     * @param array    $parameters
+     * @param int|null $limit
+     */
+    public function __construct(array $parameters, ?int $limit = null)
     {
-        $this->range = range('a', 'z');
+        foreach ($parameters as $parameter => $value) {
+            if (property_exists($this, $parameter)) {
+                $this->$parameter = $value;
+            }
+        }
+        $this->limit = $limit;
+        $this->range = $this->range ?? range('a', 'z');
     }
 
     /**

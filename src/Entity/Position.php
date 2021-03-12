@@ -14,13 +14,13 @@ use Doctrine\ORM\PersistentCollection;
 use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
- * class Position.
+ * class AlpacaPosition.
  *
  * @ORM\Table(
  * 		name="position",
  * 		uniqueConstraints={
  * 			@ORM\UniqueConstraint(name="position_un_guid", columns={"guid"}),
- *          @ORM\UniqueConstraint(name="position_un_source_type", columns={"source_id", "source_class", "ticker_id"}),
+ *          @ORM\UniqueConstraint(name="position_un_source_type", columns={"source_id", "ticker_id"}),
  * 		}
  * )
  * @ORM\Entity(repositoryClass="App\Entity\Repository\PositionRepository")
@@ -60,30 +60,18 @@ class Position extends AbstractGuidEntity
 
     /**
      * @var string
-     */
-    private string $status;
-
-    /**
-     * @var string
      *
      * @ORM\Column(name="type", type="enumPositionType", length=30, nullable=false)
      */
     private string $type;
 
     /**
-     * @var Source
+     * @var Source|null
      *
      * @ORM\ManyToOne(targetEntity="Source", inversedBy="positions", fetch="LAZY")
      * @ORM\JoinColumn(name="source_id", referencedColumnName="id", nullable=false)
      */
-    private Source $source;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="source_class", type="string", length=125, nullable=false)
-     */
-    private string $sourceClass;
+    private ?Source $source = null;
 
     /**
      * @var Ticker|null
@@ -94,7 +82,7 @@ class Position extends AbstractGuidEntity
     private Ticker $ticker;
 
     /**
-     * Position constructor.
+     * AlpacaPosition constructor.
      *
      * @throws \Exception
      */
@@ -205,39 +193,19 @@ class Position extends AbstractGuidEntity
     }
 
     /**
-     * @return string
+     * @return Source|null
      */
-    public function getStatus(): string
-    {
-        return $this->status;
-    }
-
-    /**
-     * @param string $status
-     *
-     * @return Position
-     */
-    public function setStatus(string $status): Position
-    {
-        $this->status = $status;
-
-        return $this;
-    }
-
-    /**
-     * @return Source
-     */
-    public function getSource(): Source
+    public function getSource(): ?Source
     {
         return $this->source;
     }
 
     /**
-     * @param Source $source
+     * @param Source|null $source
      *
      * @return Position
      */
-    public function setSource(Source $source): Position
+    public function setSource(?Source $source): Position
     {
         $this->source = $source;
 

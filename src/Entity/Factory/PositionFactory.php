@@ -12,7 +12,7 @@ use App\DTO\Brokerage\BrokeragePositionInterface;
 use App\Entity\Position;
 
 /**
- * Class PositionFactory.
+ * Class AlpacaPositionFactory.
  */
 class PositionFactory extends AbstractFactory
 {
@@ -31,6 +31,7 @@ class PositionFactory extends AbstractFactory
      */
     public static function create(BrokeragePositionInterface $positionInfo): Position
     {
-        return self::init()->setPositionInfo($positionInfo);
+        return self::init()
+            ->setPositionInfo($positionInfo);
     }
 }

@@ -10,7 +10,7 @@ namespace App\DataProvider\Account;
 
 use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use App\DTO\Brokerage\BrokerageAccountInterface;
+use App\DTO\Brokerage\AccountInterface;
 use App\Entity\Account;
 use App\Entity\Manager\AccountEntityManager;
 use App\Service\Entity\AccountEntityService;
@@ -76,15 +76,15 @@ class AccountInfoItemDataProvider implements ItemDataProviderInterface, Restrict
      * @param string|null $operationName
      * @param array       $context
      *
-     * @return BrokerageAccountInterface
+     * @return AccountInterface
      */
-    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): BrokerageAccountInterface
+    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): AccountInterface
     {
         $account = $this->getAccount($id);
 
-        $accountInfo = $this->accountService->getAccountInfo($account);
+        $accountSummary = $this->accountService->getAccountSummary($account);
 
-        return $accountInfo->setAccount($account);
+        return $accountSummary->setAccount($account);
     }
 
     /**

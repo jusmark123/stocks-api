@@ -18,7 +18,7 @@ final class Version20201209052534 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Add Account and Source to job table';
+        return 'Add AlpacaAccount and Source to job table';
     }
 
     public function up(Schema $schema): void

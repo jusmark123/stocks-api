@@ -18,7 +18,7 @@ class AccountEntityManager extends EntityManager
 {
     const ENTITY_CLASS = Account::class;
 
-    const ACCOUNT_NOT_FOUND = 'Account not found';
+    const ACCOUNT_NOT_FOUND = 'AlpacaAccount not found';
 
     /**
      * @param string $identifier

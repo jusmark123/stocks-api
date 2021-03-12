@@ -41,6 +41,7 @@ use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\EntityManagerInterface;
 use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 
 class FixtureContext extends BaseFixtureContext
 {
@@ -128,7 +129,6 @@ class FixtureContext extends BaseFixtureContext
             ->setDescription($data['description'] ?? null)
             ->setBrokerage($brokerage)
             ->setAccountStatusType($accountStatusType)
-            ->setApiEndpointUrl($data['apiEndpointUrl'])
             ->setApiKey($data['apiKey'])
             ->setDefault((bool) $data['default'] ?? false)
             ->setApiSecret($data['apiSecret'])
@@ -336,7 +336,7 @@ class FixtureContext extends BaseFixtureContext
     /**
      * @param string|null $guid
      *
-     * @return \Ramsey\Uuid\UuidInterface
+     * @return UuidInterface
      */
     private function getGuid(?string $guid)
     {

@@ -16,7 +16,7 @@ class UserTypeConstants
 
     const NAMES = [
         self::SYSTEM_ADMIN => 'System Admin',
-        self::SERVICE_ACCOUNT => 'Service Account',
+        self::SERVICE_ACCOUNT => 'Service AlpacaAccount',
         self::ACCOUNT_USER => 'User',
     ];
 

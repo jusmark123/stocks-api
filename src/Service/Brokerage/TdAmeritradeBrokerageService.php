@@ -72,9 +72,9 @@ class TdAmeritradeBrokerageService extends AbstractBrokerageService
      *
      *@throws ClientExceptionInterface
      *
-     * @return \App\DTO\Brokerage\BrokerageAccountInterface|null
+     *@return \App\DTO\Brokerage\AccountInterface|null
      */
-    public function getAccountInfo(Account $account): ?\App\DTO\Brokerage\BrokerageAccountInterface
+    public function getAccountSummary(Account $account): ?\App\DTO\Brokerage\AccountInterface
     {
         $classMetaDataFactory = new ClassMetadataFactory(
             new YamlFileLoader(TdAmeritradeConstants::ORDER_INFO_SERIALIZATION_CONFIG));

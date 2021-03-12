@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace App\DTO\Brokerage\Alpaca;
 
-class AccountConfiguration
+class AlpacaAccountConfiguration
 {
     /**
      * @var string
@@ -41,9 +41,9 @@ class AccountConfiguration
     /**
      * @param string $dtbpCheck
      *
-     * @return AccountConfiguration
+     * @return AlpacaAccountConfiguration
      */
-    public function setDtbpCheck(string $dtbpCheck): AccountConfiguration
+    public function setDtbpCheck(string $dtbpCheck): AlpacaAccountConfiguration
     {
         $this->dtbpCheck = $dtbpCheck;
 
@@ -61,9 +61,9 @@ class AccountConfiguration
     /**
      * @param bool $noShorting
      *
-     * @return AccountConfiguration
+     * @return AlpacaAccountConfiguration
      */
-    public function setNoShorting(bool $noShorting): AccountConfiguration
+    public function setNoShorting(bool $noShorting): AlpacaAccountConfiguration
     {
         $this->noShorting = $noShorting;
 
@@ -81,9 +81,9 @@ class AccountConfiguration
     /**
      * @param bool $suspendTrade
      *
-     * @return AccountConfiguration
+     * @return AlpacaAccountConfiguration
      */
-    public function setSuspendTrade(bool $suspendTrade): AccountConfiguration
+    public function setSuspendTrade(bool $suspendTrade): AlpacaAccountConfiguration
     {
         $this->suspendTrade = $suspendTrade;
 
@@ -101,9 +101,9 @@ class AccountConfiguration
     /**
      * @param string $tradeConfirmationEmail
      *
-     * @return AccountConfiguration|null
+     * @return AlpacaAccountConfiguration|null
      */
-    public function setTradeConfirmationEmail(?string $tradeConfirmationEmail): AccountConfiguration
+    public function setTradeConfirmationEmail(?string $tradeConfirmationEmail): AlpacaAccountConfiguration
     {
         $this->tradeConfirmationEmail = $tradeConfirmationEmail;
 

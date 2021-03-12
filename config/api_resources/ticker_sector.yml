@@ -1,10 +1,10 @@
 resources:
-  App\Entity\TickerType:
+  App\Entity\TickerSector:
     attributes:
       normalization_context:
-        groups: [ 'ticker_type.get' ]
+        groups: [ 'ticker_sector.get' ]
       denormalization_context:
-        groups: [ 'ticker_type.post' ]
+        groups: [ 'ticker_sector.post' ]
       order: {modifiedAt: DESC, id: DESC}
 
     collectionOperations:
@@ -23,8 +23,5 @@ resources:
 
     properties:
       id:
-        identifier: false
-      guid:
         identifier: true
-        swagger_context:
-          example: 'd6f68382-dd82-4324-b04c-89266d70ee2a'
+

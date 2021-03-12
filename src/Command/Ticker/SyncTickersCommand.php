@@ -13,7 +13,6 @@ use App\Command\AbstractCommand;
 use App\Constants\Transport\JobConstants;
 use App\DataPersister\SyncTickersDataPersister;
 use App\DTO\Brokerage\YahooFinance\TickerRequest;
-use App\DTO\SyncTickersRequest;
 use App\Entity\Account;
 use App\Entity\Job;
 use App\Entity\Source;
@@ -105,19 +104,6 @@ class SyncTickersCommand extends AbstractCommand implements LoggerAwareInterface
                 null
             )
             ->addOption(
-                'account_id',
-                'a',
-                InputOption::VALUE_OPTIONAL,
-                'Specify an account uuid to use. Determines brokerage',
-                null
-            )
-            ->addOption(
-                'source_id',
-                's',
-                InputOption::VALUE_OPTIONAL,
-                'Specify a source for attribution'
-            )
-            ->addOption(
                 'parameters',
                 'f',
                 InputOption::VALUE_OPTIONAL,
@@ -128,7 +114,7 @@ class SyncTickersCommand extends AbstractCommand implements LoggerAwareInterface
                 'limit',
                 'l',
                 InputOption::VALUE_OPTIONAL,
-                'Limit number of processed tickers, mainly used for testing purposes'
+                'Limit number of processed tickers, mainly used for testing purposes',
             )
             ->addOption(
                 'consume',
@@ -150,25 +136,23 @@ class SyncTickersCommand extends AbstractCommand implements LoggerAwareInterface
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         try {
-            $request = (new TickerRequest())->setLimit(1000)->setCount(1000);
-            $this->tickerService->fetchTickers($request);
             $job = $this->getJob($input->getOption('job_id'));
-            $source = $this->getSource($input->getOption('source_id'));
-            $account = $this->getAccount($input->getOption('account_id'));
             $parameters = $this->getParameters($input->getOption('parameters'));
             $limit = $input->getOption('limit');
+            $request = new TickerRequest($parameters, $limit);
 
-            $request = new SyncTickersRequest($account, $source, $parameters, $limit, $job);
-            $jobRequest = new SyncTickersDataPersister($this->messageBus, $this->defaultTypeService, $this->jobService);
-            $job = $jobRequest->persist($request);
-
-            $output->writeln(
-                sprintf('Sync tickers job initiated. View progress via the /api/stocks/v1/jobs/%s',
-                    $job->getGuid()->toString())
-            );
-
-            if ($input->getOption('consume')) {
-                $this->startConsumers($output);
+            if ($job instanceof Job || $limit >= 1000) {
+                $jobRequest = new SyncTickersDataPersister($this->messageBus, $this->defaultTypeService, $this->jobService);
+                $job = $jobRequest->persist($request);
+                $output->writeln(
+                    sprintf('Sync tickers job initiated. View progress via the /api/stocks/v1/jobs/%s',
+                        $job->getGuid()->toString())
+                );
+                if ($input->getOption('consume')) {
+                    $this->startConsumers($output);
+                }
+            } else {
+                $this->tickerService->fetchTickers($request);
             }
         } catch (\Exception $e) {
             $this->logger->error($e->getMessage(), [

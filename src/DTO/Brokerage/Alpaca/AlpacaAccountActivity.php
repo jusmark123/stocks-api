@@ -8,51 +8,51 @@ declare(strict_types=1);
 
 namespace App\DTO\Brokerage\Alpaca;
 
-use App\Entity\AbstractGuidEntity;
+use App\DTO\Brokerage\AccountHistoryInterface;
 use App\Entity\Order;
 use App\Entity\Ticker;
 
-class AccountActivity extends AbstractGuidEntity
+class AlpacaAccountActivity implements AccountHistoryInterface
 {
     /**
      * @var float
      */
-    private $cumQty;
+    private float $cumQty;
 
     /**
      * @var int
      */
-    private $leavesQty;
+    private int $leavesQty;
 
     /**
      * @var float
      */
-    private $price;
+    private float $price;
 
     /**
      * @var int
      */
-    private $qty;
+    private int $qty;
 
     /**
      * @var string
      */
-    private $side;
+    private string $side;
 
     /**
      * @var Ticker
      */
-    private $ticker;
+    private Ticker $ticker;
 
     /**
      * @var Order|null
      */
-    private $order;
+    private ?Order $order;
 
     /**
      * @var string
      */
-    private $type;
+    private string $type;
 
     /**
      * @return float
@@ -65,9 +65,9 @@ class AccountActivity extends AbstractGuidEntity
     /**
      * @param float $cumQty
      *
-     * @return AccountActivity
+     * @return AlpacaAccountActivity
      */
-    public function setCumQty(float $cumQty): AccountActivity
+    public function setCumQty(float $cumQty): AlpacaAccountActivity
     {
         $this->cumQty = $cumQty;
 
@@ -85,9 +85,9 @@ class AccountActivity extends AbstractGuidEntity
     /**
      * @param int $leavesQty
      *
-     * @return AccountActivity
+     * @return AlpacaAccountActivity
      */
-    public function setLeavesQty(int $leavesQty): AccountActivity
+    public function setLeavesQty(int $leavesQty): AlpacaAccountActivity
     {
         $this->leavesQty = $leavesQty;
 
@@ -105,9 +105,9 @@ class AccountActivity extends AbstractGuidEntity
     /**
      * @param float $price
      *
-     * @return AccountActivity
+     * @return AlpacaAccountActivity
      */
-    public function setPrice(float $price): AccountActivity
+    public function setPrice(float $price): AlpacaAccountActivity
     {
         $this->price = $price;
 
@@ -125,9 +125,9 @@ class AccountActivity extends AbstractGuidEntity
     /**
      * @param int $qty
      *
-     * @return AccountActivity
+     * @return AlpacaAccountActivity
      */
-    public function setQty(int $qty): AccountActivity
+    public function setQty(int $qty): AlpacaAccountActivity
     {
         $this->qty = $qty;
 
@@ -145,9 +145,9 @@ class AccountActivity extends AbstractGuidEntity
     /**
      * @param string $side
      *
-     * @return AccountActivity
+     * @return AlpacaAccountActivity
      */
-    public function setSide(string $side): AccountActivity
+    public function setSide(string $side): AlpacaAccountActivity
     {
         $this->side = $side;
 
@@ -165,9 +165,9 @@ class AccountActivity extends AbstractGuidEntity
     /**
      * @param Ticker $ticker
      *
-     * @return AccountActivity
+     * @return AlpacaAccountActivity
      */
-    public function setTicker(Ticker $ticker): AccountActivity
+    public function setTicker(Ticker $ticker): AlpacaAccountActivity
     {
         $this->ticker = $ticker;
 
@@ -185,9 +185,9 @@ class AccountActivity extends AbstractGuidEntity
     /**
      * @param Order|null $order
      *
-     * @return AccountActivity
+     * @return AlpacaAccountActivity
      */
-    public function setOrder(?Order $order): AccountActivity
+    public function setOrder(?Order $order): AlpacaAccountActivity
     {
         $this->order = $order;
 
@@ -205,9 +205,9 @@ class AccountActivity extends AbstractGuidEntity
     /**
      * @param string $type
      *
-     * @return AccountActivity
+     * @return AlpacaAccountActivity
      */
-    public function setType(string $type): AccountActivity
+    public function setType(string $type): AlpacaAccountActivity
     {
         $this->type = $type;
 

@@ -1,0 +1,11 @@
+App\DTO\Brokerage\AccountHistory:
+  attributes:
+    guid:
+      groups:
+        - account_history.get
+    activities:
+      groups:
+        - account_history.get
+    request:
+      groups:
+        - account_history.get

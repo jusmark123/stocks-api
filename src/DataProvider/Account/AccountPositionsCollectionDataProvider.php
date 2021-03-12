@@ -71,7 +71,7 @@ class AccountPositionsCollectionDataProvider implements ContextAwareCollectionDa
         $serializer = SerializerHelper::CamelCaseToSnakeCaseNormalizer($classMetaDataFactory);
 
         if (!$account instanceof Account) {
-            throw new ItemNotFoundException('Account not found');
+            throw new ItemNotFoundException('AlpacaAccount not found');
         }
 
         $brokerageService = $this->brokerageService->getBrokerageService($account->getBrokerage());

@@ -3,6 +3,7 @@ resources:
     attributes:
       filters:
         - ticker.search_filter
+        - ticker.relation_filter
         - ticker.or_search_filter
       normalization_context:
         groups: [ 'ticker.get' ]
@@ -30,3 +31,9 @@ resources:
         identifier: true
         swagger_context:
           example: 'd6f68382-dd82-4324-b04c-89266d70ee2a'
+
+      sector:
+        subresource:
+          collection: false
+          resourceClass: 'App\Entity\TickerSector'
+          maxDepth: 1

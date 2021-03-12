@@ -21,7 +21,7 @@ interface EntityIdInterface
     /**
      * @param int $id
      *
-     * @return self
+     * @return $this
      */
-    public function setId(int $id): self;
+    public function setId(int $id);
 }

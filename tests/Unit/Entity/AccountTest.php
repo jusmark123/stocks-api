@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Entity;
 
-use App\DTO\Brokerage\Alpaca\AccountConfiguration;
+use App\DTO\Brokerage\Alpaca\AlpacaAccountConfiguration;
 use App\DTO\Brokerage\Alpaca\Factory\AlpacaAccountInfoFactory;
 use App\Entity\Account;
 use App\Entity\Factory\AccountStatusTypeFactory;
@@ -64,7 +64,7 @@ class AccountTest extends TestCase
         $this->assertSame($this->entity, $this->entity->setAccountStatusType($accountStatusType));
         $this->assertEquals($accountStatusType, $this->entity->getAccountStatusType());
 
-        $config = new AccountConfiguration();
+        $config = new AlpacaAccountConfiguration();
         $this->assertSame($this->entity, $this->entity->setConfiguration($config));
         $this->assertEquals($config, $this->entity->getConfiguration());
 

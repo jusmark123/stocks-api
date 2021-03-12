@@ -9,16 +9,13 @@ declare(strict_types=1);
 namespace App\Service\Brokerage;
 
 use App\Constants\Brokerage\PolygonContstants;
-use App\DTO\Brokerage\BrokerageAccountInterface;
-use App\DTO\Brokerage\BrokerageOrderInterface;
-use App\DTO\Brokerage\BrokerageTickerInterface;
-use App\DTO\SyncOrdersRequest;
-use App\DTO\SyncTickersRequest;
+use App\DTO\Brokerage\AccountHistoryInterface;
+use App\DTO\Brokerage\AccountHistoryRequestInterface;
+use App\DTO\Brokerage\AccountInterface;
+use App\DTO\Brokerage\Alpaca\AlpacaAccountConfiguration;
 use App\Entity\Account;
 use App\Entity\Brokerage;
 use App\Entity\Job;
-use App\Entity\Order;
-use App\Entity\Ticker;
 use App\Exception\InvalidAccountConfiguration;
 use App\Helper\ValidationHelper;
 use App\Service\JobService;
@@ -27,7 +24,6 @@ use Predis\Client;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * Class AbstractBrokerageService.
@@ -151,66 +147,41 @@ abstract class AbstractBrokerageService implements BrokerageServiceInterface, Lo
     /**
      * @param Account $account
      *
-     * @return BrokerageAccountInterface|null
+     * @return AlpacaAccountConfiguration|null
      */
-    public function getAccountInfo(Account $account): ?BrokerageAccountInterface
+    public function fetchAccountConfiguration(Account $account): ?AlpacaAccountConfiguration
     {
-        // TODO: Implement getAccountInfo() method.
+        // TODO: Implement fetchAccountConfiguration() method.
+    }
+
+    /**
+     * @param AccountHistoryRequestInterface $request
+     *
+     * @return AccountHistoryInterface|null
+     */
+    public function fetchAccountHistory(AccountHistoryRequestInterface $request): ?AccountHistoryInterface
+    {
+        // TODO: Implement fetchAccountHistory() method.
     }
 
     /**
      * @param Account $account
      *
-     * @return array|null
+     * @return AccountInterface|null
      */
-    public function getPositions(Account $account): ?array
+    public function fetchAccountInfo(Account $account): ?AccountInterface
     {
-        // TODO: Implement getPositions() method.
+        // TODO: Implement getAccountSummary() method.
     }
 
     /**
-     * @param BrokerageOrderInterface $orderInfo
-     * @param Job                     $job
-     *
-     * @return Order|null
-     */
-    public function createOrderFromOrderInfo(BrokerageOrderInterface $orderInfo, Job $job): ?Order
-    {
-        // TODO: Implement createOrderFromOrderInfo() method.
-    }
-
-    /**
-     * @param array $message
-     *
-     * @return BrokerageOrderInterface|null
-     */
-    public function createOrderInfoFromMessage(array $message): ?BrokerageOrderInterface
-    {
-        // TODO: Implement createOrderInfoFromMessage() method.
-    }
-
-    /**
-     * @param SyncOrdersRequest   $request
-     * @param MessageBusInterface $messageBus
-     * @param Job                 $job
+     * @param Account $account
      *
      * @return Job|null
      */
-    public function fetchOrderHistory(SyncOrdersRequest $request, MessageBusInterface $messageBus, Job $job): ?Job
+    public function fetchOrders(Account $account): ?array
     {
         // TODO: Implement fetchOrderHistory() method.
-    }
-
-    /**
-     * @param SyncTickersRequest  $request
-     * @param MessageBusInterface $messageBus
-     * @param Job                 $job
-     *
-     * @return Job|null
-     */
-    public function fetchTickers(SyncTickersRequest $request, MessageBusInterface $messageBus, Job $job): ?Job
-    {
-        // TODO: Implement fetchTickers() method.
     }
 
     /**
@@ -218,30 +189,9 @@ abstract class AbstractBrokerageService implements BrokerageServiceInterface, Lo
      *
      * @return array
      */
-    public function fetchPositions($account): array
+    public function fetchPositions(Account $account): ?array
     {
         // TODO: Implement fetchPositions() method.
-    }
-
-    /**
-     * @param array $message
-     *
-     * @return BrokerageTickerInterface|null
-     */
-    public function createTickerInfoFromMessage(array $message): ?BrokerageTickerInterface
-    {
-        // TODO: Implement createTickerInfoFromMessage() method.
-    }
-
-    /**
-     * @param BrokerageTickerInterface $tickerInfo
-     * @param Job                      $job
-     *
-     * @return Ticker|null
-     */
-    public function createTickerFromTickerInfo(BrokerageTickerInterface $tickerInfo, Job $job): ?Ticker
-    {
-        // TODO: Implement createTickerFromTickerInfo() method.
     }
 
     /**

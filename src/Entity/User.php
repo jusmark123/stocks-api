@@ -51,14 +51,14 @@ class User extends Source implements UserInterface
      * @var string|null
      * @ORM\Column(name="avatar", type="text", length=1677216, nullable=true)
      */
-    private ?string $avatar;
+    private ?string $avatar = null;
 
     /**
      * @var string|null
      *
      * @ORM\Column(name="description", type="text", length=65535, nullable=true)
      */
-    private ?string $description;
+    private ?string $description = null;
 
     /**
      * @var string
@@ -72,35 +72,35 @@ class User extends Source implements UserInterface
      *
      * @ORM\Column(name="first_name", type="string", length=100, nullable=true)
      */
-    private ?string $firstName;
+    private ?string $firstName = null;
 
     /**
      * @var string|null
      *
      * @ORM\Column(name="last_name", type="string", length=100, nullable=true)
      */
-    private ?string $lastName;
+    private ?string $lastName = null;
 
     /**
      * @var string|null
      *
      * @ORM\Column(name="password", type="string", length=255, nullable=true)
      */
-    private ?string $password;
+    private ?string $password = null;
 
     /**
      * @var string|null
      *
      * @ORM\Column(name="phone", type="string", length=20, nullable=true)
      */
-    private ?string $phone;
+    private ?string $phone = null;
 
     /**
      * @var string|null
      *
      * @Groups({"user.put"})
      */
-    private ?string $plainPassword;
+    private ?string $plainPassword = null;
 
     /**
      * @var array

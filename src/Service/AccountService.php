@@ -9,7 +9,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Client\BrokerageClient;
-use App\DTO\Brokerage\BrokerageAccountInterface;
+use App\DTO\Brokerage\AccountInterface;
 use App\Entity\Account;
 use App\Service\Brokerage\BrokerageServiceProvider;
 use App\Service\Entity\AccountEntityService;
@@ -58,12 +58,12 @@ class AccountService extends AbstractService
     /**
      * @param Account $account
      *
-     * @return BrokerageAccountInterface
+     * @return AccountInterface
      */
-    public function getAccountInfo(Account $account): BrokerageAccountInterface
+    public function getAccountSummary(Account $account): AccountInterface
     {
         $brokerageService = $this->brokerageServiceProvider->getBrokerageService($account->getBrokerage());
 
-        return $brokerageService->getAccountInfo($account);
+        return $brokerageService->getAccountSummary($account);
     }
 }

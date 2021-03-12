@@ -1,4 +1,6 @@
 {
+  "name": "jwalker/stocks_api",
+  "description": "Api for automated trading",
   "type": "project",
   "license": "proprietary",
   "repositories": {
@@ -17,7 +19,6 @@
   "require": {
     "php": ">=7.4",
     "ext-ctype": "*",
-    "ext-http": "*",
     "ext-iconv": "*",
     "ext-json": "*",
     "ext-xdebug": "*",
@@ -68,7 +69,7 @@
     "symfony/twig-bridge": "5.2.*",
     "symfony/twig-bundle": "5.2.*",
     "symfony/validator": "5.2.*",
-    "tansoft/websocketclient": "^1.0",
+    "tansoft/websocketclient": "^1.0"
   },
   "require-dev": {
     "behat/behat": "^3.8",

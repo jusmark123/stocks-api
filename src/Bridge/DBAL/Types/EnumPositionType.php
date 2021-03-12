@@ -16,8 +16,8 @@ class EnumPositionType extends AbstractEnumType
     const INDEX = 'index';
     const OPTION = 'option';
 
-    protected $name = 'enumPositionType';
-    protected $values = [
+    protected string $name = 'enumPositionType';
+    protected array $values = [
         self::CRYPTO,
         self::CURRENCY,
         self::EQUITY,

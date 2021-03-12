@@ -4,6 +4,13 @@ services:
     arguments:
       - name: 'ipartial'
         ticker: 'ipartial'
+        market: 'exact'
+    tags: [ 'api_platform.filter' ]
+
+  ticker.relation_filter:
+    parent: 'api_platform.doctrine.orm.search_filter'
+    arguments:
+      - sector.name: 'exact'
     tags: [ 'api_platform.filter' ]
 
   ticker.or_search_filter:

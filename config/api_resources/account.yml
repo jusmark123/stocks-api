@@ -12,28 +12,10 @@ resources:
       post:
         method: POST
 
-      account_history:
-        method: GET
-        path: /account/{id}/account_history
-        force_eager: false
-        defaults:
-          _api_resource_context:
-            identifiers:
-              - [ id, App\Entity\Account, true ]
-        normalization_context:
-          groups: [ order_info.get ]
-        swagger_context:
-          summary: Get account history from a brokerage
-          tags: [ Account ]
-          parameters:
-            - name: id
-              in: path
-              required: true
-
       get_account_positions:
         method: GET
         path: '/accounts/{id}/positions'
-        output: App\DTO\Brokerage\Alpaca\Position
+        output: App\DTO\Brokerage\Alpaca\AlpacaPosition
         defaults:
           _api_subresource_context:
             identifiers:
@@ -52,6 +34,24 @@ resources:
     itemOperations:
       get:
         method: GET
+
+      account_history:
+        method: GET
+        path: /account/{id}/account_history
+        force_eager: false
+        defaults:
+          _api_resource_context:
+            identifiers:
+              - [ id, App\Entity\Account, true ]
+        normalization_context:
+          groups: [ account_history.get ]
+        swagger_context:
+          summary: Get account history from a brokerage
+          tags: [ Account ]
+          parameters:
+            - name: id
+              in: path
+              required: true
 
       account_get_position:
         method: GET

@@ -8,7 +8,6 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Entity\Interfaces\EntityGuidInterface;
 use App\Entity\Traits\CreatedAtTrait;
 use App\Entity\Traits\DeactivatedAtTrait;
 use App\Entity\Traits\EntityGuidTrait;
@@ -30,7 +29,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
  * @ORM\HasLifecycleCallbacks()
  * @Gedmo\SoftDeleteable(fieldName="deactivatedAt", timeAware=false)
  */
-class Algorithm extends Source implements EntityGuidInterface
+class Algorithm extends Source
 {
     use CreatedAtTrait;
     use DeactivatedAtTrait;

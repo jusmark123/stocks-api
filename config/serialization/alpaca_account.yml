@@ -1,4 +1,4 @@
-App\DTO\Brokerage\Alpaca\AccountInfo:
+App\DTO\Brokerage\Alpaca\Account:
   attributes:
     id:
       groups:

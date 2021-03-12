@@ -24,13 +24,13 @@ final class AlpacaConstants
 
     const ORDER_HISTORY_DEFAULT_PAGE_LIMIT = 500;
     // AlpacaAccountInfoEntity Class
-    const ACCOUNT_INFO_ENTITY_CLASS = 'App\DTO\Brokerage\Alpaca\Account';
-    const ACCOUNT_CONFIGURATION_ENTITY_CLASS = 'App\DTO\Brokerage\Alpaca\AccountConfiguration';
+    const ACCOUNT_INFO_ENTITY_CLASS = 'App\DTO\Brokerage\Alpaca\AlpacaAccount';
+    const ACCOUNT_CONFIGURATION_ENTITY_CLASS = 'App\DTO\Brokerage\Alpaca\AlpacaAccountConfiguration';
 
     // AlpacaOrderInfoEntity Class
     const ORDER_INFO_ENTITY_CLASS = 'App\DTO\Brokerage\Alpaca\Order\OrderInfo';
 
-    const POSITION_INFO_ENTITY_CLASS = 'App\DTO\Brokerage\Alpaca\Position';
+    const POSITION_INFO_ENTITY_CLASS = 'App\DTO\Brokerage\Alpaca\AlpacaPosition';
 
     // Brokerage Name
     const BROKERAGE_NAME = 'Alpaca Trader';
@@ -40,13 +40,13 @@ final class AlpacaConstants
     const BROKERAGE_URL = 'https://alpaca.markets/';
     const BROKERAGE_API_DOCUMENT_URL = 'https://alpaca.markets/docs/api-documentation/api-v2/';
 
-    // Request Constants
+    // RequestParameters Constants
     const REQUEST_HEADER_API_KEY = 'APCA-API-KEY-ID';
     const REQUEST_HEADER_API_SECRET_KEY = 'APCA-API-SECRET-KEY';
     const REQUEST_RETURN_DATA_TYPE = 'json';
 
-    const ACCOUNT_INFO_SERIALIZATION_CONFIG = '/opt/app-root/src/config/serialization/alpaca_account_info.yml';
-    const ACCOUNT_CONFIGURATION__SERIALIZATION_CONFIG = '/opt/app-root/src/config/serialization/alpaca_account_info.yml';
+    const ACCOUNT_INFO_SERIALIZATION_CONFIG = '/opt/app-root/src/config/serialization/alpaca_account.yml';
+    const ACCOUNT_CONFIGURATION__SERIALIZATION_CONFIG = '/opt/app-root/src/config/serialization/alpaca_account.yml';
     const ORDER_INFO_SERIALIZATION_CONFIG = '/opt/app-root/src/config/serialization/alpaca_order_info.yml';
     const ORDER_INFO_UNIQUE_KEY = 'client_order_id';
     const ORDER_POSITION_INFO_SERIALIZATION_CONFIG = '/opt/app-root/src/config/serialization/alpaca_position_info.yml';

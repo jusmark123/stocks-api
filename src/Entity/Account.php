@@ -8,15 +8,16 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\DTO\Brokerage\Alpaca\AccountConfiguration;
-use App\DTO\Brokerage\BrokerageAccountInterface;
+use App\DTO\Brokerage\AccountInterface;
+use App\DTO\Brokerage\Alpaca\AlpacaAccountConfiguration;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\PersistentCollection;
+use Exception;
 use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
- * Account.
+ * AlpacaAccount.
  *
  * @ORM\Table(
  *		name="account",
@@ -34,9 +35,9 @@ use Gedmo\Mapping\Annotation as Gedmo;
 class Account extends AbstractGuidEntity
 {
     /**
-     * @var BrokerageAccountInterface|null
+     * @var AccountInterface|null
      */
-    private ?BrokerageAccountInterface $accountInfo;
+    private ?AccountInterface $accountSummary;
 
     /**
      * @var AccountStatusType
@@ -73,9 +74,9 @@ class Account extends AbstractGuidEntity
     private Brokerage $brokerage;
 
     /**
-     * @var AccountConfiguration|null
+     * @var AlpacaAccountConfiguration|null
      */
-    private ?AccountConfiguration $configuration = null;
+    private ?AlpacaAccountConfiguration $configuration = null;
 
     /**
      * @var bool
@@ -105,7 +106,7 @@ class Account extends AbstractGuidEntity
      */
     private bool $paperAccount;
 
-    // Subresources
+    // SubResources
 
     /**
      * @var ArrayCollection|Job[]|PersistentCollection
@@ -140,9 +141,9 @@ class Account extends AbstractGuidEntity
     private $users;
 
     /**
-     * Account constructor.
+     * AlpacaAccount constructor.
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function __construct()
     {
@@ -154,21 +155,21 @@ class Account extends AbstractGuidEntity
     }
 
     /**
-     * @return BrokerageAccountInterface|null
+     * @return AccountInterface|null
      */
-    public function getAccountInfo(): ?BrokerageAccountInterface
+    public function getAccountSummary(): ?AccountInterface
     {
-        return $this->accountInfo;
+        return $this->accountSummary;
     }
 
     /**
-     * @param BrokerageAccountInterface|null $accountInfo
+     * @param AccountInterface|null $accountSummary
      *
      * @return Account
      */
-    public function setAccountInfo(?BrokerageAccountInterface $accountInfo): Account
+    public function setAccountInfo(?AccountInterface $accountSummary): Account
     {
-        $this->accountInfo = $accountInfo;
+        $this->accountSummary = $accountSummary;
 
         return $this;
     }
@@ -254,19 +255,19 @@ class Account extends AbstractGuidEntity
     }
 
     /**
-     * @return AccountConfiguration
+     * @return AlpacaAccountConfiguration
      */
-    public function getConfiguration(): ?AccountConfiguration
+    public function getConfiguration(): ?AlpacaAccountConfiguration
     {
         return $this->configuration;
     }
 
     /**
-     * @param AccountConfiguration|null $configuration
+     * @param AlpacaAccountConfiguration|null $configuration
      *
      * @return Account
      */
-    public function setConfiguration(?AccountConfiguration $configuration): Account
+    public function setConfiguration(?AlpacaAccountConfiguration $configuration): Account
     {
         $this->configuration = $configuration;
 
@@ -282,7 +283,7 @@ class Account extends AbstractGuidEntity
     }
 
     /**
-     * @param string
+     * @param string|null $description
      *
      * @return Account
      */
@@ -367,6 +368,8 @@ class Account extends AbstractGuidEntity
 
     /**
      * @param ArrayCollection|User[]|PersistentCollection $users
+     *
+     * @return Account
      */
     public function setUsers(array $users): Account
     {
@@ -454,7 +457,7 @@ class Account extends AbstractGuidEntity
     /**
      * @param array $orders
      *
-     * @return Source
+     * @return Account
      */
     public function setOrders(array $orders): Account
     {

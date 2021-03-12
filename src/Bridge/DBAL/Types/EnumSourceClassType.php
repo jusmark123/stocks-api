@@ -15,12 +15,12 @@ use App\Entity\User;
 class EnumSourceClassType extends AbstractEnumType
 {
     const USER = User::class;
-    const ALORGITHM = Algorithm::class;
+    const ALGORITHM = Algorithm::class;
     const SCREENER = Screener::class;
 
-    protected $name = 'enumSourceClassType';
-    protected $values = [
-        self::ALORGITHM,
+    protected string $name = 'enumSourceClassType';
+    protected array $values = [
+        self::ALGORITHM,
         self::SCREENER,
         self::USER,
     ];

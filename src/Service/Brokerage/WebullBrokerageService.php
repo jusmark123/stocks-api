@@ -18,7 +18,6 @@ use Predis\Client;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
-use Ramsey\Uuid\UuidInterface;
 
 /**
  * Class WebullBrokerageService.
@@ -102,7 +101,7 @@ class WebullBrokerageService extends AbstractBrokerageService
      * @param Account $account
      * @param string  $path
      *
-     * @return UuidInterface|string|null
+     * @return Uuid|string|null
      */
     private function getDid(Account $account, string $path = ''): string
     {

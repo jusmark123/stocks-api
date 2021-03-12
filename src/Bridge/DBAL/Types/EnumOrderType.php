@@ -16,8 +16,8 @@ class EnumOrderType extends AbstractEnumType
     const STOP_LIMIT = 'stop_limit';
     const TRAILING_STOP = 'trailing_stop';
 
-    protected $name = 'enumOrderType';
-    protected $values = [
+    protected string $name = 'enumOrderType';
+    protected array $values = [
         self::LIMIT,
         self::MARKET,
         self::STOP,

@@ -17,8 +17,8 @@ use Doctrine\ORM\ORMInvalidArgumentException;
  */
 abstract class AbstractEnumType extends Type
 {
-    protected $name;
-    protected $values = [];
+    protected string $name;
+    protected array $values = [];
 
     /**
      * @param array            $fieldDeclaration

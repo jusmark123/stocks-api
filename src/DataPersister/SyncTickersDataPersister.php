@@ -68,7 +68,7 @@ class SyncTickersDataPersister implements DataPersisterInterface
     /**
      * @param $data
      *
-     * @return object|void
+     * @return Job
      */
     public function persist($data): Job
     {

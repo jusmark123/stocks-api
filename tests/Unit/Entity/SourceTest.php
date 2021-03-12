@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Entity;
 
-use App\DTO\Brokerage\Alpaca\Position;
+use App\DTO\Brokerage\Alpaca\AlpacaPosition;
 use App\Entity\Factory\JobFactory;
 use App\Entity\Factory\OrderFactory;
 use App\Entity\Source;
@@ -73,7 +73,7 @@ class SourceTest extends TestCase
         $this->assertSame($this->entity, $this->entity->setJobs($jobs));
         $this->assertContains($job, $this->entity->getJobs());
 
-        $position = new Position();
+        $position = new AlpacaPosition();
         $positions = new ArrayCollection([$position]);
         $this->assertSame($this->entity, $this->entity->setPositions($positions));
         $this->assertContains($position, $this->entity->getPositions());

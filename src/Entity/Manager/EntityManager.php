@@ -11,7 +11,6 @@ namespace App\Entity\Manager;
 use App\Entity\AbstractEntity;
 use App\Entity\Interfaces\EntityInterface;
 use App\Service\EntityStateService;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\UnitOfWork;
 use Doctrine\Persistence\ManagerRegistry;
@@ -167,7 +166,7 @@ class EntityManager implements BaseEntityManagerInterface
     /**
      * @return array
      */
-    public function findAll(): array
+    public function findAll()
     {
         return $this->getEntityRepository()->findAll();
     }
@@ -188,13 +187,11 @@ class EntityManager implements BaseEntityManagerInterface
      * @param null       $limit
      * @param null       $offset
      *
-     * @return array|AbstractEntity[]
+     * @return mixed
      */
-    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ArrayCollection
+    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
     {
-        $entities = $this->getEntityRepository()->findBy($criteria, $orderBy, $limit, $offset);
-
-        return new ArrayCollection($entities);
+        return $this->getEntityRepository()->findBy($criteria, $orderBy, $limit, $offset);
     }
 
     /**

@@ -9,144 +9,144 @@ declare(strict_types=1);
 namespace App\DTO\Brokerage\Alpaca;
 
 use App\Constants\Brokerage\AlpacaConstants;
-use App\DTO\Brokerage\BrokerageAccountInterface;
+use App\DTO\Brokerage\AccountInterface;
 
-class Account implements BrokerageAccountInterface
+class AlpacaAccount implements AccountInterface
 {
     /**
      * @var string
      */
-    private $id;
+    private string $id;
 
     /**
      * @var bool
      */
-    private $accountBlocked;
+    private bool $accountBlocked;
 
     /**
      * @var string
      */
-    private $accountNumber;
+    private string $accountNumber;
 
     /**
      * @var float
      */
-    private $buyingPower;
+    private float $buyingPower;
 
     /**
      * @var float
      */
-    private $cash;
+    private float $cash;
 
     /**
      * @var \DateTime
      */
-    private $createdAt;
+    private \DateTime $createdAt;
 
     /**
      * @var string
      */
-    private $currency;
+    private string $currency;
 
     /**
      * @var string
      */
-    private $brokerage;
+    private string $brokerage;
 
     /**
      * @var int
      */
-    private $daytradeCount;
+    private int $daytradeCount;
 
     /**
      * @var float
      */
-    private $daytradingBuyingPower;
+    private float $daytradingBuyingPower;
 
     /**
      * @var float
      */
-    private $equity;
+    private float $equity;
 
     /**
      * @var float
      */
-    private $initialMargin;
+    private float $initialMargin;
 
     /**
      * @var float
      */
-    private $lastEquity;
+    private float $lastEquity;
 
     /**
      * @var float
      */
-    private $lastMaintenanceMargin;
+    private float $lastMaintenanceMargin;
 
     /**
      * @var float
      */
-    private $longMarketValue;
+    private float $longMarketValue;
 
     /**
      * @var float
      */
-    private $maintenanceMargin;
+    private float $maintenanceMargin;
 
     /**
      * @var int
      */
-    private $multiplier;
+    private int $multiplier;
 
     /**
      * @var bool
      */
-    private $patternDayTrader;
+    private bool $patternDayTrader;
 
     /**
      * @var float
      */
-    private $portfolioValue;
+    private float $portfolioValue;
 
     /**
      * @var float
      */
-    private $regtBuyingPower;
+    private float $regtBuyingPower;
 
     /**
      * @var float
      */
-    private $shortMarketValue;
+    private float $shortMarketValue;
 
     /**
      * @var bool
      */
-    private $shortingEnabled;
+    private bool $shortingEnabled;
 
     /**
      * @var int
      */
-    private $sma;
+    private int $sma;
 
     /**
      * @var string
      */
-    private $status;
+    private string $status;
 
     /**
      * @var bool
      */
-    private $tradeSuspendedByUser;
+    private bool $tradeSuspendedByUser;
 
     /**
      * @var bool
      */
-    private $tradingBlocked;
+    private bool $tradingBlocked;
 
     /**
      * @var bool
      */
-    private $transfersBlocked;
+    private bool $transfersBlocked;
 
     /**
      * @return bool
@@ -159,9 +159,9 @@ class Account implements BrokerageAccountInterface
     /**
      * @param bool $accountBlocked
      *
-     * @return Account
+     * @return AlpacaAccount
      */
-    public function setAccountBlocked(bool $accountBlocked): Account
+    public function setAccountBlocked(bool $accountBlocked): AlpacaAccount
     {
         $this->accountBlocked = $accountBlocked;
 
@@ -179,9 +179,9 @@ class Account implements BrokerageAccountInterface
     /**
      * @param string $accountNumber
      *
-     * @return Account
+     * @return AlpacaAccount
      */
-    public function setAccountNumber(string $accountNumber): Account
+    public function setAccountNumber(string $accountNumber): AlpacaAccount
     {
         $this->accountNumber = $accountNumber;
 
@@ -217,7 +217,7 @@ class Account implements BrokerageAccountInterface
      *
      * @return $this
      */
-    public function setBuyingPower(string $buyingPower): Account
+    public function setBuyingPower(string $buyingPower): AlpacaAccount
     {
         $this->buyingPower = (float) $buyingPower;
 
@@ -237,7 +237,7 @@ class Account implements BrokerageAccountInterface
      *
      * @return $this
      */
-    public function setCash(string $cash): Account
+    public function setCash(string $cash): AlpacaAccount
     {
         $this->cash = (float) $cash;
 
@@ -259,7 +259,7 @@ class Account implements BrokerageAccountInterface
      *
      * @return $this
      */
-    public function setCreatedAt(string $createdAt): Account
+    public function setCreatedAt(string $createdAt): AlpacaAccount
     {
         $this->createdAt = new \DateTime($createdAt);
 
@@ -277,9 +277,9 @@ class Account implements BrokerageAccountInterface
     /**
      * @param string $currency
      *
-     * @return Account
+     * @return AlpacaAccount
      */
-    public function setCurrency(string $currency): Account
+    public function setCurrency(string $currency): AlpacaAccount
     {
         $this->currency = $currency;
 
@@ -297,9 +297,9 @@ class Account implements BrokerageAccountInterface
     /**
      * @param int $daytradeCount
      *
-     * @return Account
+     * @return AlpacaAccount
      */
-    public function setDaytradeCount(int $daytradeCount): Account
+    public function setDaytradeCount(int $daytradeCount): AlpacaAccount
     {
         $this->daytradeCount = $daytradeCount;
 
@@ -319,7 +319,7 @@ class Account implements BrokerageAccountInterface
      *
      * @return $this
      */
-    public function setDaytradingBuyingPower(string $daytradingBuyingPower): Account
+    public function setDaytradingBuyingPower(string $daytradingBuyingPower): AlpacaAccount
     {
         $this->daytradingBuyingPower = (float) $daytradingBuyingPower;
 
@@ -339,7 +339,7 @@ class Account implements BrokerageAccountInterface
      *
      * @return $this
      */
-    public function setEquity(string $equity): Account
+    public function setEquity(string $equity): AlpacaAccount
     {
         $this->equity = (float) $equity;
 
@@ -357,9 +357,9 @@ class Account implements BrokerageAccountInterface
     /**
      * @param string $id
      *
-     * @return Account
+     * @return AlpacaAccount
      */
-    public function setId(string $id): Account
+    public function setId(string $id): AlpacaAccount
     {
         $this->id = $id;
 
@@ -379,7 +379,7 @@ class Account implements BrokerageAccountInterface
      *
      * @return $this
      */
-    public function setInitialMargin(string $initialMargin): Account
+    public function setInitialMargin(string $initialMargin): AlpacaAccount
     {
         $this->initialMargin = (float) $initialMargin;
 
@@ -399,7 +399,7 @@ class Account implements BrokerageAccountInterface
      *
      * @return $this
      */
-    public function setLastEquity(string $lastEquity): Account
+    public function setLastEquity(string $lastEquity): AlpacaAccount
     {
         $this->lastEquity = (float) $lastEquity;
 
@@ -419,7 +419,7 @@ class Account implements BrokerageAccountInterface
      *
      * @return $this
      */
-    public function setLastMaintenanceMargin(string $lastMaintenanceMargin): Account
+    public function setLastMaintenanceMargin(string $lastMaintenanceMargin): AlpacaAccount
     {
         $this->lastMaintenanceMargin = (float) $lastMaintenanceMargin;
 
@@ -439,7 +439,7 @@ class Account implements BrokerageAccountInterface
      *
      * @return $this
      */
-    public function setLongMarketValue(string $longMarketValue): Account
+    public function setLongMarketValue(string $longMarketValue): AlpacaAccount
     {
         $this->longMarketValue = (float) $longMarketValue;
 
@@ -459,7 +459,7 @@ class Account implements BrokerageAccountInterface
      *
      * @return $this
      */
-    public function setMaintenanceMargin(string $maintenanceMargin): Account
+    public function setMaintenanceMargin(string $maintenanceMargin): AlpacaAccount
     {
         $this->maintenanceMargin = (float) $maintenanceMargin;
 
@@ -477,9 +477,9 @@ class Account implements BrokerageAccountInterface
     /**=
      * @param string $multiplier
      *
-     * @return Account
+     * @return AlpacaAccount
      */
-    public function setMultiplier(string $multiplier): Account
+    public function setMultiplier(string $multiplier): AlpacaAccount
     {
         $this->multiplier = (int) $multiplier;
 
@@ -497,9 +497,9 @@ class Account implements BrokerageAccountInterface
     /**
      * @param bool $patternDayTrader
      *
-     * @return Account
+     * @return AlpacaAccount
      */
-    public function setPatternDayTrader(bool $patternDayTrader): Account
+    public function setPatternDayTrader(bool $patternDayTrader): AlpacaAccount
     {
         $this->patternDayTrader = $patternDayTrader;
 
@@ -519,7 +519,7 @@ class Account implements BrokerageAccountInterface
      *
      * @return $this
      */
-    public function setPortfolioValue(string $portfolioValue): Account
+    public function setPortfolioValue(string $portfolioValue): AlpacaAccount
     {
         $this->portfolioValue = (float) $portfolioValue;
 
@@ -539,7 +539,7 @@ class Account implements BrokerageAccountInterface
      *
      * @return $this
      */
-    public function setRegtBuyingPower(string $regtBuyingPower): Account
+    public function setRegtBuyingPower(string $regtBuyingPower): AlpacaAccount
     {
         $this->regtBuyingPower = (float) $regtBuyingPower;
 
@@ -559,7 +559,7 @@ class Account implements BrokerageAccountInterface
      *
      * @return $this
      */
-    public function setShortMarketValue(string $shortMarketValue): Account
+    public function setShortMarketValue(string $shortMarketValue): AlpacaAccount
     {
         $this->shortMarketValue = (float) $shortMarketValue;
 
@@ -579,7 +579,7 @@ class Account implements BrokerageAccountInterface
      *
      * @return $this
      */
-    public function setShortingEnabled(bool $shortingEnabled): Account
+    public function setShortingEnabled(bool $shortingEnabled): AlpacaAccount
     {
         $this->shortingEnabled = $shortingEnabled;
 
@@ -597,9 +597,9 @@ class Account implements BrokerageAccountInterface
     /**
      * @param string $sma
      *
-     * @return Account
+     * @return AlpacaAccount
      */
-    public function setSma(string $sma): Account
+    public function setSma(string $sma): AlpacaAccount
     {
         $this->sma = (int) $sma;
 
@@ -617,9 +617,9 @@ class Account implements BrokerageAccountInterface
     /**
      * @param string $status
      *
-     * @return Account
+     * @return AlpacaAccount
      */
-    public function setStatus(string $status): Account
+    public function setStatus(string $status): AlpacaAccount
     {
         $this->status = $status;
 
@@ -637,9 +637,9 @@ class Account implements BrokerageAccountInterface
     /**
      * @param bool $tradeSuspendedByUser
      *
-     * @return Account
+     * @return AlpacaAccount
      */
-    public function setTradeSuspendedByUser(bool $tradeSuspendedByUser): Account
+    public function setTradeSuspendedByUser(bool $tradeSuspendedByUser): AlpacaAccount
     {
         $this->tradeSuspendedByUser = $tradeSuspendedByUser;
 
@@ -657,9 +657,9 @@ class Account implements BrokerageAccountInterface
     /**
      * @param bool $tradingBlocked
      *
-     * @return Account
+     * @return AlpacaAccount
      */
-    public function setTradingBlocked(bool $tradingBlocked): Account
+    public function setTradingBlocked(bool $tradingBlocked): AlpacaAccount
     {
         $this->tradingBlocked = $tradingBlocked;
 
@@ -677,9 +677,9 @@ class Account implements BrokerageAccountInterface
     /**
      * @param bool $transfersBlocked
      *
-     * @return Account
+     * @return AlpacaAccount
      */
-    public function setTransfersBlocked(bool $transfersBlocked): Account
+    public function setTransfersBlocked(bool $transfersBlocked): AlpacaAccount
     {
         $this->transfersBlocked = $transfersBlocked;
 

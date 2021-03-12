@@ -82,7 +82,7 @@ class YahooFinanceTickerService implements TickerServiceInterface
                             ->findOneBy(['ticker' => $ticker['symbol']]);
 
                         $sector = null;
-                        if (array_key_exists('industryName', $ticker)) {
+                        if (\array_key_exists('industryName', $ticker)) {
                             $sector = $this->entityManager
                                 ->getRepository(TickerSector::class)
                                 ->findOneBy(['name' => $ticker['industryName']]);

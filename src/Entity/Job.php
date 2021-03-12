@@ -377,26 +377,6 @@ class Job extends AbstractGuidEntity
     }
 
     /**
-     * @return User
-     */
-    public function getUser(): User
-    {
-        return $this->user;
-    }
-
-    /**
-     * @param User $user
-     *
-     * @return Job
-     */
-    public function setUser(User $user): Job
-    {
-        $this->user = $user;
-
-        return $this;
-    }
-
-    /**
      * @return \DateTime|null
      */
     public function getReceivedAt(): ?\DateTime

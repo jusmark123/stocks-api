@@ -16,25 +16,37 @@ trait ParametersTrait
     /**
      * @var array
      */
-    protected $parameters;
+    protected array $parameters = [];
 
     /**
      * @return array
      */
-    public function getParameters(): ?array
+    public function getParameters(): array
     {
         return $this->parameters;
     }
 
     /**
-     * @param mixed $parameters
+     * @param array $parameters
      *
      * @return $this
      */
-    public function setParameters($parameters = []): self
+    public function setParameters(array $parameters): self
     {
         $this->parameters = $parameters;
 
         return $this;
+    }
+
+    /**
+     * @param string $key
+     *
+     * @return mixed
+     */
+    public function getParameter(string $key)
+    {
+        if (\array_key_exists($key, $this->parameters)) {
+            return $this->parameters[$key];
+        }
     }
 }

@@ -18,7 +18,7 @@ final class Version20201127035635 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'User & Account Entity orm updates';
+        return 'User & AlpacaAccount Entity orm updates';
     }
 
     public function up(Schema $schema): void

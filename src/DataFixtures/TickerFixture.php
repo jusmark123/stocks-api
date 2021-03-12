@@ -36,8 +36,7 @@ class TickerFixture extends AbstractDataFixture
                 ->setMarket($item[self::MARKET])
                 ->setCurrency($item[self::CURRENCY])
                 ->setExchange($item[self::EXCHANGE])
-                ->setSector($item[self::SECTOR])
-                ->setTickerType($item[self::TICKER_TYPE])
+                ->setSector($this->getReference('sector_'.$item[self::SECTOR]))
                 ->setBrokerages($item[self::BROKERAGES]);
 
             $manager->persist($ticker);
@@ -62,8 +61,7 @@ class TickerFixture extends AbstractDataFixture
                 self::MARKET => 'STOCKS',
                 self::CURRENCY => 'USD',
                 self::EXCHANGE => 'NASDAQ',
-                self::TICKER_TYPE => $this->getReference('ticker_type_CS'),
-                self::SECTOR => 'Technology',
+                self::SECTOR => 'technology',
                 self::BROKERAGES => [
                     $this->getReference(AlpacaConstants::BROKERAGE_NAME),
                 ],
@@ -72,11 +70,10 @@ class TickerFixture extends AbstractDataFixture
                 self::TICKER => 'TSLA',
                 self::ACTIVE => true,
                 self::NAME => 'Tesla, Inc. Common Stock',
-                self::MARKET => 'STOCKS',
+                self::MARKET => 'equity',
                 self::CURRENCY => 'USD',
                 self::EXCHANGE => 'NASDAQ',
-                self::TICKER_TYPE => $this->getReference('ticker_type_CS'),
-                self::SECTOR => 'Consumer Cyclical',
+                self::SECTOR => 'consumer',
                 self::BROKERAGES => [
                     $this->getReference(AlpacaConstants::BROKERAGE_NAME),
                 ],
@@ -85,11 +82,10 @@ class TickerFixture extends AbstractDataFixture
                 self::TICKER => 'GME',
                 self::ACTIVE => true,
                 self::NAME => 'GameStop Corporation',
-                self::MARKET => 'STOCKS',
+                self::MARKET => 'equity',
                 self::CURRENCY => 'USD',
                 self::EXCHANGE => 'NYSE',
-                self::TICKER_TYPE => $this->getReference('ticker_type_CS'),
-                self::SECTOR => 'Consumer Cyclical',
+                self::SECTOR => 'consumer',
                 self::BROKERAGES => [
                     $this->getReference(AlpacaConstants::BROKERAGE_NAME),
                 ],
@@ -98,11 +94,10 @@ class TickerFixture extends AbstractDataFixture
                 self::TICKER => 'BBY',
                 self::ACTIVE => true,
                 self::NAME => 'Best Buy Co. Inc.',
-                self::MARKET => 'STOCKS',
+                self::MARKET => 'equity',
                 self::CURRENCY => 'USD',
                 self::EXCHANGE => 'NYSE',
-                self::TICKER_TYPE => $this->getReference('ticker_type_CS'),
-                self::SECTOR => 'Consumer Cyclical',
+                self::SECTOR => 'consumer',
                 self::BROKERAGES => [
                     $this->getReference(AlpacaConstants::BROKERAGE_NAME),
                 ],
@@ -111,11 +106,10 @@ class TickerFixture extends AbstractDataFixture
                 self::TICKER => 'NKLA',
                 self::ACTIVE => true,
                 self::NAME => 'Nikola Corporation Common Stock',
-                self::MARKET => 'STOCKS',
+                self::MARKET => 'equity',
                 self::CURRENCY => 'USD',
                 self::EXCHANGE => 'NASDAQ',
-                self::TICKER_TYPE => $this->getReference('ticker_type_CS'),
-                self::SECTOR => null,
+                self::SECTOR => 'technology',
                 self::BROKERAGES => [
                     $this->getReference(AlpacaConstants::BROKERAGE_NAME),
                 ],

@@ -46,8 +46,9 @@ class YahooFinanceTickerFactory
      * @param array             $data
      * @param TickerSector|null $sector
      *
-     * @return Ticker
      * @throws ExceptionInterface
+     *
+     * @return Ticker
      */
     public static function createTicker(array $data, ?TickerSector $sector): Ticker
     {
@@ -67,8 +68,9 @@ class YahooFinanceTickerFactory
      * @param array  $data
      * @param Ticker $ticker
      *
-     * @return Ticker
      * @throws ExceptionInterface
+     *
+     * @return Ticker
      */
     public static function updateTicker(array $data, Ticker $ticker): Ticker
     {

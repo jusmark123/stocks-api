@@ -1,0 +1,34 @@
+App\Entity\TickerSector:
+  attributes:
+    id:
+      groups:
+        - ticker_sector.get
+    name:
+      groups:
+        - ticker.get
+        - ticker_sector.get
+        - ticker_sector.post
+        - ticker_sector.put
+    tickers:
+        - ticker_sector.get
+        - ticker_sector.post
+        - ticker_sector.put
+    createdAt:
+      groups:
+        - ticker_sector.get
+    createdBy:
+      groups:
+        - ticker_sector.get
+    modifiedAt:
+      groups:
+        - ticker_sector.get
+    modifiedBy:
+      groups:
+        - ticker_sector.get
+    deactivatedAt:
+      groups:
+        - ticker_sector.get
+    deactivatedBy:
+      groups:
+        - ticker_sector.get
+

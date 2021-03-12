@@ -30,17 +30,17 @@ class OrSearchFilter extends SearchFilter
     /**
      * @var string
      */
-    protected $propertySearchName = 'search';
+    protected string $propertySearchName = 'search';
 
     /**
      * @var ArrayCollection
      */
-    protected $statements;
+    protected ArrayCollection $statements;
 
     /**
      * @var CustomExportService
      */
-    protected $customExportService;
+    protected CustomExportService $customExportService;
 
     public function __construct(
         ManagerRegistry $managerRegistry,

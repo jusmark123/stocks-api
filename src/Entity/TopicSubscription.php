@@ -9,7 +9,6 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use Ramsey\Uuid\Uuid;
-use Ramsey\Uuid\UuidInterface;
 
 /**
  * Class TopicSubscription.
@@ -19,37 +18,37 @@ class TopicSubscription extends AbstractGuidEntity
     /**
      * @var array
      */
-    private $attributes;
+    private array $attributes;
 
     /**
      * @var string|null
      */
-    private $endpoint = null;
+    private ?string $endpoint = null;
 
     /**
      * @var string
      */
-    private $protocol = 'http';
+    private string $protocol = 'http';
 
     /**
      * @var bool
      */
-    private $confirmed = false;
+    private bool $confirmed = false;
 
     /**
      * @var string|null
      */
-    private $subscriptionArn;
+    private ?string $subscriptionArn;
 
     /**
      * @var Topic
      */
-    private $topic;
+    private Topic $topic;
 
     /**
-     * @return UuidInterface
+     * @return Uuid
      */
-    public function getGuid(): UuidInterface
+    public function getGuid(): Uuid
     {
         if (null !== $this->subscriptionArn) {
             $parts = explode(':', $this->subscriptionArn);
