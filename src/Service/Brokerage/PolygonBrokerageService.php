@@ -43,14 +43,9 @@ use Symfony\Component\Serializer\Mapping\Loader\YamlFileLoader;
 class PolygonBrokerageService extends AbstractBrokerageService
 {
     /**
-     * @var BrokerageClient
-     */
-    private $brokerageClient;
-
-    /**
      * @var TickerEntityService
      */
-    private $tickerService;
+    private TickerEntityService $tickerService;
 
     /**
      * PolygonBrokerageService constructor.
@@ -72,8 +67,7 @@ class PolygonBrokerageService extends AbstractBrokerageService
         TickerEntityService $tickerService,
         ValidationHelper $validator
     ) {
-        parent::__construct($cache, $entityManager, $jobService, $logger, $validator);
-        $this->brokerageClient = $brokerageClient;
+        parent::__construct($brokerageClient, $cache, $entityManager, $jobService, $logger, $validator);
         $this->tickerService = $tickerService;
     }
 

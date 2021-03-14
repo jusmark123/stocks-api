@@ -10,14 +10,14 @@ namespace App\Constants\Entity;
 
 final class OrderTypeConstants
 {
-    //Alpaca OrderInfo Types
+    //Alpaca AlpacaOrder Types
     const MARKET_ORDER = 1;
     const LIMIT_ORDER = 2;
     const STOP_ORDER = 3;
     const STOP_LIMIT = 4;
     const TRAILING_STOP = 5;
 
-    //Td Ameritrade OrderInfo Types
+    //Td Ameritrade AlpacaOrder Types
     const TRADE = 6;
     const RECEIVE_AND_DELIVER = 7;
     const DIVIDEND_OR_INTEREST = 8;

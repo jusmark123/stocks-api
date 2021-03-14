@@ -18,7 +18,7 @@ final class Version20210221231357 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Updated AlpacaPosition/Source/OrderInfo relations and added OrderLog entity for improved interaction';
+        return 'Updated AlpacaPosition/Source/AlpacaOrder relations and added OrderLog entity for improved interaction';
     }
 
     public function up(Schema $schema): void

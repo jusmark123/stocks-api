@@ -27,7 +27,7 @@ class JobItemEntityService extends AbstractEntityService
     /**
      * @var EventDispatcherInterface
      */
-    private $dispatcher;
+    private EventDispatcherInterface $dispatcher;
 
     /**
      * JobItemEntityService constructor.

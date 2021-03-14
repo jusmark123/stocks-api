@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 namespace App\Swagger;
 
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\SerializerAwareInterface;
 use Symfony\Component\Serializer\SerializerAwareTrait;
@@ -23,7 +22,7 @@ final class SwaggerDecorator implements NormalizerInterface, SerializerAwareInte
 
     private $decorated;
 
-    public function __construct(NormalizerInterface $decorated, LoggerInterface $logger)
+    public function __construct(NormalizerInterface $decorated)
     {
         $this->decorated = $decorated;
     }

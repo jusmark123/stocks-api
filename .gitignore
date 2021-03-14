@@ -1,7 +1,5 @@
 .idea/
 .DS_Store
-/composer.lock
-/symfony.lock
 /cert/*
 
 ###> symfony/framework-bundle ###

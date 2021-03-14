@@ -10,45 +10,36 @@ namespace App\Service\Brokerage;
 
 use App\Client\BrokerageClient;
 use App\Constants\Brokerage\AlpacaConstants;
-use App\DTO\Brokerage\AccountHistory;
 use App\DTO\Brokerage\AccountHistoryInterface;
-use App\DTO\Brokerage\Alpaca\AlpacaAccountActivity;
-use App\DTO\Brokerage\Alpaca\AlpacaAccountConfiguration;
-use App\DTO\Brokerage\Alpaca\AlpacaPosition;
 use App\DTO\Brokerage\AccountHistoryRequestInterface;
 use App\DTO\Brokerage\AccountInterface;
+use App\DTO\Brokerage\Alpaca\AlpacaAccount;
+use App\DTO\Brokerage\Alpaca\AlpacaAccountConfiguration;
+use App\DTO\Brokerage\Alpaca\AlpacaAccountNonTradeActivity;
+use App\DTO\Brokerage\Alpaca\AlpacaAccountTradeActivity;
+use App\DTO\Brokerage\Alpaca\AlpacaPosition;
+use App\DTO\Brokerage\Alpaca\Factory\AlpacaOrderFactory;
 use App\DTO\Brokerage\Alpaca\Factory\AlpacaPositionFactory;
+use App\DTO\Brokerage\BrokerageOrderEventInterface;
 use App\DTO\Brokerage\BrokerageOrderInterface;
-use App\DTO\Brokerage\BrokerageTickerInterface;
-use App\DTO\SyncOrdersRequest;
-use App\DTO\SyncTickersRequest;
 use App\Entity\Account;
-use App\Entity\Factory\OrderFactory;
-use App\Entity\Factory\PositionFactory;
-use App\Entity\Job;
 use App\Entity\Order;
-use App\Entity\OrderType;
 use App\Entity\Position;
-use App\Entity\Ticker;
 use App\Exception\InvalidAccountConfiguration;
 use App\Helper\SerializerHelper;
 use App\Helper\ValidationHelper;
-use App\Message\Factory\SyncOrderHistoryMessageFactory;
-use App\Message\Job\Stamp\JobItemStamp;
-use App\Service\DefaultTypeService;
 use App\Service\JobService;
+use App\Service\OrderService;
+use App\Service\PositionService;
+use App\Service\Ticker\TickerService;
+use const DATE_ATOM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
+use Generator;
 use Predis\Client;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Log\LoggerInterface;
-use Ramsey\Uuid\Uuid;
-use Symfony\Component\Messenger\Envelope;
-use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Serializer\Exception\ExceptionInterface;
-use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
-use Symfony\Component\Serializer\Mapping\Loader\YamlFileLoader;
-use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * Class AlpacaBrokerageService.
@@ -57,354 +48,204 @@ class AlpacaBrokerageService extends AbstractBrokerageService
 {
     protected const BROKERAGE_CONSTANTS = AlpacaConstants::class;
 
-    /**
-     * @var BrokerageClient
-     */
-    private BrokerageClient $brokerageClient;
-
-    /**
-     * @var DefaultTypeService
-     */
-    private DefaultTypeService $defaultTypeService;
-
-    /**
-     * @var PolygonBrokerageService
-     */
-    private PolygonBrokerageService $polygonService;
-
-    /**
-     * @var SerializerInterface
-     */
-    private SerializerInterface $serializer;
+    private OrderService $orderService;
+    private PositionService $positionService;
+    private TickerService $tickerService;
 
     /**
      * AlpacaBrokerageService constructor.
      *
-     * @param Client                  $cache
-     * @param DefaultTypeService      $defaultTypeService
-     * @param EntityManagerInterface  $entityManager
-     * @param BrokerageClient         $brokerageClient
-     * @param JobService              $jobService
-     * @param LoggerInterface         $logger
-     * @param PolygonBrokerageService $polygonService
-     * @param ValidationHelper        $validator
+     * @param Client                 $cache
+     * @param EntityManagerInterface $entityManager
+     * @param BrokerageClient        $brokerageClient
+     * @param JobService             $jobService
+     * @param LoggerInterface        $logger
+     * @param OrderService           $orderService
+     * @param PositionService        $positionService
+     * @param TickerService          $tickerService
+     * @param ValidationHelper       $validator
      */
     public function __construct(
         Client $cache,
-        DefaultTypeService $defaultTypeService,
         EntityManagerInterface $entityManager,
         BrokerageClient $brokerageClient,
         JobService $jobService,
         LoggerInterface $logger,
-        PolygonBrokerageService $polygonService,
+        OrderService $orderService,
+        PositionService $positionService,
+        TickerService $tickerService,
         ValidationHelper $validator
-    )
-    {
-        parent::__construct($cache, $entityManager, $jobService, $logger, $validator);
+    ) {
         $this->brokerageClient = $brokerageClient;
-        $this->defaultTypeService = $defaultTypeService;
-        $this->polygonService = $polygonService;
-        $this->serializer = SerializerHelper::ObjectNormalizer();
+        $this->orderService = $orderService;
+        $this->positionService = $positionService;
+        $this->tickerService = $tickerService;
+        $this->serializer = SerializerHelper::CamelCaseToSnakeCaseNormalizer();
+
+        parent::__construct($brokerageClient, $cache, $entityManager, $jobService, $logger, $validator);
     }
 
     /**
-     * @param BrokerageOrderInterface $orderInfo
-     * @param Job                     $job
+     * @param BrokerageOrderInterface $alpacaOrder
+     * @param Account                 $account
      *
      * @return Order
      */
-    public function createOrderFromOrderInfo(BrokerageOrderInterface $orderInfo, Job $job): Order
+    public function createOrder(BrokerageOrderInterface $alpacaOrder, Account $account): Order
     {
-        /** @var OrderType $orderType */
-        $orderType = $this->entityManager
-            ->getRepository(OrderType::class)
-            ->findOneBy(['name' => $orderInfo->getType()]);
-
-        $position = $this->getPosition($orderInfo->getSymbol(), $orderInfo->getAccount());
-
-        $order = OrderFactory::create()
-            ->setGuid(Uuid::fromString($orderInfo->getClientOrderId()))
-            ->setAccount($orderInfo->getAccount())
-            ->setAmountUsd($orderInfo->getFilledAvgPrice() * $orderInfo->getFilledQty())
-            ->setBrokerOrderId($orderInfo->getId())
-            ->setBrokerage($orderInfo->getAccount()->getBrokerage())
-            ->setCreatedAt($orderInfo->getCreatedAt())
-            ->setCreatedby($orderInfo->getUser()->getUsername())
-            ->setFees(0.00)
-            ->setFilledQty($orderInfo->getFilledQty())
-            ->setModifiedAt($orderInfo->getUpdatedAt())
-            ->setModifiedBy($orderInfo->getUser()->getUsername())
-            ->setOrderType($orderType)
-            ->setPosition($position)
-            ->setSide($orderInfo->getSide())
-            ->setSource($orderInfo->getSource())
-            ->setSymbol($orderInfo->getSymbol())
-            ->setUser($orderInfo->getUser());
-
+        $order = AlpacaOrderFactory::createOrder($alpacaOrder, $account);
+        $this->orderService->prepareOrder($order, $alpacaOrder);
         $this->validator->validate($order);
 
         return $order;
     }
 
     /**
-     * @param array $message
+     * @param BrokerageOrderEventInterface $event
+     * @param Account                      $account
      *
-     * @return BrokerageOrderInterface|null
+     * @return Order
      */
-    public function createOrderInfoFromMessage(array $message): ?BrokerageOrderInterface
+    public function createOrderFromEvent(BrokerageOrderEventInterface $event, Account $account): Order
     {
-        $classMetaDataFactory = new ClassMetadataFactory(
-            new YamlFileLoader(AlpacaConstants::ORDER_INFO_SERIALIZATION_CONFIG)
-        );
-        $serializer = SerializerHelper::CamelCaseToSnakeCaseNormalizer($classMetaDataFactory);
-        $orderInfo = $serializer->deserialize(
-            json_encode($message),
-            AlpacaConstants::ORDER_INFO_ENTITY_CLASS,
-            AlpacaConstants::REQUEST_RETURN_DATA_TYPE
-        );
+        $order = $this->createOrder($event->getOrder(), $account);
+        $this->validator->validate($order);
 
-        $this->validator->validate($orderInfo);
-
-        return $orderInfo;
-    }
-
-    /**
-     * @param BrokerageOrderInterface $orderInfo
-     * @param Account                 $account
-     *
-     * @return Position|null
-     * @throws ClientExceptionInterface
-     *
-     */
-    public function createPositionFromPositionHistory(BrokerageOrderInterface $orderInfo, Account $account): ?Position
-    {
-        $request = $this->brokerageClient->createRequest(
-            $this->getUri('positions/' . $orderInfo->getSymbol()),
-            'GET',
-            $this->getRequestHeaders($account)
-        );
-
-        $response = $this->brokerageClient->sendRequest($request);
-
-        $classMetaDataFactory = new ClassMetadataFactory(
-            new YamlFileLoader(AlpacaConstants::ORDER_POSITION_INFO_SERIALIZATION_CONFIG));
-        $serializer = SerializerHelper::CamelCaseToSnakeCaseNormalizer($classMetaDataFactory);
-
-        $position = $serializer->deserialize(
-            (string)json_encode($response->GetBody()), AlpacaConstants::POSITION_INFO_ENTITY_CLASS,
-            AlpacaConstants::REQUEST_RETURN_DATA_TYPE
-        );
-
-        if (!$position instanceof Position) {
-            $position = PositionFactory::create()
-                ->setAccount($account)
-                ->setSide($orderInfo->getSide())
-                ->setQty($orderInfo->getFilledQty())
-                ->setSymbol($orderInfo->getSymbol());
-        }
-
-        return $position;
+        return $order;
     }
 
     /**
      * @param Account $account
      *
-     * @return
+     * @throws ClientExceptionInterface
      * @throws InvalidAccountConfiguration
      *
-     * @throws ClientExceptionInterface
+     * @return AccountInterface|null
      */
     public function fetchAccountConfiguration(Account $account): ?AlpacaAccountConfiguration
     {
-        $request = $this->brokerageClient->createRequest(
-            $this->getUri(AlpacaConstants::ACCOUNT_CONFIG_ENDPOINT, $account),
-            'GET',
-            $this->getRequestHeaders($account)
-        );
+        $uri = $this->getUri(AlpacaConstants::ACCOUNT_CONFIG_ENDPOINT, $account);
 
-        $response = $this->brokerageClient->sendRequest($request);
-
-        $classMetaDataFactory = new ClassMetadataFactory(
-            new YamlFileLoader(AlpacaConstants::ACCOUNT_CONFIGURATION__SERIALIZATION_CONFIG));
-        $serializer = SerializerHelper::CamelCaseToSnakeCaseNormalizer($classMetaDataFactory);
-
-        return $serializer->deserialize(
-            (string)$response->getBody(),
-            AlpacaConstants::ACCOUNT_CONFIGURATION_ENTITY_CLASS,
-            AlpacaConstants::REQUEST_RETURN_DATA_TYPE
+        return $this->deserializeData(
+            $this->sendRequest('GET', $uri, $account),
+            AlpacaAccountConfiguration::class
         );
     }
 
     /**
      * @param AccountHistoryRequestInterface $request
      *
-     * @return mixed
-     *
      * @throws InvalidAccountConfiguration|ClientExceptionInterface
+     *
+     * @return mixed
      */
     public function fetchAccountHistory(AccountHistoryRequestInterface $request): ?AccountHistoryInterface
     {
-        $uri = $this->getUri(AlpacaConstants::ORDERS_ENDPOINT, $request->getAccount());
-        $uri .= empty($params) ? '' : '?' . http_build_query($request->getParameters());
+        $activity = $request->getParameter('activity_type');
+        $baseUrl = sprintf('%s/activities/%s', AlpacaConstants::ACCOUNT_ENDPOINT, $activity);
+        $uri = $this->getUri($baseUrl, $request->getAccount());
+        $uri .= empty($params) ? '' : '?'.http_build_query($request->getParameters());
+        $activities = $this->sendRequest('GET', $uri, $request->getAccount(), true);
 
-        $request = $this->brokerageClient->createRequest(
-            'GET',
-            $uri,
-            $this->getRequestHeaders($request->getAccount()));
-        $response = $this->brokerageClient->sendRequest($request);
+        foreach ($activities as $key => &$activity) {
+            if (\array_key_exists('type', $activity)) {
+                $activity = $this->deserializeData($activity, AlpacaAccountTradeActivity::class);
+            } else {
+                $activity = $this->deserializeData($activity, AlpacaAccountNonTradeActivity::class);
+            }
+        }
 
-        return $this->serializer->denormalize(
-            (string)$response->getBody(), AlpacaAccountActivity::class, 'json');
+        return $activities;
     }
 
     /**
      * @param Account $account
      *
-     * @return AccountInterface|null
-     *
      * @throws ClientExceptionInterface|InvalidAccountConfiguration
+     *
+     * @return AccountInterface|null
      */
     public function fetchAccount(Account $account): ?AccountInterface
     {
-        $request = $this->brokerageClient->createRequest(
-            $this->getUri(AlpacaConstants::ACCOUNT_ENDPOINT, $account),
-            'GET',
-            $this->getRequestHeaders($account)
-        );
-
-        $response = $this->brokerageClient->sendRequest($request);
-
-        $classMetaDataFactory = new ClassMetadataFactory(
-            new YamlFileLoader(AlpacaConstants::ACCOUNT_INFO_SERIALIZATION_CONFIG));
-        $serializer = SerializerHelper::CamelCaseToSnakeCaseNormalizer($classMetaDataFactory);
-
-        return $serializer->deserialize(
-            (string)$response->getBody(),
-            AlpacaConstants::ACCOUNT_INFO_ENTITY_CLASS,
-            AlpacaConstants::REQUEST_RETURN_DATA_TYPE
+        return $this->deserializeData(
+            $this->sendRequest('GET', AlpacaConstants::ACCOUNT_ENDPOINT, $account),
+            AlpacaAccount::class
         );
     }
 
     /**
-     * @param SyncOrdersRequest   $request
-     * @param MessageBusInterface $messageBus
-     * @param Job                 $job
-     *
-     * @return Job|null
-     * @throws InvalidAccountConfiguration
+     * @param Account  $account
+     * @param array    $params
+     * @param int|null $limit
      *
      * @throws ClientExceptionInterface
+     * @throws InvalidAccountConfiguration
+     *
+     * @return Generator
      */
-    public function fetchOrderHistory(SyncOrdersRequest $request, MessageBusInterface $messageBus, Job $job): Job
+    public function fetchOrderHistory(Account $account, array $params, ?int $limit = null): Generator
     {
-        $account = $request->getAccount();
-        $params = $request->getParameters();
-        $limit = $request->getLimit();
-
-        $params['direction'] = 'ASC';
-
-        if (!\array_key_exists('limit', $params)) {
-            $params['limit'] = AlpacaConstants::ORDER_HISTORY_DEFAULT_PAGE_LIMIT;
-        }
-
-        if (!\array_key_exists('after', $params)) {
-            $lastItem = $job->getJobItems()->last();
-
-            if ($lastItem) {
-                $after = new \DateTime($lastItem->getData()['created_at']);
-            } else {
-                $accountSummary = $this->getAccountSummary($account);
-                $after = $accountSummary->getCreatedAt();
-            }
-
-            $params['after'] = date_format($after, \DATE_ATOM);
-        }
+        $count = 0;
+        $params['direction'] = $params['direction'] ?? 'ASC';
+        $params['limit'] = $params['limit'] ?? AlpacaConstants::ORDER_HISTORY_DEFAULT_PAGE_LIMIT;
 
         do {
+            $alpacaOrders = [];
             $uri = $this->getUri(AlpacaConstants::ORDERS_ENDPOINT, $account);
-            $uri .= empty($params) ? '' : '?' . http_build_query($params);
-
-            $request = $this->brokerageClient->createRequest(
-                $uri,
-                'GET',
-                $this->getRequestHeaders($account)
-            );
-
-            $response = $this->brokerageClient->sendRequest($request);
-            $orderHistory = json_decode((string)$response->getBody(), true);
-
-            if (json_last_error()) {
-                throw new \Exception(json_last_error_msg());
-            }
+            $uri .= empty($params) ? '' : '?'.http_build_query($params);
+            $orderHistory = new ArrayCollection($this->sendRequest('GET', $uri, $account, true));
+            $criteria = Criteria::create()->orderBy(['created_at' => Criteria::DESC]);
+            $orderHistory = $orderHistory->matching($criteria);
 
             foreach ($orderHistory as $key => $orderData) {
-                $exists = $this->jobService->jobItemExists($job, $orderData[AlpacaConstants::ORDER_INFO_UNIQUE_KEY]);
+                $alpacaOrders[] = $this->deserializeData($orderData, AlpacaConstants::ORDER_INFO_ENTITY_CLASS);
+                ++$count;
 
-                if (!$exists) {
-                    $jobItem = $this->jobService->createJobItem($orderData, $job, $orderData['client_order_id']);
-
-                    $envelope = (new Envelope(SyncOrderHistoryMessageFactory::create(
-                        $job->getGuid()->toString(),
-                        $jobItem->getGuid()->toString(),
-                        $jobItem->getData()
-                    )))->with(new JobItemStamp(
-                            $job->getGuid()->toString(),
-                            $jobItem->getGuid()->toString())
-                    );
-
-                    $messageBus->dispatch($envelope);
-                }
-
-                if (null !== $limit && $job->getJobItems()->count() >= $limit) {
-                    $this->jobService->save($job);
-
-                    return $job;
+                if (null !== $limit && $count >= $limit) {
+                    break;
                 }
             }
+            $params['after'] = date_format($orderHistory->last()['created_at'], DATE_ATOM);
 
-            $this->jobService->save($job);
+            yield $alpacaOrders;
+        } while ($count >= $params['limit']);
+    }
 
-            $dates = array_map(function ($v) {
-                return new \DateTime($v);
-            }, array_column($orderHistory, 'created_at'));
-
-            $params['after'] = date_format(max($dates), \DATE_ATOM);
-        } while (\count($orderHistory) === $params['limit']);
-
-        return $job;
+    /**
+     * @param string  $symbol
+     * @param Account $account
+     *
+     * @throws ClientExceptionInterface
+     * @throws InvalidAccountConfiguration
+     *
+     * @return Position
+     */
+    public function fetchPosition(string $symbol, Account $account): Position
+    {
+        return $this->deserializeData(
+            $this->sendRequest('GET', $this->getUri('positions/'.$symbol), $account),
+            AlpacaPosition::class
+        );
     }
 
     /**
      * @param Account $account
      *
-     * @return array|null
-     *
-     * @throws InvalidAccountConfiguration|ExceptionInterface
      * @throws ClientExceptionInterface
+     * @throws InvalidAccountConfiguration
+     *
+     * @return array|null
      */
     public function fetchPositions(Account $account): ?array
     {
-        $request = $this->brokerageClient->createRequest(
-            $this->getUri(AlpacaConstants::POSITIONS_ENDPOINT, $account),
-            'GET',
-            $this->getRequestHeaders($account)
-        );
-
-        $response = $this->brokerageClient->sendRequest($request);
-        $data = \json_decode((string)$response->getBody(), true);
+        $positions = [];
+        $uri = $this->getUri(AlpacaConstants::POSITIONS_ENDPOINT, $account);
+        $data = $this->sendRequest('GET', $uri, $account, true);
 
         foreach ($data as $position) {
-            /** @var Ticker $ticker */
-            $ticker = $this->entityManager
-                ->getRepository(Ticker::class)
-                ->findOneBy(['ticker' => $position['symbol']]);
-
-            $position = AlpacaPositionFactory::createEntity($position, $ticker, $account);
-            $this->entityManager->persist($position);
-            $positions[] = $position;
+            $alpacaPosition = $this->deserializeData($position, AlpacaConstants::POSITION_INFO_ENTITY_CLASS);
+            $positions[] = AlpacaPositionFactory::createPositionFromPositionInfo($alpacaPosition);
         }
-
-        $this->entityManager->flush();
 
         return $positions;
     }
@@ -423,18 +264,16 @@ class AlpacaBrokerageService extends AbstractBrokerageService
     }
 
     /**
-     * @return string
+     * @param BrokerageOrderEventInterface $event
+     * @param Order                        $order
+     *
+     * @return Order
      */
-    public function getConstantsClass(): string
+    public function updateOrderFromEvent(BrokerageOrderEventInterface $event, Order $order): Order
     {
-        return self::BROKERAGE_CONSTANTS;
-    }
+        $order = AlpacaOrderFactory::updateOrder($event->getOrder(), $order);
+        $this->orderService->getOrderStatusForOrder($order, $event->getEvent());
 
-    /**
-     * @throws ClientExceptionInterface
-     */
-    public function syncTickerTypes()
-    {
-        $this->polygonService->syncTickerTypes();
+        return $order;
     }
 }

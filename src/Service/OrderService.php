@@ -11,11 +11,16 @@ namespace App\Service;
 use App\DTO\Brokerage\BrokerageOrderInterface;
 use App\DTO\SyncOrdersRequest;
 use App\Entity\Account;
+use App\Entity\Factory\OrderLogFactory;
 use App\Entity\Job;
 use App\Entity\Order;
+use App\Entity\OrderStatusType;
+use App\Entity\OrderType;
+use App\Entity\TickerType;
 use App\Helper\ValidationHelper;
 use App\Service\Brokerage\BrokerageServiceProvider;
-use App\Service\Entity\OrderEntityService;
+use App\Service\Ticker\TickerService;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -24,47 +29,46 @@ use Symfony\Component\Messenger\MessageBusInterface;
  */
 class OrderService extends AbstractService
 {
-    /**
-     * @var BrokerageServiceProvider
-     */
-    private $brokerageServiceProvider;
-
-    /**
-     * @var DefaultTypeService
-     */
-    private $defaultTypeService;
-
-    /**
-     * @var OrderEntityService
-     */
-    private $orderEntityService;
-
-    /**
-     * @var ValidationHelper
-     */
-    private $validator;
+    private BrokerageServiceProvider $brokerageServiceProvider;
+    private DefaultTypeService $defaultTypeService;
+    private EntityManagerInterface $entityManager;
+    private PositionService $positionService;
+    private TickerService $tickerService;
+    private ValidationHelper $validator;
 
     /**
      * OrderService constructor.
      *
      * @param BrokerageServiceProvider $brokerServiceProvider
      * @param DefaultTypeService       $defaultTypeService
+     * @param EntityManagerInterface   $entityManager
      * @param LoggerInterface          $logger
-     * @param OrderEntityService       $orderEntityService
+     * @param PositionService          $positionService
+     * @param TickerService            $tickerService
      * @param ValidationHelper         $validator
      */
     public function __construct(
         BrokerageServiceProvider $brokerServiceProvider,
         DefaultTypeService $defaultTypeService,
+        EntityManagerInterface $entityManager,
         LoggerInterface $logger,
-        OrderEntityService $orderEntityService,
+        PositionService $positionService,
+        TickerService $tickerService,
         ValidationHelper $validator
     ) {
         $this->brokerageServiceProvider = $brokerServiceProvider;
         $this->defaultTypeService = $defaultTypeService;
-        $this->orderEntityService = $orderEntityService;
+        $this->entityManager = $entityManager;
+        $this->positionService = $positionService;
+        $this->tickerService = $tickerService;
         $this->validator = $validator;
+
         parent::__construct($logger);
+    }
+
+    public function createOrderLog($order, $brokerOrder)
+    {
+        $orderLog = OrderLogFactory::create($order);
     }
 
     /**
@@ -95,6 +99,29 @@ class OrderService extends AbstractService
         $constantsClass = $brokerageService->getConstantsClass();
 
         return $constantsClass::ORDER_INFO_UNIQUE_KEY;
+    }
+
+    public function getOrderStatusForOrder(Order $order, string $status)
+    {
+        /** @var OrderStatusType $orderStatus */
+        $orderStatus = $this->entityManager->getRepository(OrderStatusType::class);
+        $order->setOrderStatus($orderStatus);
+    }
+
+    public function getOrderTypeForOrder(Order $order, string $type)
+    {
+        /** @var OrderType $orderType */
+        $orderType = $this->entityManager->getRepository(TickerType::class)->findOneBy(['name' => $type]);
+        $order->setOrderType($orderType);
+    }
+
+    public function prepareOrder(Order $order, BrokerageOrderInterface $brokerOrder)
+    {
+        $this->getOrderTypeForOrder($order, $brokerOrder->getType());
+        $this->getOrderStatusForOrder($order, $brokerOrder->getStatus());
+        $this->createOrderLog($order, $brokerOrder);
+        $this->tickerService->getTickerForOrder($order, $brokerOrder->getSymbol());
+        $this->positionService->getPositionForOrder($order, $brokerOrder);
     }
 
     /**

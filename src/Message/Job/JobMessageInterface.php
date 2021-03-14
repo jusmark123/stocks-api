@@ -18,5 +18,8 @@ interface JobMessageInterface
      */
     public function getJobItemId(): string;
 
+    /**
+     * @return array
+     */
     public function getMessage(): array;
 }

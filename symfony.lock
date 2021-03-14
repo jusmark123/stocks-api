@@ -1,0 +1,56 @@
+{
+    "async-aws/core": {
+        "version": "1.9.1"
+    },
+    "aws/aws-sdk-php": {
+        "version": "3.173.23"
+    },
+    "guzzlehttp/promises": {
+        "version": "1.4.1"
+    },
+    "psr/container": {
+        "version": "1.1.1"
+    },
+    "symfony/config": {
+        "version": "v5.2.4"
+    },
+    "symfony/css-selector": {
+        "version": "v5.2.4"
+    },
+    "symfony/dom-crawler": {
+        "version": "v5.2.4"
+    },
+    "symfony/error-handler": {
+        "version": "v5.2.4"
+    },
+    "symfony/event-dispatcher": {
+        "version": "v5.2.4"
+    },
+    "symfony/filesystem": {
+        "version": "v5.2.4"
+    },
+    "symfony/http-foundation": {
+        "version": "v5.2.4"
+    },
+    "symfony/http-kernel": {
+        "version": "v5.2.4"
+    },
+    "symfony/property-access": {
+        "version": "v5.2.4"
+    },
+    "symfony/property-info": {
+        "version": "v5.2.4"
+    },
+    "symfony/serializer": {
+        "version": "v5.2.4"
+    },
+    "symfony/string": {
+        "version": "v5.2.4"
+    },
+    "symfony/var-dumper": {
+        "version": "v5.2.4"
+    },
+    "symfony/web-link": {
+        "version": "v5.2.4"
+    }
+}

@@ -59,7 +59,7 @@ class AccountHistoryItemDataProvider implements ItemDataProviderInterface, Restr
     {
         $account = $this->accountManager->findOneBy(['guid' => $id]);
         $filters = $context['filters'] ?? [];
-        $request = AccountHistoryRequestFactory::createFromFilters($filters);
+        $request = AccountHistoryRequestFactory::create($account, $filters);
         $brokerageService = $this->brokerageProvider->getBrokerageService($account);
 
         return $brokerageService->fetchAccountHistory($request);

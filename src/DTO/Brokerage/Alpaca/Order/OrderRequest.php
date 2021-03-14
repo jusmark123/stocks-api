@@ -14,9 +14,9 @@ use App\Entity\Order;
 class OrderRequest implements BrokerageOrderRequestInterface
 {
     /**
-     * @var OrderInfo
+     * @var AlpacaOrder
      */
-    private OrderInfo $order;
+    private Order $order;
 
     /**
      *  @var string
@@ -89,7 +89,7 @@ class OrderRequest implements BrokerageOrderRequestInterface
     private StopLoss $stopLoss;
 
     /**
-     * @return OrderInfo
+     * @return AlpacaOrder
      */
     public function getOrder(): Order
     {
@@ -97,7 +97,7 @@ class OrderRequest implements BrokerageOrderRequestInterface
     }
 
     /**
-     * @param OrderInfo $order
+     * @param AlpacaOrder $order
      *
      * @return OrderRequest
      */

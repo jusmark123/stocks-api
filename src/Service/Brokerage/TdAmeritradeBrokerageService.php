@@ -9,7 +9,6 @@ declare(strict_types=1);
 namespace App\Service\Brokerage;
 
 use App\Client\BrokerageClient;
-use App\Client\BrokerageClientInterface;
 use App\Constants\Brokerage\TdAmeritradeConstants;
 use App\Entity\Account;
 use App\Entity\Brokerage;
@@ -31,11 +30,6 @@ class TdAmeritradeBrokerageService extends AbstractBrokerageService
     protected const BROKERAGE_CONSTANTS = TdAmeritradeConstants::class;
 
     /**
-     * @var BrokerageClientInterface
-     */
-    private BrokerageClientInterface $brokerageClient;
-
-    /**
      * TdAmeritradeBrokerageService constructor.
      *
      * @param Client                 $cache
@@ -46,14 +40,14 @@ class TdAmeritradeBrokerageService extends AbstractBrokerageService
      * @param ValidationHelper       $validator
      */
     public function __construct(
-        Client $cache,
         BrokerageClient $brokerageClient,
+        Client $cache,
         EntityManagerInterface $entityManager,
         JobService $jobService,
         LoggerInterface $logger,
         ValidationHelper $validator
     ) {
-        parent::__construct($cache, $entityManager, $jobService, $logger, $validator);
+        parent::__construct($brokerageClient, $cache, $entityManager, $jobService, $logger, $validator);
         $this->brokerageClient = $brokerageClient;
     }
 

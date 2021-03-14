@@ -19,9 +19,9 @@ class BrokerageClientProvider implements BrokerageClientProviderInterface, Logge
     use LoggerAwareTrait;
 
     /**
-     * @var array
+     * @var BrokerageClientInterface[]
      */
-    private $brokerageClients;
+    private array $brokerageClients;
 
     /**
      * BrokerageClientProvider constructor.
@@ -65,9 +65,9 @@ class BrokerageClientProvider implements BrokerageClientProviderInterface, Logge
      *
      * @throws BrokerageClientConfigurationException
      *
-     * @return BrokerageClientInterface
+     * @return BrokerageClientInterface|null
      */
-    public function getBrokerClient(Brokerage $brokerage): BrokerageClientInterface
+    public function getBrokerageClient(Brokerage $brokerage): ?BrokerageClientInterface
     {
         foreach ($this->brokerageClients as $brokerageClient) {
             if (!$brokerageClient instanceof BrokerageClientInterface) {
@@ -78,5 +78,7 @@ class BrokerageClientProvider implements BrokerageClientProviderInterface, Logge
                 return $brokerageClient;
             }
         }
+
+        return null;
     }
 }

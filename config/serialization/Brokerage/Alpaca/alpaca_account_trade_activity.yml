@@ -1,0 +1,46 @@
+App\DTO\Brokerage\Alpaca\AlpacaAccountTradeActivity:
+  attributes:
+    id:
+      groups:
+        - account.get
+        - account_history.get
+    activityType:
+      groups:
+        - account.get
+        - account_history.get
+    cumQty:
+      groups:
+        - account.get
+        - account_history.get
+    leavesQty:
+      groups:
+        - account.get
+        - account_history.get
+    price:
+      groups:
+        - account.get
+        - account_history.get
+    qty:
+      groups:
+        - account.get
+        - account_history.get
+    side:
+      groups:
+        - account.get
+        - account_history.get
+    symbol:
+      groups:
+        - account.get
+        - account_history.get
+    transactionTime:
+      groups:
+        - account.get
+        - account_history.get
+    orderId:
+      groups:
+        - account.get
+        - account_history.get
+    type:
+      groups:
+        - account.get
+        - account_history.get

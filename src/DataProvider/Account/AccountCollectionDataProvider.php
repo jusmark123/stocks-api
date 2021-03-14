@@ -52,6 +52,18 @@ class AccountCollectionDataProvider implements ContextAwareCollectionDataProvide
         $this->logger = $logger;
     }
 
+    public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
+    {
+        return self::RESOURCE_CLASS === $resourceClass && self::OPERATION_NAME === $operationName;
+    }
+
+    /**
+     * @param string      $resourceClass
+     * @param string|null $operationName
+     * @param array       $context
+     *
+     * @return iterable
+     */
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
     {
         $accounts = $this->accountEntityManager->findAll();
@@ -66,10 +78,5 @@ class AccountCollectionDataProvider implements ContextAwareCollectionDataProvide
         }, $accounts);
 
         return $accounts;
-    }
-
-    public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
-    {
-        return self::RESOURCE_CLASS === $resourceClass && self::OPERATION_NAME === $operationName;
     }
 }

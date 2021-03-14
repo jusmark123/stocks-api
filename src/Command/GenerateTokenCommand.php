@@ -24,8 +24,8 @@ class GenerateTokenCommand extends Command implements LoggerAwareInterface
 
     protected static $defaultName = 'stocks-api:api:generate-token';
 
-    private $tokenManager;
-    private $userProvider;
+    private JWTTokenManagerInterface $tokenManager;
+    private UserProviderInterface $userProvider;
 
     public function __construct(
         LoggerInterface $logger,

@@ -11,7 +11,7 @@ namespace App\DTO\Brokerage\Alpaca\Factory;
 use App\DTO\Brokerage\Alpaca\AlpacaAccount;
 use App\Entity\Factory\AbstractFactory;
 
-class AlpacaAccountInfoFactory extends AbstractFactory
+class AlpacaAccountSummaryFactory extends AbstractFactory
 {
     /**
      * @return AlpacaAccount

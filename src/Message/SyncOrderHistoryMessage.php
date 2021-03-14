@@ -23,7 +23,7 @@ class SyncOrderHistoryMessage implements JobMessageInterface
     /**
      * @var array
      */
-    private $orderHistory;
+    private array $orderHistory;
 
     /**
      * SyncOrderHistoryMessage constructor.

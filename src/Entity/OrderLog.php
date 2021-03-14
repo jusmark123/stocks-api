@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\DTO\Brokerage\BrokerageOrderStatusInterface;
+use App\DTO\Brokerage\BrokerageOrderEventInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -28,6 +28,34 @@ use Doctrine\ORM\Mapping as ORM;
 class OrderLog extends AbstractGuidEntity
 {
     /**
+     * @var float
+     *
+     * @ORM\Column(name="amount_usd", type="float", nullable=false, options={"default"=0.00})
+     */
+    private float $amountUsd = 0.00;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="event", type="text", nullable=false)
+     */
+    private string $event;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="quantity", type="float", nullable=false, options={"default"=0.00})
+     */
+    private float $filledQuantity;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="side", type="enumSideType", length=20, nullable=false)
+     */
+    private string $side;
+
+    /**
      * @var Order
      *
      * @ORM\ManyToOne(targetEntity="Order", inversedBy="orderLogs", fetch="LAZY")
@@ -36,30 +64,121 @@ class OrderLog extends AbstractGuidEntity
     private Order $order;
 
     /**
-     * @var string
+     * @var OrderStatusType
      *
-     * @ORM\Column(name="order_type", type="enumOrderType", length=25, nullable=false)
+     * @ORM\ManyToOne(targetEntity="OrderStatusType", fetch="LAZY")
+     * @ORM\JoinColumn(name="order_status_id", referencedColumnName="id", nullable=false)
      */
-    private string $orderType;
+    private OrderStatusType $orderStatus;
 
     /**
-     * @var BrokerageOrderStatusInterface
+     * @var \DateTime
+     *
+     * @ORM\Column(name="timestamp", type="datetime", nullable=false)
      */
-    private BrokerageOrderStatusInterface $orderStatus;
+    private \DateTime $timestamp;
 
     /**
-     * @var float
-     *
-     * @ORM\Column(name="quantity", type="float", nullable=false, options={"default"=0.00})
+     * @return float
      */
-    private float $quantity;
+    public function getAmountUsd(): float
+    {
+        return $this->amountUsd;
+    }
 
     /**
-     * @var string
+     * @param float $amountUsd
      *
-     * @ORM\Column(name="side", type="enumSideType", length=20, nullable=false)
+     * @return OrderLog
      */
-    private string $side;
+    public function setAmountUsd(float $amountUsd): OrderLog
+    {
+        $this->amountUsd = $amountUsd;
+
+        return $this;
+    }
+
+    /**
+     * @return BrokerageOrderEventInterface
+     */
+    public function getEvent(): BrokerageOrderEventInterface
+    {
+        return unserialize($this->event);
+    }
+
+    /**
+     * @param BrokerageOrderEventInterface $event
+     *
+     * @return OrderLog
+     */
+    public function setEvent(BrokerageOrderEventInterface $event): OrderLog
+    {
+        $this->event = serialize($event);
+
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getFilledQuantity(): float
+    {
+        return $this->filledQuantity;
+    }
+
+    /**
+     * @param float $filledQuantity
+     *
+     * @return OrderLog
+     */
+    public function setFilledQuantity(float $filledQuantity): OrderLog
+    {
+        $this->filledQuantity = $filledQuantity;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSide(): string
+    {
+        return $this->side;
+    }
+
+    /**
+     * @param string $side
+     *
+     * @return OrderLog
+     */
+    public function setSide(string $side): OrderLog
+    {
+        $this->side = $side;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getTimestamp(): \DateTime
+    {
+        return $this->timestamp;
+    }
+
+    /**
+     * @param string|\DateTime $timestamp
+     *
+     * @throws \Exception
+     *
+     * @return OrderLog
+     */
+    public function setTimestamp($timestamp): OrderLog
+    {
+        $this->timestamp = new \DateTime($timestamp);
+
+        return $this;
+    }
 
     /**
      * @return Order
@@ -82,81 +201,21 @@ class OrderLog extends AbstractGuidEntity
     }
 
     /**
-     * @return string
+     * @return OrderStatusType
      */
-    public function getOrderType(): string
-    {
-        return $this->orderType;
-    }
-
-    /**
-     * @param string $orderType
-     *
-     * @return OrderLog
-     */
-    public function setOrderType(string $orderType): OrderLog
-    {
-        $this->orderType = $orderType;
-
-        return $this;
-    }
-
-    /**
-     * @return BrokerageOrderStatusInterface
-     */
-    public function getOrderStatus(): BrokerageOrderStatusInterface
+    public function getOrderStatus(): OrderStatusType
     {
         return $this->orderStatus;
     }
 
     /**
-     * @param BrokerageOrderStatusInterface $orderStatus
+     * @param OrderStatusType $orderStatus
      *
      * @return OrderLog
      */
-    public function setOrderStatus(BrokerageOrderStatusInterface $orderStatus): OrderLog
+    public function setOrderStatus(OrderStatusType $orderStatus): OrderLog
     {
         $this->orderStatus = $orderStatus;
-
-        return $this;
-    }
-
-    /**
-     * @return float
-     */
-    public function getQuantity(): float
-    {
-        return $this->quantity;
-    }
-
-    /**
-     * @param float $quantity
-     *
-     * @return OrderLog
-     */
-    public function setQuantity(float $quantity): OrderLog
-    {
-        $this->quantity = $quantity;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getSide(): string
-    {
-        return $this->side;
-    }
-
-    /**
-     * @param string $side
-     *
-     * @return OrderLog
-     */
-    public function setSide(string $side): OrderLog
-    {
-        $this->side = $side;
 
         return $this;
     }

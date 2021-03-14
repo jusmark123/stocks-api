@@ -8,42 +8,45 @@ declare(strict_types=1);
 
 namespace App\DTO\Brokerage\Alpaca\Order;
 
+/**
+ * Class StopLoss.
+ */
 class StopLoss
 {
     /**
-     * @var string
+     * @var float
      */
-    private $stopPrice;
+    private float $stopPrice;
 
     /**
-     * @var string
+     * @var float
      */
-    private $limitPrice;
+    private float $limitPrice;
 
     /**
-     * @return string
+     * @return float
      */
-    public function getStopPrice(): string
+    public function getStopPrice(): float
     {
         return $this->stopPrice;
     }
 
     /**
-     * @param float $stopPrice
+     * @param string $stopPrice
      *
      * @return StopLoss
      */
-    public function setStopPrice(float $stopPrice): StopLoss
+    public function setStopPrice(string $stopPrice): StopLoss
     {
-        $this->stopPrice = $stopPrice;
+        $this->stopPrice = (float) $stopPrice;
 
         return $this;
     }
 
     /**
-     * @return string
+     * @return float
      */
-    public function getLimitPrice(): string
+    public function getLimitPrice(): float
     {
         return $this->limitPrice;
     }
@@ -51,9 +54,9 @@ class StopLoss
     /**
      * @param float $limitPrice
      *
-     * @return AlpacaLimitPrice
+     * @return StopLoss
      */
-    public function setLimitPrice(float $limitPrice): AlpacaLimitPrice
+    public function setLimitPrice(float $limitPrice): StopLoss
     {
         $this->limitPrice = $limitPrice;
 

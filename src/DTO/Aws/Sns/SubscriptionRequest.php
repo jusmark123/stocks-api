@@ -16,32 +16,32 @@ class SubscriptionRequest extends AbstractGuidEntity
     /**
      * @var array
      */
-    private $attributes = [];
+    private array $attributes = [];
 
     /**
      * @var string|null
      */
-    private $endpoint = null;
+    private ?string $endpoint = null;
 
     /**
      * @var string
      */
-    private $protocol = 'http';
+    private string $protocol = 'http';
 
     /**
      * @var bool
      */
-    private $returnSubscriptionArn = true;
+    private bool $returnSubscriptionArn = true;
 
     /**
      * @var Topic|null
      */
-    private $topic = null;
+    private ?Topic $topic = null;
 
     /**
      * @var string|null
      */
-    private $topicArn = null;
+    private ?string $topicArn = null;
 
     /**
      * SubscriptionRequest constructor.

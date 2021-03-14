@@ -66,7 +66,7 @@ class TokenSuccessHandler implements AuthenticationSuccessHandlerInterface
         if (null === $jwt) {
             $jwt = $this->jwtManager->create($user);
         }
-
+        $expires = [];
         $jwtCookies = [];
         foreach ($this->cookieProviders as $cookieProvider) {
             $jwtCookies[] = $cookieProvider->createCookie($jwt);

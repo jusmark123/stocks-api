@@ -9,111 +9,64 @@ declare(strict_types=1);
 namespace App\DTO\Brokerage\Alpaca\Order;
 
 use App\DTO\Brokerage\BrokerageOrderInterface;
-use App\Entity\Account;
-use App\Entity\Order;
 use App\Entity\Source;
 use App\Entity\Traits\CreatedAtTrait;
 use App\Entity\Traits\ModifiedAtTrait;
-use App\Entity\User;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 
-class OrderInfo implements BrokerageOrderInterface
+class AlpacaOrder implements BrokerageOrderInterface
 {
     use CreatedAtTrait;
     use ModifiedAtTrait;
 
-    /**
-     * @var Account
-     */
-    private Account $account;
-
-    /**
-     * @var Order|null
-     */
-    private ?Order $order;
-
-    /**
-     * @var User|null
-     */
-    private ?User $user;
-
-    /**
-     * @var Source
-     */
-    private Source $source;
-
-    /**
-     * @var string
-     */
-    private string $id;
-
-    /**
-     * @var string
-     */
+    /** @var string */
     private string $clientOrderId;
 
-    /**
-     * @var \DateTime|null
-     */
-    private ?\DateTime $updatedAt;
+    /** @var string */
+    private string $id;
 
-    /**
-     * @var \DateTime|null
-     */
-    private ?\DateTime $submittedAt;
+    /** @var Source */
+    private Source $source;
 
-    /**
-     * @var \DateTime|null
-     */
-    private ?\DateTime $filledAt;
+    /** @var DateTime|null */
+    private ?DateTime $updatedAt;
 
-    /**
-     * @var \DateTime|null
-     */
-    private ?\DateTime $expiredAt;
+    /** @var DateTime|null */
+    private ?DateTime $submittedAt;
 
-    /**
-     * @var \DateTime|null
-     */
-    private ?\DateTime $cancelledAt;
+    /** @var DateTime|null */
+    private ?DateTime $filledAt;
 
-    /**
-     * @var \DateTime|null
-     */
-    private ?\DateTime $failedAt;
+    /** @var DateTime|null */
+    private ?DateTime $expiredAt;
 
-    /**
-     * @var \DateTime|null
-     */
-    private ?\DateTime $replacedAt;
+    /** @var DateTime|null */
+    private ?DateTime $cancelledAt;
+
+    /** @var DateTime|null */
+    private ?DateTime $failedAt;
+
+    /** @var DateTime|null */
+    private ?DateTime $replacedAt;
 
     /**
      * The order that this order was replaced by.
      *
-     * @var OrderInfo|null
+     * @var AlpacaOrder|null
      */
-    private ?OrderInfo $replacedBy;
+    private ?AlpacaOrder $replacedBy;
 
-    /**
-     * The order that this order replaces.
-     *
-     * @var OrderInfo|null
-     */
-    private ?OrderInfo $replaces;
+    /** @var AlpacaOrder|null The order that this order replaces. */
+    private ?AlpacaOrder $replaces;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private string $assetId;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private string $symbol;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private string $assetClass;
 
     /**
@@ -169,9 +122,9 @@ class OrderInfo implements BrokerageOrderInterface
     private bool $extendedHours;
 
     /**
-     * When querying non-simple order_class orders in a nested style, an array of OrderInfo entities associated with this order. Otherwise, null.
+     * When querying non-simple order_class orders in a nested style, an array of AlpacaOrder entities associated with this order. Otherwise, null.
      *
-     * @var ArrayCollection|OrderInfo[]
+     * @var ArrayCollection|AlpacaOrder[]
      */
     private $legs;
 
@@ -197,83 +150,11 @@ class OrderInfo implements BrokerageOrderInterface
     private ?float $hwm;
 
     /**
-     * OrderInfo Constructor.
+     * AlpacaOrder Constructor.
      */
     public function __construct()
     {
         $this->legs = new ArrayCollection();
-    }
-
-    /**
-     * @return Account
-     */
-    public function getAccount(): Account
-    {
-        return $this->account;
-    }
-
-    /**
-     * @param Account $account
-     *
-     * @return $this|BrokerageOrderInterface
-     */
-    public function setAccount(Account $account): BrokerageOrderInterface
-    {
-        $this->account = $account;
-
-        return $this;
-    }
-
-    public function getOrder(): ?Order
-    {
-        return $this->order;
-    }
-
-    public function setOrder(Order $order): BrokerageOrderInterface
-    {
-        $this->order = $order;
-
-        return $order;
-    }
-
-    /**
-     * @return Source
-     */
-    public function getSource(): Source
-    {
-        return $this->source;
-    }
-
-    /**
-     * @param Source $source
-     *
-     * @return OrderInfo
-     */
-    public function setSource(Source $source): BrokerageOrderInterface
-    {
-        $this->source = $source;
-
-        return $this;
-    }
-
-    /**
-     * @return User|null
-     */
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    /**
-     * @param User|null $user
-     *
-     * @return OrderInfo
-     */
-    public function setUser(?User $user): OrderInfo
-    {
-        $this->user = $user;
-
-        return $this;
     }
 
     /**
@@ -287,9 +168,9 @@ class OrderInfo implements BrokerageOrderInterface
     /**
      * @param string $id
      *
-     * @return OrderInfo
+     * @return AlpacaOrder
      */
-    public function setId(string $id): OrderInfo
+    public function setId(string $id): AlpacaOrder
     {
         $this->id = $id;
 
@@ -307,9 +188,9 @@ class OrderInfo implements BrokerageOrderInterface
     /**
      * @param string $clientOrderId
      *
-     * @return OrderInfo
+     * @return AlpacaOrder
      */
-    public function setClientOrderId(string $clientOrderId): OrderInfo
+    public function setClientOrderId(string $clientOrderId): AlpacaOrder
     {
         $this->clientOrderId = $clientOrderId;
 
@@ -317,19 +198,19 @@ class OrderInfo implements BrokerageOrderInterface
     }
 
     /**
-     * @return \DateTime|null
+     * @return DateTime|null
      */
-    public function getUpdatedAt(): ?\DateTime
+    public function getUpdatedAt(): ?DateTime
     {
         return $this->updatedAt;
     }
 
     /**
-     * @param \DateTime|null $updatedAt
+     * @param DateTime|null $updatedAt
      *
      * @return $this
      */
-    public function setUpdatedAt(\DateTime $updatedAt = null): OrderInfo
+    public function setUpdatedAt(DateTime $updatedAt = null): AlpacaOrder
     {
         $this->updatedAt = $updatedAt;
 
@@ -337,19 +218,19 @@ class OrderInfo implements BrokerageOrderInterface
     }
 
     /**
-     * @return \DateTime|null
+     * @return DateTime|null
      */
-    public function getSubmittedAt(): ?\DateTime
+    public function getSubmittedAt(): ?DateTime
     {
         return $this->submittedAt;
     }
 
     /**
-     * @param \DateTime|null $submittedAt
+     * @param DateTime|null $submittedAt
      *
      * @return $this
      */
-    public function setSubmittedAt(\DateTime $submittedAt = null): OrderInfo
+    public function setSubmittedAt(DateTime $submittedAt = null): AlpacaOrder
     {
         $this->submittedAt = $submittedAt;
 
@@ -357,19 +238,19 @@ class OrderInfo implements BrokerageOrderInterface
     }
 
     /**
-     * @return \DateTime|null
+     * @return DateTime|null
      */
-    public function getFilledAt(): ?\DateTime
+    public function getFilledAt(): ?DateTime
     {
         return $this->filledAt;
     }
 
     /**
-     * @param \DateTime|null $filledAt
+     * @param DateTime|null $filledAt
      *
      * @return $this
      */
-    public function setFilledAt(\DateTime $filledAt = null): OrderInfo
+    public function setFilledAt(DateTime $filledAt = null): AlpacaOrder
     {
         $this->filledAt = $filledAt;
 
@@ -377,19 +258,19 @@ class OrderInfo implements BrokerageOrderInterface
     }
 
     /**
-     * @return \DateTime|null
+     * @return DateTime|null
      */
-    public function getExpiredAt(): ?\DateTime
+    public function getExpiredAt(): ?DateTime
     {
         return $this->expiredAt;
     }
 
     /**
-     * @param \DateTime|null $expiredAt
+     * @param DateTime|null $expiredAt
      *
      * @return $this
      */
-    public function setExpiredAt(\DateTime $expiredAt = null): OrderInfo
+    public function setExpiredAt(DateTime $expiredAt = null): AlpacaOrder
     {
         $this->expiredAt = $expiredAt;
 
@@ -397,19 +278,19 @@ class OrderInfo implements BrokerageOrderInterface
     }
 
     /**
-     * @return \DateTime|null
+     * @return DateTime|null
      */
-    public function getCancelledAt(): ?\DateTime
+    public function getCancelledAt(): ?DateTime
     {
         return $this->cancelledAt;
     }
 
     /**
-     * @param \DateTime|null $cancelledAt
+     * @param DateTime|null $cancelledAt
      *
      * @return $this
      */
-    public function setCancelledAt(\DateTime $cancelledAt = null): OrderInfo
+    public function setCancelledAt(DateTime $cancelledAt = null): AlpacaOrder
     {
         $this->cancelledAt = $cancelledAt;
 
@@ -417,19 +298,19 @@ class OrderInfo implements BrokerageOrderInterface
     }
 
     /**
-     * @return \DateTime|null
+     * @return DateTime|null
      */
-    public function getFailedAt(): ?\DateTime
+    public function getFailedAt(): ?DateTime
     {
         return $this->failedAt;
     }
 
     /**
-     * @param \DateTime|null $failedAt
+     * @param DateTime|null $failedAt
      *
      * @return $this
      */
-    public function setFailedAt(\DateTime $failedAt = null): OrderInfo
+    public function setFailedAt(DateTime $failedAt = null): AlpacaOrder
     {
         $this->failedAt = $failedAt;
 
@@ -437,19 +318,19 @@ class OrderInfo implements BrokerageOrderInterface
     }
 
     /**
-     * @return \DateTime|null
+     * @return DateTime|null
      */
-    public function getReplacedAt(): ?\DateTime
+    public function getReplacedAt(): ?DateTime
     {
         return $this->replacedAt;
     }
 
     /**
-     * @param \DateTime|null $replacedAt
+     * @param DateTime|null $replacedAt
      *
      * @return $this
      */
-    public function setReplacedAt(\DateTime $replacedAt = null): OrderInfo
+    public function setReplacedAt(DateTime $replacedAt = null): AlpacaOrder
     {
         $this->replacedAt = $replacedAt;
 
@@ -457,19 +338,19 @@ class OrderInfo implements BrokerageOrderInterface
     }
 
     /**
-     * @return OrderInfo|null
+     * @return AlpacaOrder|null
      */
-    public function getReplacedBy(): ?OrderInfo
+    public function getReplacedBy(): ?AlpacaOrder
     {
         return $this->replacedBy;
     }
 
     /**
-     * @param OrderInfo|null $replacedBy
+     * @param AlpacaOrder|null $replacedBy
      *
      * @return $this
      */
-    public function setReplacedBy(?OrderInfo $replacedBy): OrderInfo
+    public function setReplacedBy(?AlpacaOrder $replacedBy): AlpacaOrder
     {
         $this->replacedBy = $replacedBy;
 
@@ -477,19 +358,19 @@ class OrderInfo implements BrokerageOrderInterface
     }
 
     /**
-     * @return OrderInfo|null
+     * @return AlpacaOrder|null
      */
-    public function getReplaces(): ?OrderInfo
+    public function getReplaces(): ?AlpacaOrder
     {
         return $this->replaces;
     }
 
     /**
-     * @param OrderInfo|null $replaces
+     * @param AlpacaOrder|null $replaces
      *
      * @return $this
      */
-    public function setReplaces(?OrderInfo $replaces): OrderInfo
+    public function setReplaces(?AlpacaOrder $replaces): AlpacaOrder
     {
         $this->replaces = $replaces;
 
@@ -507,9 +388,9 @@ class OrderInfo implements BrokerageOrderInterface
     /**
      * @param string $assetId
      *
-     * @return OrderInfo
+     * @return AlpacaOrder
      */
-    public function setAssetId(string $assetId): OrderInfo
+    public function setAssetId(string $assetId): AlpacaOrder
     {
         $this->assetId = $assetId;
 
@@ -527,9 +408,9 @@ class OrderInfo implements BrokerageOrderInterface
     /**
      * @param string $symbol
      *
-     * @return OrderInfo
+     * @return AlpacaOrder
      */
-    public function setSymbol(string $symbol): OrderInfo
+    public function setSymbol(string $symbol): AlpacaOrder
     {
         $this->symbol = $symbol;
 
@@ -547,9 +428,9 @@ class OrderInfo implements BrokerageOrderInterface
     /**
      * @param string $assetClass
      *
-     * @return OrderInfo
+     * @return AlpacaOrder
      */
-    public function setAssetClass(string $assetClass): OrderInfo
+    public function setAssetClass(string $assetClass): AlpacaOrder
     {
         $this->assetClass = $assetClass;
 
@@ -565,11 +446,11 @@ class OrderInfo implements BrokerageOrderInterface
     }
 
     /**
-     * @param int $qty
+     * @param string $qty
      *
      * @return $this
      */
-    public function setQty(string $qty = '0'): OrderInfo
+    public function setQty(string $qty = '0'): AlpacaOrder
     {
         $this->qty = (int) $qty;
 
@@ -585,11 +466,11 @@ class OrderInfo implements BrokerageOrderInterface
     }
 
     /**
-     * @param int $filledQty
+     * @param string|int $filledQty
      *
      * @return $this
      */
-    public function setFilledQty(string $filledQty = '0'): OrderInfo
+    public function setFilledQty(string $filledQty): AlpacaOrder
     {
         $this->filledQty = (int) $filledQty;
 
@@ -607,9 +488,9 @@ class OrderInfo implements BrokerageOrderInterface
     /**
      * @param string $type
      *
-     * @return OrderInfo
+     * @return AlpacaOrder
      */
-    public function setType(string $type): OrderInfo
+    public function setType(string $type): AlpacaOrder
     {
         $this->type = $type;
 
@@ -627,9 +508,9 @@ class OrderInfo implements BrokerageOrderInterface
     /**
      * @param string $side
      *
-     * @return OrderInfo
+     * @return AlpacaOrder
      */
-    public function setSide(string $side): OrderInfo
+    public function setSide(string $side): AlpacaOrder
     {
         $this->side = $side;
 
@@ -647,9 +528,9 @@ class OrderInfo implements BrokerageOrderInterface
     /**
      * @param string $timeInForce
      *
-     * @return OrderInfo
+     * @return AlpacaOrder
      */
-    public function setTimeInForce(string $timeInForce): OrderInfo
+    public function setTimeInForce(string $timeInForce): AlpacaOrder
     {
         $this->timeInForce = $timeInForce;
 
@@ -669,7 +550,7 @@ class OrderInfo implements BrokerageOrderInterface
      *
      * @return $this
      */
-    public function setLimitPrice(?string $limitPrice): OrderInfo
+    public function setLimitPrice(?string $limitPrice): AlpacaOrder
     {
         $this->limitPrice = (float) $limitPrice;
 
@@ -689,7 +570,7 @@ class OrderInfo implements BrokerageOrderInterface
      *
      * @return $this
      */
-    public function setStopPrice(?string $stopPrice = null): OrderInfo
+    public function setStopPrice(?string $stopPrice = null): AlpacaOrder
     {
         $this->stopPrice = (float) $stopPrice;
 
@@ -709,7 +590,7 @@ class OrderInfo implements BrokerageOrderInterface
      *
      * @return $this
      */
-    public function setFilledAvgPrice(?string $filledAvgPrice = null): OrderInfo
+    public function setFilledAvgPrice(?string $filledAvgPrice = null): AlpacaOrder
     {
         $this->filledAvgPrice = (float) $filledAvgPrice;
 
@@ -727,9 +608,9 @@ class OrderInfo implements BrokerageOrderInterface
     /**
      * @param string $status
      *
-     * @return OrderInfo
+     * @return AlpacaOrder
      */
-    public function setStatus(string $status): OrderInfo
+    public function setStatus(string $status): AlpacaOrder
     {
         $this->status = $status;
 
@@ -745,11 +626,11 @@ class OrderInfo implements BrokerageOrderInterface
     }
 
     /**
-     * @param string $extendedHours
+     * @param bool $extendedHours
      *
-     * @return OrderInfo
+     * @return AlpacaOrder
      */
-    public function setExtendedHours(bool $extendedHours): OrderInfo
+    public function setExtendedHours(bool $extendedHours): AlpacaOrder
     {
         $this->extendedHours = $extendedHours;
 
@@ -757,7 +638,7 @@ class OrderInfo implements BrokerageOrderInterface
     }
 
     /**
-     * @return ArrayCollection|OrderInfo[]
+     * @return ArrayCollection|AlpacaOrder[]
      */
     public function getLegs()
     {
@@ -765,11 +646,11 @@ class OrderInfo implements BrokerageOrderInterface
     }
 
     /**
-     * @param ArrayCollection|OrderInfo[] $legs
+     * @param ArrayCollection|AlpacaOrder[] $legs
      *
-     * @return OrderInfo
+     * @return AlpacaOrder
      */
-    public function setLegs($legs): OrderInfo
+    public function setLegs($legs): AlpacaOrder
     {
         $this->legs = $legs;
 
@@ -789,7 +670,7 @@ class OrderInfo implements BrokerageOrderInterface
      *
      * @return $this
      */
-    public function setTrailPrice(string $trailPrice = null): OrderInfo
+    public function setTrailPrice(string $trailPrice = null): AlpacaOrder
     {
         $this->trailPrice = (float) $trailPrice;
 
@@ -809,7 +690,7 @@ class OrderInfo implements BrokerageOrderInterface
      *
      * @return $this
      */
-    public function setTrailPercent(string $trailPercent = null): OrderInfo
+    public function setTrailPercent(string $trailPercent = null): AlpacaOrder
     {
         $this->trailPercent = (float) $trailPercent;
 
@@ -829,7 +710,7 @@ class OrderInfo implements BrokerageOrderInterface
      *
      * @return $this
      */
-    public function setHwm(?string $hwm): OrderInfo
+    public function setHwm(?string $hwm): AlpacaOrder
     {
         $this->hwm = (float) $hwm;
 

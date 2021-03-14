@@ -20,17 +20,38 @@ trait JobFailedEventTrait
     /**
      * @var Job|null
      */
-    protected $job;
+    protected ?Job $job;
 
     /**
      * @var JobItem|null
      */
-    protected $jobItem;
+    protected ?JobItem $jobItem;
 
     /**
      * @var JobRequestMessageInterface|null
      */
-    protected $message;
+    protected ?JobRequestMessageInterface $message;
+
+    /**
+     * AbstractJobFailedEvent constructor.
+     *
+     * @param \Exception                      $exception
+     * @param Job|null                        $job
+     * @param JobItem|null                    $jobItem
+     * @param JobRequestMessageInterface|null $message
+     */
+    public function __construct(
+        \Exception $exception,
+        ?Job $job = null,
+        ?JobItem $jobItem = null,
+        ?JobRequestMessageInterface $message = null
+    ) {
+        $this->jobItem = $jobItem;
+        $this->job = $job;
+        $this->message = $message;
+
+        parent::__construct($exception, $jobItem);
+    }
 
     /**
      * @return Job|null
@@ -49,9 +70,9 @@ trait JobFailedEventTrait
     }
 
     /**
-     * @return JobRequestMessageInterface
+     * @return JobRequestMessageInterface|null
      */
-    public function getMessage(): JobRequestMessageInterface
+    public function getMessage(): ?JobRequestMessageInterface
     {
         return $this->message;
     }

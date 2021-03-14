@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\DTO\Brokerage\Alpaca\Order\AlpacaOrder;
 use App\DTO\Brokerage\BrokerageOrderInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
@@ -15,7 +16,7 @@ use Doctrine\ORM\PersistentCollection;
 use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
- * class OrderInfo.
+ * class AlpacaOrder.
  *
  * @ORM\Table(
  *        name="`order`",
@@ -43,14 +44,21 @@ class Order extends AbstractGuidEntity
     /**
      * @var float
      *
+     * @ORM\Column(name="amount_usd", type="float", nullable=false, options={"default"=0.00})
+     */
+    private float $amountUsd = 0.00;
+
+    /**
+     * @var float
+     *
      * @ORM\Column(name="filled_average_price", type="float", nullable=false, options={"default"=0.00})
      */
     private float $filledAveragePrice;
 
     /**
-     * @var BrokerageOrderInterface
+     * @var BrokerageOrderInterface|AlpacaOrder
      */
-    private BrokerageOrderInterface $orderInfo;
+    private BrokerageOrderInterface $orderSummary;
 
     /**
      * @var ArrayCollection|OrderLog[]|PersistentCollection
@@ -60,9 +68,12 @@ class Order extends AbstractGuidEntity
     private $orderLogs;
 
     /**
-     * @var BrokerageOrderInterface
+     * @var OrderStatusType
+     *
+     * @ORM\ManyToOne(targetEntity="OrderStatusType")
+     * @ORM\JoinColumn(name="order_status_type_id", referencedColumnName="id")
      */
-    private BrokerageOrderInterface $orderStatus;
+    private OrderStatusType $orderStatus;
 
     /**
      * @var OrderType
@@ -112,13 +123,21 @@ class Order extends AbstractGuidEntity
     /**
      * @var Position
      *
-     * @ORM\ManyToOne(targetEntity="Position", inversedBy="orders", fetch="LAZY")
+     * @ORM\ManyToOne(targetEntity="Position", inversedBy="orders", fetch="LAZY", cascade={"persist", "remove"})
      * @ORM\JoinColumn(name="position_id", referencedColumnName="id", nullable=false)
      */
     private Position $position;
 
     /**
-     * OrderInfo constructor.
+     * @var PositionLog
+     *
+     * @ORM\OneToOne(targetEntity="PositionLog", mappedBy="order", fetch="LAZY", cascade={"persist", "remove"})
+     * @ORM\JoinColumn(name="position_log_id", referencedColumnName="id", nullable=false)
+     */
+    private PositionLog $positionLog;
+
+    /**
+     * AlpacaOrder constructor.
      *
      * @throws \Exception
      */
@@ -151,6 +170,26 @@ class Order extends AbstractGuidEntity
     /**
      * @return float
      */
+    public function getAmountUsd(): float
+    {
+        return $this->amountUsd;
+    }
+
+    /**
+     * @param float $amountUsd
+     *
+     * @return Order
+     */
+    public function setAmountUsd(float $amountUsd): Order
+    {
+        $this->amountUsd = $amountUsd;
+
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
     public function getFilledAveragePrice(): float
     {
         return $this->filledAveragePrice;
@@ -171,19 +210,19 @@ class Order extends AbstractGuidEntity
     /**
      * @return BrokerageOrderInterface
      */
-    public function getOrderInfo(): BrokerageOrderInterface
+    public function getOrderSummary(): BrokerageOrderInterface
     {
-        return $this->orderInfo;
+        return $this->orderSummary;
     }
 
     /**
-     * @param BrokerageOrderInterface $orderInfo
+     * @param BrokerageOrderInterface $orderSummary
      *
      * @return Order
      */
-    public function setOrderInfo(BrokerageOrderInterface $orderInfo): Order
+    public function setOrderSummary(BrokerageOrderInterface $orderSummary): Order
     {
-        $this->orderInfo = $orderInfo;
+        $this->orderSummary = $orderSummary;
 
         return $this;
     }
@@ -249,21 +288,61 @@ class Order extends AbstractGuidEntity
     }
 
     /**
-     * @return BrokerageOrderInterface
+     * @return OrderStatusType
      */
-    public function getOrderStatus(): BrokerageOrderInterface
+    public function getOrderStatus(): OrderStatusType
     {
         return $this->orderStatus;
     }
 
     /**
-     * @param BrokerageOrderInterface $orderStatus
+     * @param OrderStatusType $orderStatus
      *
      * @return Order
      */
-    public function setOrderStatus(BrokerageOrderInterface $orderStatus): Order
+    public function setOrderStatus(OrderStatusType $orderStatus): Order
     {
         $this->orderStatus = $orderStatus;
+
+        return $this;
+    }
+
+    /**
+     * @return Position
+     */
+    public function getPosition(): Position
+    {
+        return $this->position;
+    }
+
+    /**
+     * @param Position $position
+     *
+     * @return Order
+     */
+    public function setPosition(Position $position): Order
+    {
+        $this->position = $position;
+
+        return $this;
+    }
+
+    /**
+     * @return PositionLog
+     */
+    public function getPositionLog(): PositionLog
+    {
+        return $this->positionLog;
+    }
+
+    /**
+     * @param PositionLog $positionLog
+     *
+     * @return Order
+     */
+    public function setPositionLog(PositionLog $positionLog): Order
+    {
+        $this->positionLog = $positionLog;
 
         return $this;
     }

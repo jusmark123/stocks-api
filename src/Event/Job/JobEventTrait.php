@@ -10,7 +10,7 @@ namespace App\Event\Job;
 
 use App\Entity\Job;
 use App\Entity\JobItem;
-use App\Message\JobRequestMessageInterface;
+use App\Message\Job\JobRequestMessageInterface;
 
 /**
  * Traits JobEventTrait.
@@ -20,12 +20,17 @@ trait JobEventTrait
     /**
      * @var Job|null
      */
-    protected $job;
+    protected ?Job $job = null;
 
     /**
      * @var JobItem|null
      */
-    protected $jobItem;
+    protected ?JobItem $jobItem = null;
+
+    /**
+     * @var JobRequestMessageInterface|null
+     */
+    protected ?JobRequestMessageInterface $message = null;
 
     /**
      * @return Job|null
@@ -44,9 +49,9 @@ trait JobEventTrait
     }
 
     /**
-     * @return JobRequestMessageInterface
+     * @return ?JobRequestMessageInterface
      */
-    public function getJobMessage(): JobRequestMessageInterface
+    public function getJobMessage(): ?JobRequestMessageInterface
     {
         return $this->message;
     }

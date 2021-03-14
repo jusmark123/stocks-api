@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace App\Entity\Factory;
 
-use App\DTO\Brokerage\BrokeragePositionInterface;
+use App\Entity\Order;
 use App\Entity\Position;
 
 /**
@@ -24,14 +24,13 @@ class PositionFactory extends AbstractFactory
         return new Position();
     }
 
-    /**
-     * @param BrokeragePositionInterface $positionInfo
-     *
-     * @return Position
-     */
-    public static function create(BrokeragePositionInterface $positionInfo): Position
+    public static function createFromOrder(Order $order): Position
     {
         return self::init()
-            ->setPositionInfo($positionInfo);
+            ->setAccount($order->getAccount())
+            ->setTicker($order->getTicker())
+            ->setQuantity($order->getQuantityFilled())
+            ->setAverageFilledPrice($order->getFilledAveragePrice())
+            ->addOrder($order);
     }
 }

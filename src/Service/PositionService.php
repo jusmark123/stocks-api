@@ -8,13 +8,16 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use ApiPlatform\Core\Bridge\Symfony\Validator\Validator;
 use App\DTO\SyncPositionsRequest;
+use App\Entity\Account;
+use App\Entity\Factory\PositionFactory;
 use App\Entity\Job;
+use App\Entity\Order;
 use App\Entity\Position;
 use App\Helper\ValidationHelper;
 use App\Service\Brokerage\BrokerageServiceProvider;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -23,13 +26,19 @@ use Psr\Log\LoggerInterface;
 class PositionService extends AbstractService
 {
     private BrokerageServiceProvider $brokerageServiceProvider;
-
     private DefaultTypeService $defaultTypeService;
-
     private EntityManagerInterface $entityManager;
-
     private ValidationHelper $validator;
 
+    /**
+     * PositionService constructor.
+     *
+     * @param BrokerageServiceProvider $brokerageServiceProvider
+     * @param DefaultTypeService       $defaultTypeService
+     * @param EntityManagerInterface   $entityManager
+     * @param LoggerInterface          $logger
+     * @param ValidationHelper         $validator
+     */
     public function __construct(
         BrokerageServiceProvider $brokerageServiceProvider,
         DefaultTypeService $defaultTypeService,
@@ -46,21 +55,52 @@ class PositionService extends AbstractService
     }
 
     /**
-     * @param SyncPositionHistory $request
-     * @param Job                 $job
+     * @param Order $order
+     */
+    public function getPositionForOrder(Order $order)
+    {
+        $position = PositionFactory::createFromOrder($order);
+        $order->setPosition($position);
+    }
+
+    /**
+     * @param string  $symbol
+     * @param Account $account
      *
-     * @throws \Exception
+     * @return Position|object
+     */
+    public function getPosition(string $symbol, Account $account): Position
+    {
+        return $this->entityManager
+            ->getRepository(Position::class)
+            ->findOneBy(['ticker' => $symbol, 'account' => $account]);
+    }
+
+    /**
+     * @param Account $account
+     *
+     * @return array
+     */
+    public function getPositions(Account $account): array
+    {
+        $brokerageService = $this->brokerageServiceProvider->getBrokerageService($account->getBrokerage());
+
+        return $brokerageService->fetchPositions($account);
+    }
+
+    /**
+     * @param SyncPositionsRequest $request
+     * @param Job                  $job
+     *
+     * @throws Exception
      *
      * @return mixed
      */
     public function fetchPositionHistory(SyncPositionsRequest $request, Job $job): ?Job
     {
         try {
-            $brokerageService = $this->brokerageServiceProvider
-                ->getBrokerageService($request->getAccount()->getBrokerage());
-
-            return $brokerageService->fetchPositionHistory($request, $job);
-        } catch (\Exception $e) {
+            return null;
+        } catch (Exception $e) {
             throw $e;
         }
     }

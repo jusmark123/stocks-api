@@ -9,8 +9,7 @@ WORKDIR /opt/app-root/src
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Extensions
-RUN apk add --update --no-cache --virtual .php-build-deps \
-    ${PHPIZE_DEPS} \
+RUN apk add --update --no-cache ${PHPIZE_DEPS} \
     bash \
     bash-doc \
     bash-completion \
@@ -23,8 +22,6 @@ RUN apk add --update --no-cache --virtual .php-build-deps \
     openrc \
     openssh-client \
     openssl \
-    rabbitmq-c \
-    rabbitmq-c-dev \
     sudo \
     supervisor \
  && pecl install apcu-5.1.18 \

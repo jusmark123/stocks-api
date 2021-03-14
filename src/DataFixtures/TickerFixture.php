@@ -10,6 +10,7 @@ namespace App\DataFixtures;
 
 use App\Constants\Brokerage\AlpacaConstants;
 use App\Entity\Factory\TickerFactory;
+use App\Entity\TickerSector;
 use Doctrine\Persistence\ObjectManager;
 
 class TickerFixture extends AbstractDataFixture
@@ -29,6 +30,8 @@ class TickerFixture extends AbstractDataFixture
     public function load(ObjectManager $manager)
     {
         foreach ($this->getData() as $item) {
+            /** @var TickerSector $sector */
+            $sector = $this->getReference('sector_'.$item[self::SECTOR]);
             $ticker = TickerFactory::create()
                 ->setTicker($item[self::TICKER])
                 ->setActive($item[self::ACTIVE])
@@ -36,7 +39,7 @@ class TickerFixture extends AbstractDataFixture
                 ->setMarket($item[self::MARKET])
                 ->setCurrency($item[self::CURRENCY])
                 ->setExchange($item[self::EXCHANGE])
-                ->setSector($this->getReference('sector_'.$item[self::SECTOR]))
+                ->setSector($sector)
                 ->setBrokerages($item[self::BROKERAGES]);
 
             $manager->persist($ticker);

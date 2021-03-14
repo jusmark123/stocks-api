@@ -18,6 +18,8 @@ use WebSocket\ISocketHandler;
 
 class AlpacaStreamHandler extends AbstractStreamHandler implements ISocketHandler
 {
+    private Account $account;
+
     public function __construct(Account $account)
     {
         $this->account = $account;

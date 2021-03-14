@@ -9,7 +9,7 @@ declare(strict_types=1);
 namespace App\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
-use App\DTO\AWS\Sns\SubscriptionRequest;
+use App\DTO\Aws\Sns\SubscriptionRequest;
 use App\Entity\TopicSubscription;
 use App\Service\TopicService;
 
@@ -18,7 +18,7 @@ class TopicSubscribeDataPersister implements ContextAwareDataPersisterInterface
     /**
      * @var TopicService
      */
-    private $topicService;
+    private TopicService $topicService;
 
     /**
      * TopicSubscribeDataPersister constructor.

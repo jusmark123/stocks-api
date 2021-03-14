@@ -24,6 +24,18 @@ class AccountHistoryRequest implements AccountHistoryRequestInterface
     private Account $account;
 
     /**
+     * AccountHistoryRequest constructor.
+     *
+     * @param Account $account
+     * @param array   $parameters
+     */
+    public function __construct(Account $account, array $parameters)
+    {
+        $this->account = $account;
+        $this->parameters = $parameters;
+    }
+
+    /**
      * @return mixed
      */
     public function getAccount(): Account

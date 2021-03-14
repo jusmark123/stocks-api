@@ -19,6 +19,26 @@ trait ParametersTrait
     protected array $parameters = [];
 
     /**
+     * @param string $key
+     *
+     * @return mixed|null
+     */
+    public function getParameter(string $key)
+    {
+        return $this->hasParameter($key) ? $this->parameters[$key] : null;
+    }
+
+    /**
+     * @param string $key
+     *
+     * @return bool
+     */
+    public function hasParameter(string $key): bool
+    {
+        return \array_key_exists($key, $this->parameters);
+    }
+
+    /**
      * @return array
      */
     public function getParameters(): array
@@ -40,13 +60,10 @@ trait ParametersTrait
 
     /**
      * @param string $key
-     *
-     * @return mixed
+     * @param        $value
      */
-    public function getParameter(string $key)
+    public function setParameter(string $key, $value)
     {
-        if (\array_key_exists($key, $this->parameters)) {
-            return $this->parameters[$key];
-        }
+        $this->parameters[$key] = $value;
     }
 }

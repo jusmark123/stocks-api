@@ -1,0 +1,30 @@
+App\DTO\Brokerage\Alpaca\AlpacaAccountNonTradeActivity:
+  attributes:
+    id:
+      groups:
+        - account.get
+        - account_history.get
+    activityType:
+      groups:
+        - account.get
+        - account_history.get
+    date:
+      groups:
+        - account.get
+        - account_history.get
+    netAmount:
+      groups:
+        - account.get
+        - account_history.get
+    symbol:
+      groups:
+        - account.get
+        - account_history.get
+    qty:
+      groups:
+        - account.get
+        - account_history.get
+    perShareAmount:
+      groups:
+        - account.get
+        - account_history.get

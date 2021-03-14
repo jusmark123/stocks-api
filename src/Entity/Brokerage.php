@@ -84,6 +84,8 @@ class Brokerage extends AbstractGuidEntity
 
     /**
      * @var BrokerageOrderStatus[]
+     *
+     * @ORM\OneToMany(targetEntity="OrderStatusType", mappedBy="brokerage", fetch="LAZY")
      */
     private array $orderStatuses;
 

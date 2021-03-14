@@ -1,16 +1,18 @@
 <?php
 
+/*
+ * Stocks Api
+ */
+
+declare(strict_types=1);
 
 namespace App\DTO\Brokerage\Alpaca\Factory;
 
-
+use App\DTO\Brokerage\Alpaca\AlpacaAccountTradeActivity;
 use App\DTO\Brokerage\Alpaca\AlpacaPosition;
-use App\DTO\Brokerage\YahooFinance\Entity\YahooFinanceTicker;
-use App\Entity\Account;
 use App\Entity\Factory\AbstractFactory;
 use App\Entity\Factory\PositionFactory;
 use App\Entity\Position;
-use App\Entity\Ticker;
 use App\Helper\SerializerHelper;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
@@ -31,8 +33,9 @@ class AlpacaPositionFactory extends AbstractFactory
     /**
      * @param array $data
      *
-     * @return AlpacaPosition
      * @throws ExceptionInterface
+     *
+     * @return AlpacaPosition
      */
     public static function create(array $data): AlpacaPosition
     {
@@ -42,23 +45,34 @@ class AlpacaPositionFactory extends AbstractFactory
     }
 
     /**
-     * @param array   $data
-     * @param Ticker  $ticker
-     * @param Account $account
+     * @param array $data
+     *
+     * @throws ExceptionInterface
      *
      * @return Position
-     * @throws ExceptionInterface
      */
-    public static function createEntity(array $data, Ticker $ticker, Account $account): Position
+    public static function createPosition(array $data): Position
     {
         $position = self::create($data);
 
         return PositionFactory::init()
             ->setGuid(Uuid::fromString($position->getAssetId()))
-            ->setAccount($account)
-            ->setTicker($ticker)
             ->setQuantity($position->getQty())
             ->setSide($position->getSide())
             ->setType('equity');
+    }
+
+    public static function createPositionFromPositionInfo(AlpacaPosition $alpacaPosition): Position
+    {
+        return PositionFactory::init()
+            ->setSide($alpacaPosition->getSide())
+            ->setQutantity($alpacaPosition->getQty())
+            ->setSymbol($alpacaPosition->getSymbol());
+    }
+
+    public static function createPositionFromActivity(AlpacaAccountTradeActivity $activity): Position
+    {
+        return PositionFactory::init()
+            ->setGuid($activity->getGuid());
     }
 }

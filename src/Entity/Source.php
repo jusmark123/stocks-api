@@ -38,9 +38,16 @@ abstract class Source extends AbstractEntity
     /**
      * @var ArrayCollection|Position[]|PersistentCollection
      *
-     * @ORM\OneToMany(targetEntity="Position", mappedBy="source", fetch="LAZY")
+     * @ORM\ManyToMany(targetEntity="Position", inversedBy="sources", fetch="LAZY")
      */
     private $positions;
+
+    /**
+     * @var ArrayCollection|PositionLog[]|PersistentCollection
+     *
+     * @ORM\OneToMany(targetEntity="PositionLog", mappedBy="source", fetch="LAZY", cascade={"persist", "remove"})
+     */
+    private $positionLogs;
 
     /**
      * Source constructor.
@@ -52,6 +59,7 @@ abstract class Source extends AbstractEntity
         $this->jobs = new ArrayCollection();
         $this->orders = new ArrayCollection();
         $this->positions = new ArrayCollection();
+        $this->positionLogs = new ArrayCollection();
     }
 
     /**
@@ -111,6 +119,25 @@ abstract class Source extends AbstractEntity
     {
         $this->positions = $positions;
 
+        return $this;
+    }
+
+    /**
+     * @return PositionLog
+     */
+    public function getPositionLogs(): PositionLog
+    {
+        return $this->positionLogs;
+    }
+
+    /**
+     * @param PositionLog $positionLogs
+     *
+     * @return Source
+     */
+    public function setPositionLogs(PositionLog $positionLogs): Source
+    {
+        $this->positionLogs = $positionLogs;
         return $this;
     }
 }

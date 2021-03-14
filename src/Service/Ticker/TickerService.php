@@ -9,14 +9,10 @@ declare(strict_types=1);
 namespace App\Service\Ticker;
 
 use App\DTO\Brokerage\YahooFinance\TickerRequest;
-use App\Entity\Job;
-use App\Entity\Ticker;
 use App\Helper\ValidationHelper;
 use App\Service\AbstractService;
-use App\Service\Brokerage\PolygonBrokerageService;
 use App\Service\DefaultTypeService;
 use App\Service\Entity\TickerEntityService;
-use Http\Message\RequestFactory;
 use Predis\Client;
 use Psr\Log\LoggerInterface;
 
@@ -30,58 +26,38 @@ class TickerService extends AbstractService
     const NASDAQ_CACHE_KEY = 'nasdaq-%s';
     const DOW_CACHE_KEY = 'dow-%s';
 
-    /**
-     * @var Client
-     */
     private Client $cache;
-
-    /**
-     * @var TickerServiceProvider
-     */
     private TickerServiceProvider $tickerServiceProvider;
-
-    /**
-     * @var TickerEntityService
-     */
     private TickerEntityService $tickerEntityService;
-
-    /**
-     * @var DefaultTypeService
-     */
     private DefaultTypeService $defaultTypeService;
-
-    /**
-     * @var ValidationHelper
-     */
     private ValidationHelper $validator;
+    private TickerEntityService $entityService;
 
     /**
      * TickerService constructor.
      *
-     * @param TickerServiceProvider   $tickerServiceProvider
-     * @param DefaultTypeService      $defaultTypeService
-     * @param LoggerInterface         $logger
-     * @param PolygonBrokerageService $polygonBrokerageService
-     * @param TickerEntityService     $tickerEntityService
-     * @param ValidationHelper        $validator
+     * @param Client                $cache
+     * @param DefaultTypeService    $defaultTypeService
+     * @param LoggerInterface       $logger
+     * @param TickerEntityService   $entityService
+     * @param TickerServiceProvider $tickerServiceProvider
+     * @param ValidationHelper      $validator
      */
     public function __construct(
         Client $cache,
-        TickerServiceProvider $tickerServiceProvider,
         DefaultTypeService $defaultTypeService,
         LoggerInterface $logger,
-        PolygonBrokerageService $polygonBrokerageService,
-        TickerEntityService $tickerEntityService,
+        TickerEntityService $entityService,
+        TickerServiceProvider $tickerServiceProvider,
         ValidationHelper $validator
     ) {
         $this->cache = $cache;
         $this->tickerServiceProvider = $tickerServiceProvider;
         $this->defaultTypeService = $defaultTypeService;
-        $this->tickerEntityService = $tickerEntityService;
+        $this->entityService = $entityService;
         $this->validator = $validator;
         parent::__construct($logger);
     }
-
 
     /**
      * @param TickerRequest $request
@@ -90,6 +66,16 @@ class TickerService extends AbstractService
     {
         $tickerService = $this->tickerServiceProvider->getTickerService(YahooFinanceTickerService::class);
         $tickerService->fetchTickers($request);
+    }
+
+    /**
+     * @param string $symbol
+     *
+     * @return mixed
+     */
+    public function getTickerBySymbol(string $symbol)
+    {
+        return $this->entityService->getEntityManager()->findOneBy(['ticker' => $symbol]);
     }
 
     /**
@@ -211,6 +197,5 @@ class TickerService extends AbstractService
 
     private function parseTableToArray($table, $columns = 0)
     {
-
     }
 }

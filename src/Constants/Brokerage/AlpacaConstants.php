@@ -28,7 +28,7 @@ final class AlpacaConstants
     const ACCOUNT_CONFIGURATION_ENTITY_CLASS = 'App\DTO\Brokerage\Alpaca\AlpacaAccountConfiguration';
 
     // AlpacaOrderInfoEntity Class
-    const ORDER_INFO_ENTITY_CLASS = 'App\DTO\Brokerage\Alpaca\Order\OrderInfo';
+    const ORDER_INFO_ENTITY_CLASS = 'App\DTO\Brokerage\Alpaca\Order\AlpacaOrder';
 
     const POSITION_INFO_ENTITY_CLASS = 'App\DTO\Brokerage\Alpaca\AlpacaPosition';
 
@@ -85,6 +85,8 @@ final class AlpacaConstants
         'rejected' => 'The order has been rejected, and no further updates will occur for the order. This state occurs on rare occasions and may occur based on various conditions decided by the exchanges.',
         'suspended' => 'The order has been suspended, and is not eligible for trading. This state only occurs on rare occasions.',
         'calculated' => 'The order has been completed for the day (either filled or done for day), but remaining settlement calculations are still pending. This state only occurs on rare occasions.',
+        'order_replace_rejected' => 'The order replace request has been rejected',
+        'order_cancel_rejected' => 'The order cancel request has been rejected',
     ];
     const ORDER_TYPES = [
         'market' => 'A market order is a request to buy or sell a security at the currently available market price. It provides the most likely method of filling an order. Market orders fill nearly instantaneously',

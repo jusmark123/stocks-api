@@ -27,11 +27,6 @@ class WebullBrokerageService extends AbstractBrokerageService
     protected const BROKERAGE_CONSTANTS = WebullConstants::class;
 
     /**
-     * @var BrokerageClient
-     */
-    private BrokerageClient $brokerageClient;
-
-    /**
      * WebullBrokerageService constructor.
      *
      * @param Client                 $cache
@@ -42,14 +37,14 @@ class WebullBrokerageService extends AbstractBrokerageService
      * @param ValidationHelper       $validator
      */
     public function __construct(
-        Client $cache,
         BrokerageClient $brokerageClient,
+        Client $cache,
         EntityManagerInterface $entityManager,
         JobService $jobService,
         LoggerInterface $logger,
         ValidationHelper $validator
     ) {
-        parent::__construct($cache, $entityManager, $jobService, $logger, $validator);
+        parent::__construct($brokerageClient, $cache, $entityManager, $jobService, $logger, $validator);
         $this->brokerageClient = $brokerageClient;
     }
 

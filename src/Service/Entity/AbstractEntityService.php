@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace App\Service\Entity;
 
 use App\Entity\AbstractEntity;
+use App\Entity\Manager\EntityManager;
 use App\Helper\ValidationHelper;
 use App\Service\AbstractService;
 use App\Service\DefaultTypeService;
@@ -23,7 +24,7 @@ abstract class AbstractEntityService extends AbstractService
     /**
      * @var DefaultTypeService
      */
-    protected $defaultTypeService;
+    protected DefaultTypeService $defaultTypeService;
 
     /**
      * @var EntityManagerInterface
@@ -33,15 +34,15 @@ abstract class AbstractEntityService extends AbstractService
     /**
      * @var ValidationHelper
      */
-    protected $validator;
+    protected ValidationHelper $validator;
 
     /**
      * AbstractEntityService constructor.
      *
-     * @param DefaultTypeService     $defaultTypeService
-     * @param EntityManagerInterface $entityManager
-     * @param LoggerInterface        $logger
-     * @param ValidationHelper       $validator
+     * @param DefaultTypeService                   $defaultTypeService
+     * @param EntityManagerInterface|EntityManager $entityManager
+     * @param LoggerInterface                      $logger
+     * @param ValidationHelper                     $validator
      */
     public function __construct(
         DefaultTypeService $defaultTypeService,
@@ -71,9 +72,9 @@ abstract class AbstractEntityService extends AbstractService
     }
 
     /**
-     * @return EntityManagerInterface
+     * @return EntityManager
      */
-    public function getEntityManager(): EntityManagerInterface
+    public function getEntityManager(): EntityManager
     {
         return $this->entityManager;
     }

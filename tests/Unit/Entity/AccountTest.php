@@ -9,7 +9,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Entity;
 
 use App\DTO\Brokerage\Alpaca\AlpacaAccountConfiguration;
-use App\DTO\Brokerage\Alpaca\Factory\AlpacaAccountInfoFactory;
+use App\DTO\Brokerage\Alpaca\Factory\AlpacaAccountSummaryFactory;
 use App\Entity\Account;
 use App\Entity\Factory\AccountStatusTypeFactory;
 use App\Entity\Factory\BrokerageFactory;
@@ -56,7 +56,7 @@ class AccountTest extends TestCase
         $this->assertSame($this->entity, $this->entity->setApiSecret('string'));
         $this->assertEquals('string', $this->entity->getApiSecret());
 
-        $accountInfo = AlpacaAccountInfoFactory::create();
+        $accountInfo = AlpacaAccountSummaryFactory::create();
         $this->assertSame($this->entity, $this->entity->setAccountInfo($accountInfo));
         $this->assertEquals($accountInfo, $this->entity->getAccountInfo());
 

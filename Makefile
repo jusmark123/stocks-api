@@ -28,7 +28,7 @@ PHONY: build-cache
 build-database: build-drop-database build-create-database build-migrate build-validate-database build-fixtures
 .PHONY: build-database
 
-build: .env generate-keys symfony-cli build-dependencies build-database
+build: .env generate-keys build-dependencies build-database
 .PHONY: build
 
 build-dependencies:
@@ -126,7 +126,7 @@ supervisor:
 	supervisorctl -c docker/php-fpm/supervisord.conf
 .PHONY: supervisor
 
-test: test-unit test-feature
+test: static  test-unit test-feature
 .PHONY: test
 
 test-feature:
@@ -135,12 +135,20 @@ test-feature:
 #	php -d memory_limit=-1 vendor/bin/behat --format progress -vv --stop-on-failure
 .PHONY: test-feature
 
+test-health:
+	curl localhost:8080/health
+.PHONY: test-health
+
 test-unit:
 	vendor/bin/simple-phpunit \
 		--coverage-html build/coverage \
 		--coverage-clover build/coverage/clover.xml \
 		--log-junit build/reports/phpunit/junit.xml
 .PHONY: unit-test
+
+static:
+	php -d memory_limit=-1 vendor/bin/phpstan analyse --level 1 src public
+.PHONY: static
 
 start-consumers:
 	supervisorctl --configuration /etc/supervisor/conf.d/supervisord.conf start all
@@ -153,56 +161,3 @@ stop-consumers:
 sync-tickers:
 	bin/console stocks-api:api:sync-tickers
 .PHONY: sync-tickers
-
-##### Satis Commands ####
-
-.PHONY: satis-init satis-up satis-start satis-stop satis-restart satis-state satis-remove satis-bash satis-build satis-down satis-logs
-
-###############################################
-##     VARIABLES                             ##
-###############################################
-compose=docker-compose
-image=ypereirareis/docker-satis
-
-###############################################
-##      TARGETS                              ##
-###############################################
-satis-up:
-	@echo "== START =="
-	$(compose) up -d stocks-api-satis
-
-satis-start: satis-up
-
-satis-init:
-	@$(compose) build --pull
-
-satis-rebuild:
-	@$(compose) build --pull --no-cache stocks-api-satis
-
-satis-stop:
-	@echo "== STOP =="
-	@$(compose) stop
-
-satis-restart: satis-start
-
-satis-state:
-	@echo "== STATE =="
-	@$(compose) ps
-
-satis-remove:
-	@echo "== REMOVE =="
-	@$(compose) rm --force
-
-satis-bash:
-	@echo "== BASH =="
-	@$(compose) exec stocks-api-satis bash
-
-satis-logs:
-	@$(compose) logs -ft --tail=1000
-
-satis-down:
-	@$(compose) down --volumes --remove-orphans stocks-api-satis
-
-satis-build:
-	@echo "== SATIS BUILD =="
-	@$(compose) exec stocks-api-satis ./scripts/build.sh

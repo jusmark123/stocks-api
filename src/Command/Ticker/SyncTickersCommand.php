@@ -13,9 +13,7 @@ use App\Command\AbstractCommand;
 use App\Constants\Transport\JobConstants;
 use App\DataPersister\SyncTickersDataPersister;
 use App\DTO\Brokerage\YahooFinance\TickerRequest;
-use App\Entity\Account;
 use App\Entity\Job;
-use App\Entity\Source;
 use App\Service\DefaultTypeService;
 use App\Service\JobService;
 use App\Service\Ticker\TickerService;
@@ -23,10 +21,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -115,13 +111,6 @@ class SyncTickersCommand extends AbstractCommand implements LoggerAwareInterface
                 'l',
                 InputOption::VALUE_OPTIONAL,
                 'Limit number of processed tickers, mainly used for testing purposes',
-            )
-            ->addOption(
-                'consume',
-                'c',
-                InputOption::VALUE_OPTIONAL,
-                'Start consumers for message processing',
-                false
             );
     }
 
@@ -133,7 +122,7 @@ class SyncTickersCommand extends AbstractCommand implements LoggerAwareInterface
      *
      * @return int
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         try {
             $job = $this->getJob($input->getOption('job_id'));
@@ -148,9 +137,6 @@ class SyncTickersCommand extends AbstractCommand implements LoggerAwareInterface
                     sprintf('Sync tickers job initiated. View progress via the /api/stocks/v1/jobs/%s',
                         $job->getGuid()->toString())
                 );
-                if ($input->getOption('consume')) {
-                    $this->startConsumers($output);
-                }
             } else {
                 $this->tickerService->fetchTickers($request);
             }
@@ -191,48 +177,6 @@ class SyncTickersCommand extends AbstractCommand implements LoggerAwareInterface
     }
 
     /**
-     * @param string|null $accountId
-     *
-     * @return Account|null
-     */
-    private function getAccount(?string $accountId = null): ?Account
-    {
-        $account = null;
-        if (null !== $accountId) {
-            $account = $this->entityManager
-                ->getRepository(Account::class)
-                ->findOneBy(['guid' => $accountId]);
-        }
-
-        if (!$account instanceof Account) {
-            $account = $this->polygonService->getDefaultAccount();
-        }
-
-        return $account;
-    }
-
-    /**
-     * @param string|null $sourceId
-     *
-     * @return Source|null
-     */
-    private function getSource(?string $sourceId = null): ?Source
-    {
-        $source = null;
-        if (null !== $sourceId) {
-            $source = $this->entityManager
-                ->getRepository(Source::class)
-                ->findOneBy(['guid' => $sourceId]);
-        }
-
-        if (!$source instanceof Source) {
-            $source = $this->defaultTypeService->getDefaultSource();
-        }
-
-        return $source;
-    }
-
-    /**
      * @param string|null $parameters
      *
      * @return array|null
@@ -250,21 +194,5 @@ class SyncTickersCommand extends AbstractCommand implements LoggerAwareInterface
         }
 
         return $parameters;
-    }
-
-    private function startConsumers(OutputInterface $output)
-    {
-        $command = $this->getApplication()->find('messenger:consume');
-        $input = new ArrayInput(['receivers' => self::QUEUES]);
-
-        return $command->run($input, new NullOutput());
-    }
-
-    private function stopConsumers(OutputInterface $output)
-    {
-        $command = $this->getApplication()->find('messenger:stop-workers');
-        $input = new ArrayInput([]);
-
-        return $command->run($input, $output);
     }
 }

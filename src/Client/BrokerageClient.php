@@ -14,10 +14,10 @@ use App\Exception\HttpMessageException;
 use Http\Client\HttpClient;
 use Http\Message\RequestFactory;
 use Http\Message\UriFactory;
+use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
-use React\Promise\ExtendedPromiseInterface;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
 /**
@@ -28,12 +28,12 @@ class BrokerageClient extends AbstractClient implements BrokerageClientInterface
     /**
      * @var Account
      */
-    private $account;
+    private Account $account;
 
     /**
      * @var Brokerage
      */
-    private $brokerage;
+    private Brokerage $brokerage;
 
     /**
      * BrokerageClient Constructor.
@@ -79,10 +79,12 @@ class BrokerageClient extends AbstractClient implements BrokerageClientInterface
      *
      * @return BrokerageClient
      */
-    public function setAccount(Account $account)
+    public function setAccount(Account $account): BrokerageClient
     {
         $this->account = $account;
         $this->setBrokerage($account->getBrokerage());
+
+        return $this;
     }
 
     /**
@@ -90,9 +92,11 @@ class BrokerageClient extends AbstractClient implements BrokerageClientInterface
      *
      * @return BrokerageClient
      */
-    public function setBrokerage(Brokerage $brokerage)
+    public function setBrokerage(Brokerage $brokerage): BrokerageClient
     {
         $this->brokerage = $brokerage;
+
+        return $this;
     }
 
     /**
@@ -104,32 +108,9 @@ class BrokerageClient extends AbstractClient implements BrokerageClientInterface
     }
 
     /**
-     * @return RequestInterface
-     */
-    public function createAccountInfoRequest(): RequestInterface
-    {
-    }
-
-    /**
-     * @return array
-     */
-    public function getHeaders(): array
-    {
-        return $this->headers;
-    }
-
-    /**
-     * @param array $headers
-     */
-    public function setHeaders(array $headers)
-    {
-        $this->headers = $headers;
-    }
-
-    /**
      * @param RequestInterface $request
      *
-     * @throws \Psr\Http\Client\ClientExceptionInterface
+     * @throws ClientExceptionInterface|HttpMessageException
      *
      * @return ResponseInterface
      */
@@ -138,15 +119,6 @@ class BrokerageClient extends AbstractClient implements BrokerageClientInterface
         $response = $this->client->sendRequest($request);
 
         return $this->validateResponse($response);
-    }
-
-    /**
-     * @param RequestInterface $request
-     *
-     * @return ExtendedPromiseInterface
-     */
-    public function sendAsyncRequest(RequestInterface $request): ExtendedPromiseInterface
-    {
     }
 
     /**

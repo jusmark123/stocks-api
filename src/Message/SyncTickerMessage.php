@@ -23,7 +23,7 @@ class SyncTickerMessage implements JobMessageInterface
     /**
      * @var array
      */
-    private $tickerData;
+    private array $tickerData;
 
     /**
      * SyncTickerMessage constructor.

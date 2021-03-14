@@ -16,7 +16,7 @@ use App\Entity\Brokerage;
 interface BrokerageClientProviderInterface
 {
     /**
-     * @return array
+     * @return BrokerageClientInterface[]
      */
     public function getBrokerageClients(): array;
 
@@ -30,7 +30,7 @@ interface BrokerageClientProviderInterface
     /**
      * @param Brokerage $brokerage
      *
-     * @return BrokerageClientInterface
+     * @return BrokerageClientInterface|null
      */
-    public function getBrokerClient(Brokerage $brokerage): BrokerageClientInterface;
+    public function getBrokerageClient(Brokerage $brokerage): ?BrokerageClientInterface;
 }
